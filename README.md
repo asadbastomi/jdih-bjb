@@ -14,3 +14,4 @@
 - php artisan db:seed
 - php artisan passport:install
 # jdih-bjb
+# jdih-bjb
