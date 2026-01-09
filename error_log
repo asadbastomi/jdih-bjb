@@ -1,0 +1,2 @@
+[17-Apr-2023 06:59:42 Asia/Makassar] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 2621440 bytes) in /home/jdih/jdih/vendor/composer/autoload_classmap.php on line 5147
+[17-Apr-2023 06:59:42 Asia/Makassar] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 847872 bytes) in /home/jdih/jdih/vendor/nunomaduro/collision/src/Highlighter.php on line 155

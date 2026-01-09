@@ -1,0 +1,77 @@
+form input[type='text'],
+form input[type='password'],
+form input[type='email'],
+form .custom-control-label,
+form .custom-control-label:before,
+form .note-editor.invalid,
+form .dropify-wrapper.invalid{
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+form input[type='text'].invalid,
+form input[type='password'].invalid,
+form input[type='email'].invalid,
+form .select2-selection.invalid,
+form .note-editor.invalid,
+form .dropify-wrapper.invalid{
+    border-color: #f1556c!important;
+}
+form .custom-control-label.invalid,
+form .custom-control-label.invalid:before{
+    color: #f1556c;
+    border-color: #f1556c;
+}
+*:focus {
+    outline: 0 !important;
+    box-shadow: none!important;
+}
+.card-box.pb-2.position-relative{
+    min-height: calc(100vh - 259px);
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+.modal-open .modal.modal-static {
+    /* overflow-y: hidden!important; */
+}
+.modal.modal-static .modal-dialog {
+    transform: scale(0.98)!important;
+}
+table .fix {
+    width: 1px;
+    white-space: nowrap;
+}
+table .toogle {
+    width: 42px!important;
+    white-space: nowrap;
+}
+table tbody td {
+    vertical-align: middle!important;
+}
+table tbody tr {
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+table tbody td .button-list .btn {
+    margin-left: 0px!important;
+}
+table tr.notif {
+    background: #d7ffe8;
+}
+table tr.delete {
+    background: #ffd7d7;
+}
+ul.pagination{
+    z-index: 0!important;
+}
+.justify-start {
+    margin-right: auto!important;
+}
+.dropifyheightforce119 .dropify-wrapper{
+    height: 119px;
+}
