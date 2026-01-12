@@ -8,7 +8,6 @@ npm-debug.log
 yarn-error.log
 /public/upload/*
 /public/error_log
-public/.htaccess
 /public/.user.ini
 /public/php.ini
 /.phpunit.cache
