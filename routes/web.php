@@ -42,7 +42,7 @@ Route::get('/artikel', 'PublicController@artikel')->name('artikel');
 Route::get('/pengumuman', 'PublicController@pengumuman')->name('pengumuman');
 Route::get('/kegiatan', 'PublicController@kegiatan')->name('kegiatan');
 Route::get('/kegiatan/cat/{kategori}', 'PublicController@kegiatan')->name('kegiatan.category');
-Route::get('/kegiatan/{id}/{slug}', 'PublicController@kegiatanbyid');
+Route::get('/kegiatan/{id}/{slug}', 'PublicController@kegiatanbyid')->where('slug', '.*');
 Route::get('/monograf-hukum', 'PublicController@buku')->name('monograf-hukum');
 Route::get('/monograf-hukum/{id}/{slug}', 'PublicController@detailBuku')->name('monograf-hukum.detail');
 Route::get('/propemperda', 'PublicController@propemperda')->name('propemperda');
@@ -134,4 +134,3 @@ Route::group(['middleware' => 'auth', 'prefix' => '/'], function () {
 
 // landing
 // Route::get('', 'RoutingController@index')->name('index');
-
