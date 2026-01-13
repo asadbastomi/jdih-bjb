@@ -125,7 +125,6 @@ Route::middleware('auth')->group(function () {
 
 Auth::routes();
 
-
 Route::group(['middleware' => 'auth', 'prefix' => '/'], function () {
     Route::get('{first}/{second}/{third}', 'RoutingController@thirdLevel')->name('third');
     Route::get('{first}/{second}', 'RoutingController@secondLevel')->name('second');
