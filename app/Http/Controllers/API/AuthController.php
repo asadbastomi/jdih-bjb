@@ -141,7 +141,12 @@ class AuthController extends BaseController
     public function logout()
     {
         $user = Auth::user();
-        $user->token()->revoke();
+        if ($user) {
+            $token = $user->token();
+            if ($token) {
+                $token->revoke();
+            }
+        }
         $more['auth'] = 'logout';
         $more['cookie'] = Cookie::forget('_token');
         return $this->sendResponse($user, 'Successfully logged out', $more);

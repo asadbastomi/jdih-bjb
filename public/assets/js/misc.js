@@ -125,7 +125,9 @@ function btnLoadingStart(buttonname) {
     window[buttonname].start();
 }
 function btnLoadingStop(buttonname) {
-    window[buttonname].stop();
+    if (buttonname && window[buttonname]) {
+        window[buttonname].stop();
+    }
 }
 function getData(url, option = null) {
     if (option.success) var actSuccess = option.success;
@@ -459,8 +461,8 @@ function sentData(url, option = null) {
                 btnLoadingStop(buttonname);
             }
             if (actError) {
+                actError(response);
             }
-            btnLoadingStop(buttonname);
         }
     });
 }
