@@ -72,7 +72,14 @@ class UsersController extends BaseController
                         ->where('users.id', '<>', 1)
                         ->paginate($item);
         }
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            Log::build([
+                    'driver' => 'single',
+                    'path' => storage_path('logs/long.log'),
+                ])->info(date("Y-m-d h:i:s",time()) . ' : ' . Auth::user()->username . ' Access List User' . request()->getClientIp() . " -- " . $request->host(). " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
+            return $this->sendResponse($data['users'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             Log::build([
                     'driver' => 'single',
                     'path' => storage_path('logs/long.log'),

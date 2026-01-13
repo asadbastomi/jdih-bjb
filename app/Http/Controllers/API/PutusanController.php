@@ -41,7 +41,10 @@ class PutusanController extends BaseController
             });
         }
         $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->paginate($item);
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.putusan.data', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
@@ -88,7 +91,10 @@ class PutusanController extends BaseController
             }
         }
         $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->paginate($item);
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('public.dataputusan', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
@@ -135,7 +141,10 @@ class PutusanController extends BaseController
             }
         }
         $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->paginate($item);
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('public.dataputusan', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);

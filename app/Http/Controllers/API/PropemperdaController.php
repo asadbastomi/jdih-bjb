@@ -58,7 +58,10 @@ class PropemperdaController extends BaseController
             }
             $data['propubahcabut'] = $regUbahCabutArr;
         }
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['propemperda'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.propemperda.data', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
@@ -93,7 +96,10 @@ class PropemperdaController extends BaseController
             $dataset->where('tahun', 'like', '%'.$tahun.'%');
         }
         $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->paginate($item);
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('public.datapropemperda', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);

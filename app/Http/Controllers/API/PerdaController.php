@@ -65,7 +65,10 @@ class PerdaController extends BaseController
             $regUbahCabutArr[$row->id_reg_1][] = $rowdata;
         }
         $data['regubahcabut'] = $regUbahCabutArr;
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.perda.data', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
@@ -139,7 +142,10 @@ class PerdaController extends BaseController
             $regUbahCabutArr[$row->id_reg_1][] = $rowdata;
         }
         $data['regubahcabut'] = $regUbahCabutArr;
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('public.dataperda', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);

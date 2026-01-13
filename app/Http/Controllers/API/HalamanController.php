@@ -36,7 +36,10 @@ class HalamanController extends BaseController
         } else {
             $data['halaman'] = Halaman::paginate($item);
         }
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['halaman'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.halaman.data', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);

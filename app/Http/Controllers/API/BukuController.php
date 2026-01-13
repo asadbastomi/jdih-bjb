@@ -42,7 +42,10 @@ class BukuController extends BaseController
             $data['buku'] = Buku::with(['kategori', 'temaDokumen'])->orderBy('updated_at', 'desc')->paginate($item);
         }
         
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['buku'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.buku.data', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
@@ -91,7 +94,10 @@ class BukuController extends BaseController
             $buku->url_detail = url('/monograf-hukum/' . $buku->id . '/' . $buku->slug);
         }
 
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('public.databuku', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);

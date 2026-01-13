@@ -69,7 +69,10 @@ class KepWalikotaController extends BaseController
         Log::build(['driver' => 'single', 'path' => storage_path('logs/long.log'),])
             ->info(date("Y-m-d h:i:s", time()) . ' : ' . Auth::user()->username . ' Access List Keputusan Walikota' . request()->getClientIp() . " -- " . $request->host() . " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
         // $data['regubahcabut'] = $regUbahCabutArr;
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.kep-walikota.data', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
@@ -135,7 +138,10 @@ class KepWalikotaController extends BaseController
         //     $regUbahCabutArr[$row->id_reg_1][] = $rowdata;
         // }
         // $data['regubahcabut'] = $regUbahCabutArr;
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('public.datakep-walikota', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);

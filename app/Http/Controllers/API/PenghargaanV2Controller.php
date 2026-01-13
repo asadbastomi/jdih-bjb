@@ -28,7 +28,10 @@ class PenghargaanV2Controller extends BaseController
             'driver' => 'single',
             'path' => storage_path('logs/long.log'),
         ])->info(date("Y-m-d h:i:s", time()) . ' : ' . Auth::user()->username . ' Access List PenghargaanV2' . request()->getClientIp() . " -- " . $request->host() . " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.penghargaanV2.data', $data);
         }
         return $this->sendError(null, 'Unauthorized', 401);

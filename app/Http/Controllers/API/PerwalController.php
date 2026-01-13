@@ -63,7 +63,10 @@ class PerwalController extends BaseController
             $regUbahCabutArr[$row->id_reg_1][] = $rowdata;
         }
         $data['regubahcabut'] = $regUbahCabutArr;
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('admin.perwal.data', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
@@ -138,7 +141,10 @@ class PerwalController extends BaseController
             $regUbahCabutArr[$row->id_reg_1][] = $rowdata;
         }
         $data['regubahcabut'] = $regUbahCabutArr;
-        if ($request->ajax()) {
+        // Return JSON for API requests, HTML view for AJAX requests
+        if ($request->expectsJson()) {
+            return $this->sendResponse($data['data'], 'Data retrieved successfully');
+        } elseif ($request->ajax()) {
             return view('public.dataperwal', $data);
         }
         return $this->sendError(null, 'Unauthorised', 401);
