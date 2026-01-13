@@ -27,19 +27,40 @@ class BukuController extends BaseController
             $this->findMe(Buku::get());
         }
 
-        if($search != "") {
-            $data['buku'] = Buku::with(['kategori', 'temaDokumen'])->where(function ($query) use ($search) {
-                $query->where('judul', 'like', '%'.$search.'%')
-                    ->orWhere('teu_orang_badan', 'like', '%'.$search.'%')
-                    ->orWhere('pengarang', 'like', '%'.$search.'%')
-                    ->orWhere('penerbit', 'like', '%'.$search.'%')
-                    ->orWhere('tahun_terbit', 'like', '%'.$search.'%')
-                    ->orWhere('subjek', 'like', '%'.$search.'%')
-                    ->orWhere('keterangan', 'like', '%'.$search.'%');
-            })
-            ->paginate($item);
-        } else {
-            $data['buku'] = Buku::with(['kategori', 'temaDokumen'])->orderBy('updated_at', 'desc')->paginate($item);
+        // Try to get data without eager loading first to check if data exists
+        try {
+            $testData = Buku::count();
+            
+            if($search != "") {
+                $data['buku'] = Buku::with(['kategori', 'temaDokumen'])->where(function ($query) use ($search) {
+                    $query->where('judul', 'like', '%'.$search.'%')
+                        ->orWhere('teu_orang_badan', 'like', '%'.$search.'%')
+                        ->orWhere('pengarang', 'like', '%'.$search.'%')
+                        ->orWhere('penerbit', 'like', '%'.$search.'%')
+                        ->orWhere('tahun_terbit', 'like', '%'.$search.'%')
+                        ->orWhere('subjek', 'like', '%'.$search.'%')
+                        ->orWhere('keterangan', 'like', '%'.$search.'%');
+                })
+                ->paginate($item);
+            } else {
+                $data['buku'] = Buku::with(['kategori', 'temaDokumen'])->orderBy('updated_at', 'desc')->paginate($item);
+            }
+        } catch (\Exception $e) {
+            // If eager loading fails, try without relationships
+            if($search != "") {
+                $data['buku'] = Buku::where(function ($query) use ($search) {
+                    $query->where('judul', 'like', '%'.$search.'%')
+                        ->orWhere('teu_orang_badan', 'like', '%'.$search.'%')
+                        ->orWhere('pengarang', 'like', '%'.$search.'%')
+                        ->orWhere('penerbit', 'like', '%'.$search.'%')
+                        ->orWhere('tahun_terbit', 'like', '%'.$search.'%')
+                        ->orWhere('subjek', 'like', '%'.$search.'%')
+                        ->orWhere('keterangan', 'like', '%'.$search.'%');
+                })
+                ->paginate($item);
+            } else {
+                $data['buku'] = Buku::orderBy('updated_at', 'desc')->paginate($item);
+            }
         }
         
         // Return JSON for API requests, HTML view for AJAX requests
