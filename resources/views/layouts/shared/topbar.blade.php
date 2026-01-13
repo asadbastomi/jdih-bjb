@@ -67,7 +67,7 @@
 
         <!-- LOGO -->
         <div class="logo-box">
-            <a href="{{route('any', ['dashboard'])}}" class="logo logo-dark text-center">
+            <a href="{{route('admin.dashboard.catchall.root', ['dashboard'])}}" class="logo logo-dark text-center">
                 <span class="logo-sm">
                     <img src="{{asset('assets/images/logo-sm.png')}}" alt="" height="22">
                     <!-- <span class="logo-lg-text-light">UBold</span> -->
@@ -78,7 +78,7 @@
                 </span>
             </a>
 
-            <a href="{{route('any', ['dashboard'])}}" class="logo logo-light text-center">
+            <a href="{{route('admin.dashboard.catchall.root', ['dashboard'])}}" class="logo logo-light text-center">
                 <span class="logo-sm">
                     <img src="{{asset('assets/images/logo-sm.png')}}" alt="" height="22">
                 </span>

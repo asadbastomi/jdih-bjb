@@ -128,11 +128,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('/sop', 'SopController')->only(['index']);
         
         // Dashboard catch-all routes (only within /dashboard)
-        Route::get('{first}/{second}/{third}', 'RoutingController@thirdLevel')->name('third');
-        Route::get('{first}/{second}', 'RoutingController@secondLevel')->name('second');
-        Route::get('{any}', 'RoutingController@root')->name('any');
+        Route::get('{first}/{second}/{third}', '\App\Http\Controllers\RoutingController@thirdLevel')->name('dashboard.catchall.third');
+        Route::get('{first}/{second}', '\App\Http\Controllers\RoutingController@secondLevel')->name('dashboard.catchall.second');
+        Route::get('{any}', '\App\Http\Controllers\RoutingController@root')->name('dashboard.catchall.root');
     });
 });
 
-// landing
-// Route::get('', 'RoutingController@index')->name('index');
+// Root-level catch-all routes for demo/template pages
+Route::get('{first}/{second}/{third}', 'RoutingController@thirdLevel')->name('third');
+Route::get('{first}/{second}', 'RoutingController@secondLevel')->name('second');
+Route::get('{any}', 'RoutingController@root')->name('any');
