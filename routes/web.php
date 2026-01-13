@@ -68,6 +68,12 @@ Route::get('/home/{jenis}/{idjenis}/all/{text}', function ($jenis, $idjenis, $te
 });
 
 Route::get('/home/{$}/1/all/01 Tahun 2000', 'PublicController@sync')->name('sync.legacy');
+
+// Auth routes - define explicitly before catch-all routes
+Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('/login', 'Auth\LoginController@login')->name('login.post');
+Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
+
 // Admin
 Route::middleware('auth')->group(function () {
     Route::namespace('Admin')->prefix('dashboard')->name('admin.')->group(function () {
@@ -120,15 +126,12 @@ Route::middleware('auth')->group(function () {
         Route::resource('/relaas-v2', 'RelaasV2Controller')->only(['index']);
         // SOP
         Route::resource('/sop', 'SopController')->only(['index']);
+        
+        // Dashboard catch-all routes (only within /dashboard)
+        Route::get('{first}/{second}/{third}', 'RoutingController@thirdLevel')->name('third');
+        Route::get('{first}/{second}', 'RoutingController@secondLevel')->name('second');
+        Route::get('{any}', 'RoutingController@root')->name('any');
     });
-});
-
-Auth::routes();
-
-Route::group(['middleware' => 'auth', 'prefix' => '/'], function () {
-    Route::get('{first}/{second}/{third}', 'RoutingController@thirdLevel')->name('third');
-    Route::get('{first}/{second}', 'RoutingController@secondLevel')->name('second');
-    Route::get('{any}', 'RoutingController@root')->name('any');
 });
 
 // landing
