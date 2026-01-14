@@ -687,7 +687,7 @@ function strip_tags(input, allowed) {
     });
 }
 
-function handleFileSelect(evt, fucntionnext, target) {
+function handleFileSelect(evt, functionnext, target) {
     var f = evt; // FileList object
     var reader = new FileReader();
     // Closure to capture the file information.
@@ -697,7 +697,7 @@ function handleFileSelect(evt, fucntionnext, target) {
             //Converting Binary Data to base 64
             var base64String = window.btoa(binaryData);
             //showing file converted to base64
-            fucntionnext(f.type, base64String, target);
+            functionnext(f.type, base64String, target);
         };
     })(f);
     // Read in the image file as a data URL.

@@ -540,5 +540,5 @@
     <script src="{{asset('assets/libs/selectize/selectize.min.js')}}"></script>
 
     <!-- Dashboar 1 init js-->
-    <script src="{{asset('assets/js/pages/dashboard-1.init.js')}}"></script>
+    <script src="{{asset('assets/js/pages/dashboard-1-standalone.js')}}"></script>
 @endsection

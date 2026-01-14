@@ -86,17 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./resources/js/pages/task.init.js":
-/*!*****************************************!*\
-  !*** ./resources/js/pages/task.init.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-eval("/*\nTemplate Name: Ubold - Responsive Bootstrap 4 Admin Dashboard\nAuthor: CoderThemes\nWebsite: https://coderthemes.com/\nContact: support@coderthemes.com\nFile: Task init js\n*/\n// Bubble theme\nvar quill = new Quill('#bubble-editor', {\n  theme: 'bubble'\n});//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9yZXNvdXJjZXMvanMvcGFnZXMvdGFzay5pbml0LmpzPzhkZDgiXSwibmFtZXMiOlsicXVpbGwiLCJRdWlsbCIsInRoZW1lIl0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7OztBQVFBO0FBQ0EsSUFBSUEsS0FBSyxHQUFHLElBQUlDLEtBQUosQ0FBVSxnQkFBVixFQUE0QjtBQUNwQ0MsT0FBSyxFQUFFO0FBRDZCLENBQTVCLENBQVoiLCJmaWxlIjoiLi9yZXNvdXJjZXMvanMvcGFnZXMvdGFzay5pbml0LmpzLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLypcblRlbXBsYXRlIE5hbWU6IFVib2xkIC0gUmVzcG9uc2l2ZSBCb290c3RyYXAgNCBBZG1pbiBEYXNoYm9hcmRcbkF1dGhvcjogQ29kZXJUaGVtZXNcbldlYnNpdGU6IGh0dHBzOi8vY29kZXJ0aGVtZXMuY29tL1xuQ29udGFjdDogc3VwcG9ydEBjb2RlcnRoZW1lcy5jb21cbkZpbGU6IFRhc2sgaW5pdCBqc1xuKi9cblxuLy8gQnViYmxlIHRoZW1lXG52YXIgcXVpbGwgPSBuZXcgUXVpbGwoJyNidWJibGUtZWRpdG9yJywge1xuICAgIHRoZW1lOiAnYnViYmxlJ1xufSk7Il0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./resources/js/pages/task.init.js\n");
-
-/***/ }),
-
 /***/ 54:
 /*!***********************************************!*\
   !*** multi ./resources/js/pages/task.init.js ***!
@@ -104,7 +93,7 @@ eval("/*\nTemplate Name: Ubold - Responsive Bootstrap 4 Admin Dashboard\nAuthor:
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nikhil/workspace/themes/Ubold/ubold/laravel/laravel/resources/js/pages/task.init.js */"./resources/js/pages/task.init.js");
+!(function webpackMissingModule() { var e = new Error("Cannot find module '/Users/toms/Sites/www/2026/jdih/resources/js/pages/task.init.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /***/ })

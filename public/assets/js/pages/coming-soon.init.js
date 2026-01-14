@@ -86,17 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./resources/js/pages/coming-soon.init.js":
-/*!************************************************!*\
-  !*** ./resources/js/pages/coming-soon.init.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-eval("/*\nTemplate Name: Ubold - Responsive Bootstrap 4 Admin Dashboard\nAuthor: CoderThemes\nWebsite: https://coderthemes.com/\nContact: support@coderthemes.com\nFile: Coming Soon init js\n*/\n$('[data-countdown]').each(function () {\n  var $this = $(this),\n      finalDate = $(this).data('countdown');\n  $this.countdown(finalDate, function (event) {\n    $(this).html(event.strftime('' + '<div class=\"coming-box\">%D <span>Days</span></div> ' + '<div class=\"coming-box\">%H <span>Hours</span></div> ' + '<div class=\"coming-box\">%M <span>Minutes</span></div> ' + '<div class=\"coming-box\">%S <span>Seconds</span></div> '));\n  });\n});//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9yZXNvdXJjZXMvanMvcGFnZXMvY29taW5nLXNvb24uaW5pdC5qcz82NTNkIl0sIm5hbWVzIjpbIiQiLCJlYWNoIiwiJHRoaXMiLCJmaW5hbERhdGUiLCJkYXRhIiwiY291bnRkb3duIiwiZXZlbnQiLCJodG1sIiwic3RyZnRpbWUiXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7O0FBUUFBLENBQUMsQ0FBQyxrQkFBRCxDQUFELENBQXNCQyxJQUF0QixDQUEyQixZQUFZO0FBQ25DLE1BQUlDLEtBQUssR0FBR0YsQ0FBQyxDQUFDLElBQUQsQ0FBYjtBQUFBLE1BQXFCRyxTQUFTLEdBQUdILENBQUMsQ0FBQyxJQUFELENBQUQsQ0FBUUksSUFBUixDQUFhLFdBQWIsQ0FBakM7QUFDQUYsT0FBSyxDQUFDRyxTQUFOLENBQWdCRixTQUFoQixFQUEyQixVQUFVRyxLQUFWLEVBQWlCO0FBQ3hDTixLQUFDLENBQUMsSUFBRCxDQUFELENBQVFPLElBQVIsQ0FBYUQsS0FBSyxDQUFDRSxRQUFOLENBQWUsS0FDMUIscURBRDBCLEdBRTFCLHNEQUYwQixHQUcxQix3REFIMEIsR0FJMUIsd0RBSlcsQ0FBYjtBQUtILEdBTkQ7QUFPSCxDQVREIiwiZmlsZSI6Ii4vcmVzb3VyY2VzL2pzL3BhZ2VzL2NvbWluZy1zb29uLmluaXQuanMuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKlxuVGVtcGxhdGUgTmFtZTogVWJvbGQgLSBSZXNwb25zaXZlIEJvb3RzdHJhcCA0IEFkbWluIERhc2hib2FyZFxuQXV0aG9yOiBDb2RlclRoZW1lc1xuV2Vic2l0ZTogaHR0cHM6Ly9jb2RlcnRoZW1lcy5jb20vXG5Db250YWN0OiBzdXBwb3J0QGNvZGVydGhlbWVzLmNvbVxuRmlsZTogQ29taW5nIFNvb24gaW5pdCBqc1xuKi9cblxuJCgnW2RhdGEtY291bnRkb3duXScpLmVhY2goZnVuY3Rpb24gKCkge1xuICAgIHZhciAkdGhpcyA9ICQodGhpcyksIGZpbmFsRGF0ZSA9ICQodGhpcykuZGF0YSgnY291bnRkb3duJyk7XG4gICAgJHRoaXMuY291bnRkb3duKGZpbmFsRGF0ZSwgZnVuY3Rpb24gKGV2ZW50KSB7XG4gICAgICAgICQodGhpcykuaHRtbChldmVudC5zdHJmdGltZSgnJ1xuICAgICAgICArICc8ZGl2IGNsYXNzPVwiY29taW5nLWJveFwiPiVEIDxzcGFuPkRheXM8L3NwYW4+PC9kaXY+ICdcbiAgICAgICAgKyAnPGRpdiBjbGFzcz1cImNvbWluZy1ib3hcIj4lSCA8c3Bhbj5Ib3Vyczwvc3Bhbj48L2Rpdj4gJ1xuICAgICAgICArICc8ZGl2IGNsYXNzPVwiY29taW5nLWJveFwiPiVNIDxzcGFuPk1pbnV0ZXM8L3NwYW4+PC9kaXY+ICdcbiAgICAgICAgKyAnPGRpdiBjbGFzcz1cImNvbWluZy1ib3hcIj4lUyA8c3Bhbj5TZWNvbmRzPC9zcGFuPjwvZGl2PiAnKSk7XG4gICAgfSk7XG59KTsiXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./resources/js/pages/coming-soon.init.js\n");
-
-/***/ }),
-
 /***/ 8:
 /*!******************************************************!*\
   !*** multi ./resources/js/pages/coming-soon.init.js ***!
@@ -104,7 +93,7 @@ eval("/*\nTemplate Name: Ubold - Responsive Bootstrap 4 Admin Dashboard\nAuthor:
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nikhil/workspace/themes/Ubold/ubold/laravel/laravel/resources/js/pages/coming-soon.init.js */"./resources/js/pages/coming-soon.init.js");
+!(function webpackMissingModule() { var e = new Error("Cannot find module '/Users/toms/Sites/www/2026/jdih/resources/js/pages/coming-soon.init.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /***/ })

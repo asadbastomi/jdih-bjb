@@ -234,25 +234,13 @@
     <script src="{{ asset('assets/libs/chartist-plugin-tooltips/chartist-plugin-tooltips.min.js') }}"></script>
 
     <!-- Dashboar 1 init js-->
-    <script src="{{ asset('assets/js/pages/dashboard-1.init.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/dashboard-1-standalone.js') }}"></script>
     {{-- <script src="{{asset('assets/js/pages/chartist.init.js')}}"></script> --}}
     <script>
         //Simple pie chart
 
         var data = {
-            series: [{
-                {
-                    $totalperda
-                }
-            }, {
-                {
-                    $totalperwal
-                }
-            }, {
-                {
-                    $totalpropemperda
-                }
-            }]
+            series: [{{ $totalperda }}, {{ $totalperwal }}, {{ $totalpropemperda }}]
         };
 
         var sum = function(a, b) {
@@ -293,21 +281,9 @@
                         @for ($i = $mintahun; $i <= $maxtahun; $i++)
                             {
                                 y: '{{ $i }}',
-                                a: {
-                                    {
-                                        isset($tahunanperda[$i]) ? $tahunanperda[$i] : 0
-                                    }
-                                },
-                                b: {
-                                    {
-                                        isset($tahunanperwal[$i]) ? $tahunanperwal[$i] : 0
-                                    }
-                                },
-                                c: {
-                                    {
-                                        isset($tahunanpropemperda[$i]) ? $tahunanpropemperda[$i] : 0
-                                    }
-                                }
+                                a: {{ isset($tahunanperda[$i]) ? $tahunanperda[$i] : 0 }},
+                                b: {{ isset($tahunanperwal[$i]) ? $tahunanperwal[$i] : 0 }},
+                                c: {{ isset($tahunanpropemperda[$i]) ? $tahunanpropemperda[$i] : 0 }}
                             },
                         @endfor
                     ];

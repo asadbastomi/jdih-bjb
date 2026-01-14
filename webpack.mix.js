@@ -365,7 +365,7 @@ var third_party_assets = {
     {
       "name": "jquery.scrollto",
       "assets": [
-        "./node_modules/jquery.scrollto/dist/jquery.scrollTo.min.js",
+        "./node_modules/jquery.scrollto/jquery.scrollTo.min.js",
       ]
     },
     {
@@ -412,7 +412,7 @@ var third_party_assets = {
     {
       "name": "morris.js06",
       "assets": [
-        "./node_modules/morris.js06/morris.min.js",
+        "./node_modules/morris.js06/dist/morris.min.js",
       ]
     },
     {
