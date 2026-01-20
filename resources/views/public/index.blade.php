@@ -2152,6 +2152,742 @@ setlocale(LC_TIME, 'id_ID');
     <!-- Back to top -->
     <a href="#" class="back-to-top" id="back-to-top"> <i class="mdi mdi-chevron-up"> </i> </a>
 
+    <!-- Comprehensive Accessibility Widget -->
+    <div id="accessibilityWidget">
+        <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Accessibility Options">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z"/>
+            </svg>
+        </button>
+        
+        <div id="accessibilityPanel" class="accessibility-panel" role="dialog" aria-modal="true" aria-labelledby="a11y-title">
+            <div class="accessibility-header">
+                <h3 id="a11y-title">Accessibility Options</h3>
+                <button class="close-panel" aria-label="Close accessibility panel">&times;</button>
+            </div>
+            
+            <div class="accessibility-content">
+                <!-- Font Size -->
+                <div class="accessibility-group">
+                    <label>Text Size</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="font-decrease" aria-label="Decrease font size">
+                            <i class="mdi mdi-minus"></i>
+                        </button>
+                        <span class="control-value" id="fontSizeValue">100%</span>
+                        <button class="btn-access" data-action="font-increase" aria-label="Increase font size">
+                            <i class="mdi mdi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Text Spacing -->
+                <div class="accessibility-group">
+                    <label>Text Spacing</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="spacing-decrease" aria-label="Decrease text spacing">
+                            <i class="mdi mdi-minus"></i>
+                        </button>
+                        <span class="control-value" id="spacingValue">Normal</span>
+                        <button class="btn-access" data-action="spacing-increase" aria-label="Increase text spacing">
+                            <i class="mdi mdi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Line Height -->
+                <div class="accessibility-group">
+                    <label>Line Height</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="line-decrease" aria-label="Decrease line height">
+                            <i class="mdi mdi-minus"></i>
+                        </button>
+                        <span class="control-value" id="lineHeightValue">1.5</span>
+                        <button class="btn-access" data-action="line-increase" aria-label="Increase line height">
+                            <i class="mdi mdi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contrast -->
+                <div class="accessibility-group">
+                    <label>Contrast</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="contrast-normal" aria-label="Normal contrast">Normal</button>
+                        <button class="btn-access" data-action="contrast-high" aria-label="High contrast">High</button>
+                        <button class="btn-access" data-action="contrast-inverted" aria-label="Inverted colors">Inverted</button>
+                    </div>
+                </div>
+
+                <!-- Font -->
+                <div class="accessibility-group">
+                    <label>Font Type</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="font-default" aria-label="Default font">Default</button>
+                        <button class="btn-access" data-action="font-dyslexic" aria-label="Dyslexia-friendly font" style="font-family: Arial, sans-serif;">Dyslexic</button>
+                    </div>
+                </div>
+
+                <!-- Text to Speech -->
+                <div class="accessibility-group">
+                    <label>Text to Speech</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="tts-toggle" id="ttsToggle" aria-label="Toggle text to speech">
+                            <i class="mdi mdi-volume-up"></i> <span>Start</span>
+                        </button>
+                        <button class="btn-access" data-action="tts-stop" id="ttsStop" aria-label="Stop text to speech">
+                            <i class="mdi mdi-stop"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Highlights -->
+                <div class="accessibility-group">
+                    <label>Highlights</label>
+                    <div class="accessibility-controls">
+                        <label class="accessibility-checkbox">
+                            <input type="checkbox" id="highlightLinks">
+                            <span>Highlight Links</span>
+                        </label>
+                        <label class="accessibility-checkbox">
+                            <input type="checkbox" id="highlightHeadings">
+                            <span>Highlight Headings</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Mouse Pointer -->
+                <div class="accessibility-group">
+                    <label>Mouse Pointer</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="pointer-default" aria-label="Default mouse pointer">Default</button>
+                        <button class="btn-access" data-action="pointer-large" aria-label="Large mouse pointer">Large</button>
+                    </div>
+                </div>
+
+                <!-- Stop Animations -->
+                <div class="accessibility-group">
+                    <label>Motion</label>
+                    <div class="accessibility-controls">
+                        <label class="accessibility-checkbox">
+                            <input type="checkbox" id="stopAnimations">
+                            <span>Stop Animations</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Reset -->
+                <div class="accessibility-group">
+                    <button class="btn-reset" data-action="reset" aria-label="Reset all accessibility settings">
+                        <i class="mdi mdi-refresh"></i> Reset All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Accessibility Widget Styles */
+        #accessibilityWidget * {
+            box-sizing: border-box;
+        }
+
+        .accessibility-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            z-index: 999999;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 3px solid white;
+            outline: none;
+        }
+
+        .accessibility-toggle:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+
+        .accessibility-toggle:focus {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        .accessibility-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            z-index: 1000000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            min-width: 400px;
+            max-width: 90vw;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .accessibility-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .accessibility-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .accessibility-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-panel {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .close-panel:hover {
+            background: #f3f4f6;
+            color: #333;
+        }
+
+        .close-panel:focus {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        .accessibility-content {
+            padding: 24px;
+        }
+
+        .accessibility-group {
+            margin-bottom: 24px;
+        }
+
+        .accessibility-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .accessibility-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .accessibility-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-access {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px 16px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            outline: none;
+        }
+
+        .btn-access:hover {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+
+        .btn-access.active {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+
+        .btn-access:focus {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        .control-value {
+            min-width: 70px;
+            text-align: center;
+            font-weight: 600;
+            color: #6366f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .accessibility-checkbox {
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 12px 16px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .accessibility-checkbox:hover {
+            border-color: #6366f1;
+            background: #f3f4f6;
+        }
+
+        .accessibility-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6366f1;
+        }
+
+        .accessibility-checkbox span {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 14px 20px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            outline: none;
+        }
+
+        .btn-reset:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-reset:focus {
+            outline: 2px solid #ef4444;
+            outline-offset: 2px;
+        }
+
+        /* Accessibility Effects */
+        body.accessibility-high-contrast {
+            filter: contrast(1.5) saturate(0.5);
+        }
+
+        body.accessibility-inverted {
+            filter: invert(1);
+        }
+
+        body.accessibility-dyslexic {
+            font-family: Arial, sans-serif !important;
+            letter-spacing: 0.5px;
+        }
+
+        body.accessibility-large-pointer * {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewport='0 0 64 64' style='fill:black;font-size:64px;'><text y='50%'>👆</text></svg>"), auto !important;
+        }
+
+        body.accessibility-stop-animations *,
+        body.accessibility-stop-animations *::before,
+        body.accessibility-stop-animations *::after {
+            animation-duration: 0s !important;
+            animation-delay: 0s !important;
+            transition-duration: 0s !important;
+            transition-delay: 0s !important;
+        }
+
+        body.accessibility-highlight-links a {
+            background: #fef08a;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 2px solid #eab308;
+        }
+
+        body.accessibility-highlight-headings h1,
+        body.accessibility-highlight-headings h2,
+        body.accessibility-highlight-headings h3,
+        body.accessibility-highlight-headings h4,
+        body.accessibility-highlight-headings h5,
+        body.accessibility-highlight-headings h6 {
+            background: #bbf7d0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 2px solid #22c55e;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .accessibility-toggle {
+                bottom: 80px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+
+            .accessibility-toggle svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            .accessibility-panel {
+                min-width: 320px;
+                width: 90vw;
+            }
+
+            .btn-access {
+                font-size: 0.85rem;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+
+    <script>
+    (function() {
+        'use strict';
+
+        var accessibilityToggle = document.getElementById('accessibilityToggle');
+        var accessibilityPanel = document.getElementById('accessibilityPanel');
+        var closePanel = document.querySelector('.close-panel');
+        var body = document.body;
+
+        // State
+        var state = {
+            fontSize: 100,
+            letterSpacing: 0,
+            lineHeight: 1.5,
+            contrast: 'normal',
+            font: 'default',
+            pointer: 'default',
+            highlightLinks: false,
+            highlightHeadings: false,
+            stopAnimations: false,
+            ttsEnabled: false
+        };
+
+        // Toggle panel
+        accessibilityToggle.addEventListener('click', function() {
+            accessibilityPanel.classList.toggle('active');
+            if (accessibilityPanel.classList.contains('active')) {
+                closePanel.focus();
+            }
+        });
+
+        // Close panel
+        closePanel.addEventListener('click', function() {
+            accessibilityPanel.classList.remove('active');
+            accessibilityToggle.focus();
+        });
+
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (!accessibilityPanel.contains(e.target) && e.target !== accessibilityToggle) {
+                accessibilityPanel.classList.remove('active');
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                accessibilityPanel.classList.remove('active');
+                accessibilityToggle.focus();
+            }
+        });
+
+        // Font Size
+        function updateFontSize(value) {
+            state.fontSize = value;
+            document.documentElement.style.fontSize = value + '%';
+            document.getElementById('fontSizeValue').textContent = value + '%';
+        }
+
+        document.querySelector('[data-action="font-increase"]').addEventListener('click', function() {
+            var newVal = Math.min(state.fontSize + 10, 150);
+            updateFontSize(newVal);
+        });
+
+        document.querySelector('[data-action="font-decrease"]').addEventListener('click', function() {
+            var newVal = Math.max(state.fontSize - 10, 70);
+            updateFontSize(newVal);
+        });
+
+        // Text Spacing
+        function updateLetterSpacing(value) {
+            state.letterSpacing = value;
+            document.documentElement.style.letterSpacing = value + 'px';
+            var label = value === 0 ? 'Normal' : value + 'px';
+            document.getElementById('spacingValue').textContent = label;
+        }
+
+        document.querySelector('[data-action="spacing-increase"]').addEventListener('click', function() {
+            var newVal = Math.min(state.letterSpacing + 1, 5);
+            updateLetterSpacing(newVal);
+        });
+
+        document.querySelector('[data-action="spacing-decrease"]').addEventListener('click', function() {
+            var newVal = Math.max(state.letterSpacing - 1, 0);
+            updateLetterSpacing(newVal);
+        });
+
+        // Line Height
+        function updateLineHeight(value) {
+            state.lineHeight = value;
+            document.documentElement.style.lineHeight = value;
+            document.getElementById('lineHeightValue').textContent = value.toFixed(1);
+        }
+
+        document.querySelector('[data-action="line-increase"]').addEventListener('click', function() {
+            var newVal = Math.min(state.lineHeight + 0.3, 2.4);
+            updateLineHeight(newVal);
+        });
+
+        document.querySelector('[data-action="line-decrease"]').addEventListener('click', function() {
+            var newVal = Math.max(state.lineHeight - 0.3, 1.2);
+            updateLineHeight(newVal);
+        });
+
+        // Contrast
+        function setContrast(type) {
+            body.classList.remove('accessibility-high-contrast', 'accessibility-inverted');
+            state.contrast = type;
+
+            if (type === 'high') {
+                body.classList.add('accessibility-high-contrast');
+            } else if (type === 'inverted') {
+                body.classList.add('accessibility-inverted');
+            }
+
+            // Update button states
+            document.querySelectorAll('[data-action^="contrast-"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[data-action="contrast-' + type + '"]').classList.add('active');
+        }
+
+        document.querySelector('[data-action="contrast-normal"]').addEventListener('click', function() {
+            setContrast('normal');
+        });
+
+        document.querySelector('[data-action="contrast-high"]').addEventListener('click', function() {
+            setContrast('high');
+        });
+
+        document.querySelector('[data-action="contrast-inverted"]').addEventListener('click', function() {
+            setContrast('inverted');
+        });
+
+        // Font Type
+        function setFont(type) {
+            body.classList.remove('accessibility-dyslexic');
+            state.font = type;
+
+            if (type === 'dyslexic') {
+                body.classList.add('accessibility-dyslexic');
+            }
+
+            // Update button states
+            document.querySelectorAll('[data-action^="font-"]').forEach(btn => {
+                if (!btn.hasAttribute('data-action', 'reset')) {
+                    btn.classList.remove('active');
+                }
+            });
+            document.querySelector('[data-action="font-' + type + '"]').classList.add('active');
+        }
+
+        document.querySelector('[data-action="font-default"]').addEventListener('click', function() {
+            setFont('default');
+        });
+
+        document.querySelector('[data-action="font-dyslexic"]').addEventListener('click', function() {
+            setFont('dyslexic');
+        });
+
+        // Text to Speech
+        var synthesis = window.speechSynthesis;
+        var currentUtterance = null;
+
+        document.getElementById('ttsToggle').addEventListener('click', function() {
+            var btn = this;
+            var span = btn.querySelector('span');
+
+            if (!state.ttsEnabled) {
+                state.ttsEnabled = true;
+                span.textContent = 'Reading';
+                btn.classList.add('active');
+
+                var text = document.body.innerText;
+                currentUtterance = new SpeechSynthesisUtterance(text);
+                currentUtterance.rate = 0.9;
+                currentUtterance.pitch = 1;
+
+                synthesis.speak(currentUtterance);
+
+                currentUtterance.onend = function() {
+                    state.ttsEnabled = false;
+                    span.textContent = 'Start';
+                    btn.classList.remove('active');
+                };
+            } else {
+                synthesis.cancel();
+                state.ttsEnabled = false;
+                span.textContent = 'Start';
+                btn.classList.remove('active');
+            }
+        });
+
+        document.getElementById('ttsStop').addEventListener('click', function() {
+            synthesis.cancel();
+            state.ttsEnabled = false;
+            var btn = document.getElementById('ttsToggle');
+            btn.querySelector('span').textContent = 'Start';
+            btn.classList.remove('active');
+        });
+
+        // Highlights
+        document.getElementById('highlightLinks').addEventListener('change', function() {
+            state.highlightLinks = this.checked;
+            if (this.checked) {
+                body.classList.add('accessibility-highlight-links');
+            } else {
+                body.classList.remove('accessibility-highlight-links');
+            }
+        });
+
+        document.getElementById('highlightHeadings').addEventListener('change', function() {
+            state.highlightHeadings = this.checked;
+            if (this.checked) {
+                body.classList.add('accessibility-highlight-headings');
+            } else {
+                body.classList.remove('accessibility-highlight-headings');
+            }
+        });
+
+        // Mouse Pointer
+        function setPointer(type) {
+            body.classList.remove('accessibility-large-pointer');
+            state.pointer = type;
+
+            if (type === 'large') {
+                body.classList.add('accessibility-large-pointer');
+            }
+
+            // Update button states
+            document.querySelectorAll('[data-action^="pointer-"]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[data-action="pointer-' + type + '"]').classList.add('active');
+        }
+
+        document.querySelector('[data-action="pointer-default"]').addEventListener('click', function() {
+            setPointer('default');
+        });
+
+        document.querySelector('[data-action="pointer-large"]').addEventListener('click', function() {
+            setPointer('large');
+        });
+
+        // Stop Animations
+        document.getElementById('stopAnimations').addEventListener('change', function() {
+            state.stopAnimations = this.checked;
+            if (this.checked) {
+                body.classList.add('accessibility-stop-animations');
+            } else {
+                body.classList.remove('accessibility-stop-animations');
+            }
+        });
+
+        // Reset
+        document.querySelector('[data-action="reset"]').addEventListener('click', function() {
+            updateFontSize(100);
+            updateLetterSpacing(0);
+            updateLineHeight(1.5);
+            setContrast('normal');
+            setFont('default');
+            setPointer('default');
+
+            document.getElementById('highlightLinks').checked = false;
+            state.highlightLinks = false;
+            body.classList.remove('accessibility-highlight-links');
+
+            document.getElementById('highlightHeadings').checked = false;
+            state.highlightHeadings = false;
+            body.classList.remove('accessibility-highlight-headings');
+
+            document.getElementById('stopAnimations').checked = false;
+            state.stopAnimations = false;
+            body.classList.remove('accessibility-stop-animations');
+
+            synthesis.cancel();
+            state.ttsEnabled = false;
+            var btn = document.getElementById('ttsToggle');
+            btn.querySelector('span').textContent = 'Start';
+            btn.classList.remove('active');
+
+            accessibilityPanel.classList.remove('active');
+        });
+
+        // Initialize
+        setContrast('normal');
+        setFont('default');
+        setPointer('default');
+    })();
+    </script>
+
     <!-- javascript -->
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
     </script>
@@ -2796,7 +3532,6 @@ setlocale(LC_TIME, 'id_ID');
             }
         });
     </script>
-    <script src="https://website-widgets.pages.dev/dist/sienna.min.js" defer></script>
 </body>
 
 </html>
