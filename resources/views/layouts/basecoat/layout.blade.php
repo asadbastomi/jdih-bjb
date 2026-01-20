@@ -6,7 +6,7 @@
     <title>@yield('title') - Jaringan Dokumentasi dan Informasi Hukum Kota Banjarbaru</title>
 </head>
 
-<body class="min-h-[100dvh]">
+<body class="min-h-[100dvh] flex flex-col">
     @include('layouts.basecoat.navbar')
 
     <div class="fixed -z-10 h-[100dvh] w-full bg-white">
@@ -15,9 +15,11 @@
         </div>
     </div>
 
-    <main class="px-4 lg:px-6 py-10 max-w-7xl mx-auto">
+    <main class="px-4 lg:px-6 py-10 mx-auto w-full flex-grow flex-shrink-0">
         @yield('content')
     </main>
+    
+    @include('public.footer')
 </body>
 
 </html>

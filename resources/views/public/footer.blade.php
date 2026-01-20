@@ -109,7 +109,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
 </style>
-<footer class="footer" style="background: var(--gradient-dark); color: var(--gray-300); padding: 60px 0 20px; position: relative; overflow: hidden; border-top: 4px solid var(--primary-color);">
+<footer class="footer" style="background: var(--gradient-dark); color: var(--gray-300); padding: 60px 0 20px; position: relative; overflow: hidden; border-top: 4px solid var(--primary-color); width: 100%; margin: 0 auto;">
     <div class="container-fluid">
         <div class="row mb-0">
             <div class="col-md-4">
