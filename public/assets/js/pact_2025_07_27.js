@@ -32,7 +32,7 @@ function makeForm(formname, method = 'post') {
         } else if ( ($(this).attr('type')=='checkbox') ) {
             var valdata = ($('#'+$(this).attr('id'))[0].checked)? 'true' : '';
         } else if ( ($(this).prop("tagName").toLowerCase()=='select') ) {
-            var valdata = $('#'+$(this).attr('id')).select2('val');
+            var valdata = $('#'+$(this).attr('id')).val();
         } else if ($(this).hasClass('wysiwyg')) {
             var valdata = strip_tags($(this).summernote('code'));
             if (valdata!='') {

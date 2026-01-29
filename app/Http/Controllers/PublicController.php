@@ -106,6 +106,11 @@ class PublicController extends Controller
             $this->data['tahunanpropemperda'][$row->tahun] = $row->jumlah;
             $this->data['totalpropemperda'] += $row->jumlah;
         }
+        // Count total Monografi Hukum (Buku)
+        $this->data['totalmonografihukum'] = Buku::count();
+        // Count total Putusan
+        $this->data['totalputusan'] = Putusan::count();
+        // Prepare year-wise data for Buku (Monografi Hukum)
         $this->data['tahunanbuku'] = Buku::selectRaw('tahun_terbit, COUNT(tahun_terbit) AS jumlah')
             ->groupBy('tahun_terbit')
             ->orderBy('tahun_terbit', 'asc')
@@ -113,6 +118,15 @@ class PublicController extends Controller
         $this->data['totalbuku'] = 0;
         foreach ($this->data['tahunanbuku'] as $row) {
             $this->data['totalbuku'] += $row->jumlah;
+        }
+        // Prepare year-wise data for Putusan
+        $this->data['tahunanputusan'] = Putusan::selectRaw('YEAR(tanggal_putusan) as tahun, COUNT(*) as jumlah')
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'asc')
+            ->get();
+        $this->data['totalputusanbyyear'] = 0;
+        foreach ($this->data['tahunanputusan'] as $row) {
+            $this->data['totalputusanbyyear'] += $row->jumlah;
         }
         $tahunanperda = $tahunanperda->map(function ($item, $key) {
             return (object) [
@@ -677,9 +691,9 @@ class PublicController extends Controller
             $this->data['det'] = $request->input('det');
         }
         $this->data['judul'] = 'Putusan Pengadilan Negeri';
-        $gettanggal = collect(Putusan::select('tanggal')->where('kategori_id', 4)->orderBy('tanggal', 'desc')->get()->toArray());
+        $gettanggal = collect(Putusan::select('tanggal_putusan')->where('kategori_id', 4)->orderBy('tanggal_putusan', 'desc')->get()->toArray());
         $yearList = $gettanggal->map(function ($item, $key) {
-            return ['tahun' => Carbon::createFromFormat('Y-m-d', $item['tanggal'])->format('Y')];
+            return ['tahun' => Carbon::createFromFormat('Y-m-d', $item['tanggal_putusan'])->format('Y')];
         });
         $this->data['tahunlist'] = json_decode($yearList->unique()->sortDesc()->toJson());
         return view('public.row', $this->data);
@@ -702,9 +716,9 @@ class PublicController extends Controller
             $this->data['det'] = $request->input('det');
         }
         $this->data['judul'] = 'Putusan Pengadilan Tata Usaha Negara';
-        $gettanggal = collect(Putusan::select('tanggal')->where('kategori_id', 5)->orderBy('tanggal', 'desc')->get()->toArray());
+        $gettanggal = collect(Putusan::select('tanggal_putusan')->where('kategori_id', 5)->orderBy('tanggal_putusan', 'desc')->get()->toArray());
         $yearList = $gettanggal->map(function ($item, $key) {
-            return ['tahun' => Carbon::createFromFormat('Y-m-d', $item['tanggal'])->format('Y')];
+            return ['tahun' => Carbon::createFromFormat('Y-m-d', $item['tanggal_putusan'])->format('Y')];
         });
         $this->data['tahunlist'] = json_decode($yearList->unique()->sortDesc()->toJson());
         return view('public.row', $this->data);
@@ -828,5 +842,45 @@ class PublicController extends Controller
             // Tampilkan halaman error dengan pesan yang sesuai
             return view('public.tema-dokumen', $this->data);
         }
+    }
+
+    /**
+     * Menampilkan detail Putusan Pengadilan.
+     *
+     * @param string $kategori Singkatan kategori (putusan-negeri / putusan-tu)
+     * @param int $id ID putusan
+     * @param string $slug Slug putusan (untuk SEO)
+     * @return \Illuminate\Http\Response
+     */
+    public function putusanDetail($kategori, $id, $slug)
+    {
+        // Tentukan kategori ID berdasarkan singkatan
+        $kategoriId = ($kategori == 'putusan-tu') ? 5 : 4;
+
+        // Fetch data Putusan dengan relasi kategori dan temaDokumen
+        $this->data['data'] = Putusan::select('putusan.*', 'kategori.nama')
+            ->where('kategori_id', $kategoriId)
+            ->where('putusan.id', $id)
+            ->with('temaDokumen')
+            ->leftJoin('kategori', 'putusan.kategori_id', '=', 'kategori.id')
+            ->first();
+
+        if (!$this->data['data']) {
+            return redirect('/404');
+        }
+
+        // Cek hit/view count
+        $this->data['hit'] = PopularItem::where('id_item', $id)->where('id_kategori', $kategoriId)->first()->hit ?? 0;
+        $this->data['unduhan'] = PopularItem::where('id_item', $id)->where('id_kategori', $kategoriId)->first()->downloaded ?? 0;
+
+        // Update hit counter
+        $hitRequest = new Request();
+        $hitRequest->merge([
+            'id' => $this->data['data']->id,
+            'kategori' => $kategoriId,
+        ]);
+        $this->addHit($hitRequest);
+
+        return view('public.putusan-detail', $this->data);
     }
 }

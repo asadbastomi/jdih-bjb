@@ -7,6 +7,7 @@ use App\RegUbahCabut;
 use Validator;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\API\BaseController as BaseController;
 
 class PerdaController extends BaseController
@@ -26,26 +27,22 @@ class PerdaController extends BaseController
         $dataset = Regulasi::where('kategori_id', $this->kategoriId);
         if ($search != "") {
             $dataset->where(function ($query) use ($search) {
-                $query->orWhere('nomor', 'like', '%' . $search . '%')
+                $query->orWhere('nomor_peraturan', 'like', '%' . $search . '%')
                     ->orWhere('nomor_tahun', 'like', '%' . $search . '%')
                     ->orWhere('tahun', 'like', '%' . $search . '%')
                     ->orWhere('judul', 'like', '%' . $search . '%')
                     ->orWhere('penandatangan', 'like', '%' . $search . '%')
-                    ->orWhere('tempat', 'like', '%' . $search . '%')
                     ->orWhere('tanggal_diundangkan', 'like', '%' . $search . '%')
                     ->orWhere('sumber', 'like', '%' . $search . '%')
                     ->orWhere('subjek', 'like', '%' . $search . '%')
-                    ->orWhere('bahasa', 'like', '%' . $search . '%')
-                    ->orWhere('lokasi', 'like', '%' . $search . '%')
                     ->orWhere('bidang_hukum', 'like', '%' . $search . '%')
                     ->orWhere('keterangan', 'like', '%' . $search . '%')
                     ->orWhere('file', 'like', '%' . $search . '%')
                     ->orWhere('abstrak', 'like', '%' . $search . '%')
-                    ->orWhere('no_reg', 'like', '%' . $search . '%')
-                    ->orWhere('teu_badan', 'like', '%' . $search . '%');
+                    ->orWhere('no_reg', 'like', '%' . $search . '%');
             });
         }
-        $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->orderByRaw("CAST(nomor as unsigned) DESC")->paginate($item);
+        $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->orderByRaw("CAST(nomor_peraturan as unsigned) DESC")->paginate($item);
         $regUbahCabut = Regulasi::withUbahCabut();
         foreach ($data['data'] as $key => $row) {
             $regUbahCabut->orWhere('id_reg_1', $row->id);
@@ -55,7 +52,7 @@ class PerdaController extends BaseController
         foreach ($cekperrow as $key => $row) {
             $rowdata = [];
             $rowdata['id'] = $row->id;
-            $rowdata['id_text'] = $row->nomor . ' Tahun ' . $row->tahun;
+            $rowdata['id_text'] = $row->nomor_peraturan . ' Tahun ' . $row->tahun;
             $rowdata['nomor'] = 'Nomor ' . $rowdata['id_text'];
             $rowdata['id_reg_1'] = $row->id_reg_1;
             $rowdata['id_reg_2'] = $row->id_reg_2;
@@ -89,23 +86,19 @@ class PerdaController extends BaseController
         $dataset = Regulasi::where('kategori_id', $this->kategoriId);
         if ($search != "") {
             $dataset->where(function ($query) use ($search) {
-                $query->orWhere('nomor', 'like', '%' . $search . '%')
+                $query->orWhere('nomor_peraturan', 'like', '%' . $search . '%')
                     ->orWhere('nomor_tahun', 'like', '%' . $search . '%')
                     ->orWhere('tahun', 'like', '%' . $search . '%')
                     ->orWhere('judul', 'like', '%' . $search . '%')
                     ->orWhere('penandatangan', 'like', '%' . $search . '%')
-                    ->orWhere('tempat', 'like', '%' . $search . '%')
                     ->orWhere('tanggal_diundangkan', 'like', '%' . $search . '%')
                     ->orWhere('sumber', 'like', '%' . $search . '%')
                     ->orWhere('subjek', 'like', '%' . $search . '%')
-                    ->orWhere('bahasa', 'like', '%' . $search . '%')
-                    ->orWhere('lokasi', 'like', '%' . $search . '%')
                     ->orWhere('bidang_hukum', 'like', '%' . $search . '%')
                     ->orWhere('keterangan', 'like', '%' . $search . '%')
                     ->orWhere('file', 'like', '%' . $search . '%')
                     ->orWhere('abstrak', 'like', '%' . $search . '%')
-                    ->orWhere('no_reg', 'like', '%' . $search . '%')
-                    ->orWhere('teu_badan', 'like', '%' . $search . '%');
+                    ->orWhere('no_reg', 'like', '%' . $search . '%');
             });
         }
         if ($tahun != 'ALL') {
@@ -122,7 +115,7 @@ class PerdaController extends BaseController
                 });
             }
         }
-        $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->orderByRaw("CAST(nomor as unsigned) DESC")->paginate($item);
+        $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->orderByRaw("CAST(nomor_peraturan as unsigned) DESC")->paginate($item);
         $regUbahCabut = Regulasi::withUbahCabut();
         foreach ($data['data'] as $key => $row) {
             $regUbahCabut->orWhere('id_reg_1', $row->id);
@@ -132,7 +125,7 @@ class PerdaController extends BaseController
         foreach ($cekperrow as $key => $row) {
             $rowdata = [];
             $rowdata['id'] = $row->id;
-            $rowdata['nomor'] = 'Nomor ' . $row->nomor . ' Tahun ' . $row->tahun;
+            $rowdata['nomor'] = 'Nomor ' . $row->nomor_peraturan . ' Tahun ' . $row->tahun;
             $rowdata['id_reg_1'] = $row->id_reg_1;
             $rowdata['id_reg_2'] = $row->id_reg_2;
             $rowdata['jenis'] = $row->jenis;
@@ -158,40 +151,38 @@ class PerdaController extends BaseController
         $dataset = Regulasi::where('kategori_id', $this->kategoriId);
         if ($search != "") {
             $dataset->where(function ($query) use ($search) {
-                $query->orWhere('nomor', 'like', '%' . $search . '%')
+                $query->orWhere('nomor_peraturan', 'like', '%' . $search . '%')
                     ->orWhere('judul', 'like', '%' . $search . '%')
                     ->orWhere('file', 'like', '%' . $search . '%')
                     ->orWhere('abstrak', 'like', '%' . $search . '%')
                     ->orWhere('sumber', 'like', '%' . $search . '%')
-                    ->orWhere('tempat', 'like', '%' . $search . '%')
-                    ->orWhere('lokasi', 'like', '%' . $search . '%')
                     ->orWhere('no_reg', 'like', '%' . $search . '%')
                     ->orWhere('keterangan', 'like', '%' . $search . '%');
             });
         }
-        $data = $dataset->orderBy('tanggal_diundangkan', 'desc')->orderByRaw("CAST(nomor as unsigned) DESC")->paginate($item);;
+        $data = $dataset->orderBy('tanggal_diundangkan', 'desc')->orderByRaw("CAST(nomor_peraturan as unsigned) DESC")->paginate($item);
         $dataserve = [];
         foreach ($data as $key => $row) {
             $dataserve[$key]['id'] = $row->id;
-            $dataserve[$key]['text'] = 'Nomor ' . $row->nomor . ' Tahun ' . $row->tahun . ' - ' . $row->judul;
+            $dataserve[$key]['text'] = 'Nomor ' . $row->nomor_peraturan . ' Tahun ' . $row->tahun . ' - ' . $row->judul;
         }
         return json_encode($dataserve);
     }
 
     public function store(Request $request)
     {
+        // Use nomor_peraturan if available, otherwise fall back to nomor
+        $nomorPeraturan = $request->nomor_peraturan ?? $request->nomor;
+        
         $validator = Validator::make($request->all(), [
-            'nomor' => ['required'],
+            'nomor' => ['required_without:nomor_peraturan'],
+            'nomor_peraturan' => ['required_without:nomor'],
             'tahun' => ['required'],
-            'tempat' => ['required'],
             'tanggal_penetapan' => ['required'],
             'judul' => ['required'],
             'tanggal_diundangkan' => ['required'],
-            'teu_badan' => ['required'],
             'sumber' => ['required'],
-            'bahasa' => ['required'],
             'subjek' => ['required'],
-            'lokasi' => ['required'],
             'bidang_hukum' => ['required'],
             'file' => ['required'],
         ]);
@@ -202,22 +193,37 @@ class PerdaController extends BaseController
         $table = new Regulasi;
         $table->kategori_id = $this->kategoriId;
 
-        $table->nomor = $request->nomor;
+        $table->nomor_peraturan = $nomorPeraturan;
         $table->tahun = $request->tahun;
-        $table->tempat = $request->tempat;
         $table->tanggal_penetapan = $request->tanggal_penetapan;
         $table->judul = $request->judul;
         $table->tanggal_diundangkan = $request->tanggal_diundangkan;
-        $table->teu_badan = $request->teu_badan;
         $table->sumber = $request->sumber;
-        $table->bahasa = $request->bahasa;
         $table->subjek = $request->subjek;
-        $table->lokasi = $request->lokasi;
         $table->bidang_hukum = $request->bidang_hukum;
+        
+        // New fields
+        if ($request->judul_lengkap) {
+            $table->judul_lengkap = $request->judul_lengkap;
+        }
+        if ($request->jenis_peraturan) {
+            $table->jenis_peraturan = $request->jenis_peraturan;
+        }
+        if ($request->urusan_pemerintahan) {
+            $table->urusan_pemerintahan = $request->urusan_pemerintahan;
+        }
+        if ($request->instansi_pemrakarsa) {
+            $table->instansi_pemrakarsa = $request->instansi_pemrakarsa;
+        }
+        if ($request->status_peraturan) {
+            $table->status_peraturan = $request->status_peraturan;
+        }
+        
         $table->file = '';
 
-        $filecount = count($request->file);
-        foreach ($request->file as $key => $value) {
+        $files = is_array($request->file) ? $request->file : [$request->file];
+        $filecount = count($files);
+        foreach ($files as $key => $value) {
             if (is_file($value)) {
                 $extension = $value->extension();
                 $filename = $value->getClientOriginalName();
@@ -234,8 +240,9 @@ class PerdaController extends BaseController
         }
         if ($request->abstrak) {
             $table->abstrak = '';
-            $filecount = count($request->abstrak);
-            foreach ($request->abstrak as $key => $value) {
+            $abstraks = is_array($request->abstrak) ? $request->abstrak : [$request->abstrak];
+            $filecount = count($abstraks);
+            foreach ($abstraks as $key => $value) {
                 if (is_file($value)) {
                     $extension = $value->extension();
                     $filename = $value->getClientOriginalName();
@@ -294,7 +301,7 @@ class PerdaController extends BaseController
                 if (!in_array($row->id_reg_2, $arraystrict)) {
                     $arraystrict[] = $row->id_reg_2;
                     $addtoselector[$key]['id'] = $row->id_reg_2;
-                    $addtoselector[$key]['text'] = 'Nomor ' . $row->nomor . ' Tahun ' . $row->tahun . ' - ' . $row->judul;
+                    $addtoselector[$key]['text'] = 'Nomor ' . $row->nomor_peraturan . ' Tahun ' . $row->tahun . ' - ' . $row->judul;
                 }
                 $rowdata[$row->jenis][] = $row->id_reg_2;
                 $keterangan = $row->keterangan;
@@ -314,18 +321,18 @@ class PerdaController extends BaseController
 
     public function update(Request $request, $id)
     {
+        // Use nomor_peraturan if available, otherwise fall back to nomor
+        $nomorPeraturan = $request->nomor_peraturan ?? $request->nomor;
+        
         $validator = Validator::make($request->all(), [
-            'nomor' => ['required'],
+            'nomor' => ['required_without:nomor_peraturan'],
+            'nomor_peraturan' => ['required_without:nomor'],
             'tahun' => ['required'],
-            'tempat' => ['required'],
             'tanggal_penetapan' => ['required'],
             'judul' => ['required'],
             'tanggal_diundangkan' => ['required'],
-            'teu_badan' => ['required'],
             'sumber' => ['required'],
-            'bahasa' => ['required'],
             'subjek' => ['required'],
-            'lokasi' => ['required'],
             'bidang_hukum' => ['required'],
             'file' => ['required'],
         ]);
@@ -335,23 +342,37 @@ class PerdaController extends BaseController
         }
         $table = Regulasi::where('id', $request->id)->first();
 
-        $table->nomor = $request->nomor;
+        $table->nomor_peraturan = $nomorPeraturan;
         $table->tahun = $request->tahun;
-        $table->tempat = $request->tempat;
         $table->tanggal_penetapan = $request->tanggal_penetapan;
         $table->judul = $request->judul;
         $table->tanggal_diundangkan = $request->tanggal_diundangkan;
-        $table->teu_badan = $request->teu_badan;
         $table->sumber = $request->sumber;
-        $table->bahasa = $request->bahasa;
         $table->subjek = $request->subjek;
-        $table->lokasi = $request->lokasi;
         $table->bidang_hukum = $request->bidang_hukum;
+        
+        // New fields
+        if ($request->judul_lengkap) {
+            $table->judul_lengkap = $request->judul_lengkap;
+        }
+        if ($request->jenis_peraturan) {
+            $table->jenis_peraturan = $request->jenis_peraturan;
+        }
+        if ($request->urusan_pemerintahan) {
+            $table->urusan_pemerintahan = $request->urusan_pemerintahan;
+        }
+        if ($request->instansi_pemrakarsa) {
+            $table->instansi_pemrakarsa = $request->instansi_pemrakarsa;
+        }
+        if ($request->status_peraturan) {
+            $table->status_peraturan = $request->status_peraturan;
+        }
 
         if ($request->file != 'nochange') {
             $table->file = '';
-            $filecount = count($request->file);
-            foreach ($request->file as $key => $value) {
+            $files = is_array($request->file) ? $request->file : [$request->file];
+            $filecount = count($files);
+            foreach ($files as $key => $value) {
                 if (is_file($value)) {
                     $extension = $value->extension();
                     $filename = $value->getClientOriginalName();
@@ -367,8 +388,9 @@ class PerdaController extends BaseController
         if ($request->abstrak) {
             if ($request->abstrak != 'nochange') {
                 $table->abstrak = '';
-                $filecount = count($request->abstrak);
-                foreach ($request->abstrak as $key => $value) {
+                $abstraks = is_array($request->abstrak) ? $request->abstrak : [$request->abstrak];
+                $filecount = count($abstraks);
+                foreach ($abstraks as $key => $value) {
                     if (is_file($value)) {
                         $extension = $value->extension();
                         $filename = $value->getClientOriginalName();

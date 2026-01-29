@@ -41,6 +41,354 @@ setlocale(LC_TIME, 'id_ID');
     <script src="https://static.elfsight.com/platform/platform.js" async></script>
 
     <style>
+        /* Animation Keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0%, 20%, 40%, 60%, 80%, 100% {
+                transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+            }
+            0% {
+                opacity: 0;
+                transform: scale3d(.3, .3, .3);
+            }
+            20% {
+                transform: scale3d(1.1, 1.1, 1.1);
+            }
+            40% {
+                transform: scale3d(.9, .9, .9);
+            }
+            60% {
+                opacity: 1;
+                transform: scale3d(1.03, 1.03, 1.03);
+            }
+            80% {
+                transform: scale3d(.97, .97, .97);
+            }
+            100% {
+                opacity: 1;
+                transform: scale3d(1, 1, 1);
+            }
+        }
+
+        @keyframes rotateIn {
+            from {
+                opacity: 0;
+                transform: rotate(-180deg);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(0);
+            }
+        }
+
+        @keyframes flipInX {
+            from {
+                transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+                animation-timing-function: ease-in;
+                opacity: 0;
+            }
+            40% {
+                transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+                animation-timing-function: ease-in;
+            }
+            60% {
+                transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+                opacity: 1;
+            }
+            80% {
+                transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+            }
+            to {
+                transform: perspective(400px) rotate3d(1, 0, 0, 0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Animation Classes - Initial State (hidden) */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(60px);
+            /* No transition initially to prevent page load animation */
+            transition: none;
+        }
+
+        /* Animation Direction Variants - Initial States */
+        .animate-on-scroll.fade-in-up,
+        .animate-on-scroll[data-animate="fade-in-up"] {
+            transform: translateY(60px);
+        }
+
+        .animate-on-scroll.fade-in-down,
+        .animate-on-scroll[data-animate="fade-in-down"] {
+            transform: translateY(-60px);
+        }
+
+        .animate-on-scroll.fade-in-left,
+        .animate-on-scroll[data-animate="fade-in-left"] {
+            transform: translateX(-60px);
+        }
+
+        .animate-on-scroll.fade-in-right,
+        .animate-on-scroll[data-animate="fade-in-right"] {
+            transform: translateX(60px);
+        }
+
+        .animate-on-scroll.scale-in,
+        .animate-on-scroll[data-animate="scale-in"] {
+            transform: scale(0.8);
+        }
+
+        .animate-on-scroll.bounce-in,
+        .animate-on-scroll[data-animate="bounce-in"] {
+            transform: scale(0.8);
+        }
+
+        /* Active State - When element enters viewport */
+        .animate-on-scroll.is-visible {
+            opacity: 1 !important;
+            transform: translateY(0) translateX(0) scale(1) !important;
+            /* Enable transition when becoming visible */
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Staggered Delays */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
+        .delay-800 { animation-delay: 0.8s; }
+
+        /* Page Load Animations */
+        body.loading .hero-slider {
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        body.loading .search-section {
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+        }
+
+        body.loading .theme-section {
+            animation: fadeInUp 1s ease-out 0.5s backwards;
+        }
+
+        body.loading .modern-card {
+            animation: fadeInUp 1s ease-out 0.7s backwards;
+        }
+
+        body.loading .stat-card {
+            animation: scaleIn 0.8s ease-out 0.9s backwards;
+        }
+
+        body.loading .content-card {
+            animation: fadeInLeft 0.8s ease-out 1s backwards;
+        }
+
+        body.loading .news-card {
+            animation: fadeInUp 0.8s ease-out 1.2s backwards;
+        }
+
+        body.loading .penghargaan-item {
+            animation: scaleIn 0.8s ease-out 1.4s backwards;
+        }
+
+        body.loading .link-item {
+            animation: fadeInUp 0.8s ease-out 1.6s backwards;
+        }
+
+        /* Hover Effects for elements WITH scroll animations */
+        .animate-on-scroll.is-visible:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        /* Smooth Scroll Behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading Animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scroll Progress Indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            z-index: 9998;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Parallax Effect */
+        .parallax-element {
+            transform: translateY(var(--parallax-offset, 0));
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Counter Animation */
+        .counter-value {
+            display: inline-block;
+        }
+
+        /* Image Reveal Animation */
+        .img-reveal {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .img-reveal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            transition: left 0.6s ease-out;
+        }
+
+        .img-reveal:hover::before {
+            left: 100%;
+        }
+
         /* Modern SaaS Design System */
         :root {
             --primary-color: #6366f1;
@@ -735,6 +1083,8 @@ setlocale(LC_TIME, 'id_ID');
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .news-card:hover {
@@ -746,10 +1096,14 @@ setlocale(LC_TIME, 'id_ID');
             height: 200px;
             width: 100%;
             object-fit: cover;
+            flex-shrink: 0;
         }
 
         .news-content {
             padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .news-date {
@@ -763,6 +1117,12 @@ setlocale(LC_TIME, 'id_ID');
             font-weight: 600;
             color: var(--dark-color);
             margin-bottom: 10px;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Awards Section */
@@ -1407,15 +1767,23 @@ setlocale(LC_TIME, 'id_ID');
     </style>
 </head>
 
-<body>
+<body class="loading">
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
     @include('public.header')
 
     <!-- Hero Section -->
-    <section class="hero-slider hero-style translate " id="heroSlider">
+    <section class="hero-slider hero-style translate parallax-element" id="heroSlider" data-parallax-speed="0.3">
         <div class="hero-container">
             @foreach ($slide as $item)
                 <div class="hero-slide" data-background="{{ url($item->foto) }}">
-                    <div class="hero-background" style="background-image: url('{{ url($item->foto) }}')"></div>
+                    <div class="hero-background parallax-element" data-parallax-speed="0.5" style="background-image: url('{{ url($item->foto) }}')"></div>
                     <div class="hero-overlay"></div>
                     <div class="hero-content">
                         <div class="containerme">
@@ -1454,12 +1822,12 @@ setlocale(LC_TIME, 'id_ID');
     </section>
 
     <!-- Search Section -->
-    <section class="search-section">
+    <section class="search-section animate-on-scroll fade-in-up">
         <div class="container search-container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="text-center">
-                        <h1 class="search-title">{{ translateIt('Cari Produk Hukum') }}</h1>
+                        <h1 class="search-title animate-on-scroll fade-in-down">{{ translateIt('Cari Produk Hukum') }}</h1>
                         <div class="form-group">
                             <input type="text" class="form-control search-input"
                                 placeholder="{{ translateIt('Ketikkan Sesuatu') }}" id="textsearch">
@@ -1523,7 +1891,7 @@ setlocale(LC_TIME, 'id_ID');
     <!-- Theme Section -->
     <section class="theme-section">
         <div class="container">
-            <h3 class="theme-title">{{ translateIt('Telusur Tema Peraturan') }}</h3>
+            <h3 class="theme-title animate-on-scroll fade-in-up">{{ translateIt('Telusur Tema Peraturan') }}</h3>
             <div class="theme-container" id="tema-dokumen-container">
                 <!-- Tema dokumen akan dimuat melalui AJAX -->
             </div>
@@ -1531,11 +1899,11 @@ setlocale(LC_TIME, 'id_ID');
     </section>
 
     <!-- Products Section -->
-    <section class="content-section">
+    <section class="content-section animate-on-scroll fade-in-up">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 mb-4">
-                    <div class="modern-card">
+                    <div class="modern-card animate-on-scroll fade-in-left delay-100">
                         <div class="card-header-custom">
                             Produk Hukum Terbaru
                         </div>
@@ -1551,7 +1919,7 @@ setlocale(LC_TIME, 'id_ID');
                                                     <div class="product-meta">
                                                         {{ $r->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($r->tanggal_diundangkan)) : '' }}
                                                     </div>
-                                                    <div class="product-title">Nomor {{ $r->nomor }} Tahun
+                                                    <div class="product-title">Nomor {{ $r->nomor_peraturan }} Tahun
                                                         {{ $r->tahun }}</div>
                                                     <div class="product-meta">{{ $r->judul }}</div>
                                                 </a>
@@ -1580,7 +1948,7 @@ setlocale(LC_TIME, 'id_ID');
                                                     <div class="product-meta">
                                                         {{ $p->regulasi->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($p->regulasi->tanggal_diundangkan)) : '' }}
                                                     </div>
-                                                    <div class="product-title">Nomor {{ $p->regulasi->nomor }} Tahun
+                                                    <div class="product-title">Nomor {{ $p->regulasi->nomor_peraturan }} Tahun
                                                         {{ $p->regulasi->tahun }}</div>
                                                     <div class="product-meta">{{ $p->regulasi->judul }}</div>
                                                 </a>
@@ -1597,12 +1965,12 @@ setlocale(LC_TIME, 'id_ID');
     </section>
 
     <!-- Statistics Section -->
-    <section class="stats-section">
+    <section class="stats-section animate-on-scroll fade-in-up">
         <div class="container">
-            <h3 class="stats-title">{{ translateIt('STATISTIK PRODUK HUKUM') }}</h3>
+            <h3 class="stats-title animate-on-scroll fade-in-up">{{ translateIt('STATISTIK PRODUK HUKUM') }}</h3>
             <div class="row">
                 <div class="col-md-6 col-xl-3 mb-4">
-                    <div class="stat-card">
+                    <div class="stat-card animate-on-scroll scale-in delay-100">
                         <div class="stat-icon" style="background-color: #3498DB;">
                             <i class="mdi mdi-book-open-page-variant"></i>
                         </div>
@@ -1637,6 +2005,24 @@ setlocale(LC_TIME, 'id_ID');
                         <div class="stat-label">{{ translateIt('Total') }} Propemperda</div>
                     </div>
                 </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #E74C3C;">
+                            <i class="mdi mdi-book-multiple"></i>
+                        </div>
+                        <div class="stat-number" data-plugin="counterup">{{ $totalmonografihukum ?? 0 }}</div>
+                        <div class="stat-label">{{ translateIt('Total') }} Monografi Hukum</div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #1ABC9C;">
+                            <i class="mdi mdi-gavel"></i>
+                        </div>
+                        <div class="stat-number" data-plugin="counterup">{{ $totalputusan ?? 0 }}</div>
+                        <div class="stat-label">{{ translateIt('Total') }} Putusan</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Charts -->
@@ -1653,10 +2039,14 @@ setlocale(LC_TIME, 'id_ID');
                                         style="color: #F39C12"></i> Keputusan Wali Kota</span>
                                 <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
                                         style="color: #9B59B6"></i> Propemperda</span>
+                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
+                                        style="color: #E74C3C"></i> Monografi Hukum</span>
+                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
+                                        style="color: #1ABC9C"></i> Putusan</span>
                             </p>
                         </div>
                         <div id="morris-bar-stacked" style="height: 250px;" class="morris-chart"
-                            data-colors="#3498DB,#2ECC71,#F39C12,#9B59B6"></div>
+                            data-colors="#3498DB,#2ECC71,#F39C12,#9B59B6,#E74C3C,#1ABC9C"></div>
                     </div>
                 </div>
             </div>
@@ -1735,15 +2125,15 @@ setlocale(LC_TIME, 'id_ID');
     </section>
 
     <!-- News Section -->
-    <section class="news-section">
+    <section class="news-section animate-on-scroll fade-in-up">
         <div class="container">
-            <h3 class="news-title">Berita Terbaru</h3>
+            <h3 class="news-title animate-on-scroll fade-in-up">Berita Terbaru</h3>
             <div class="row">
                 @foreach ($kegiatan as $k)
                     <div class="col-lg-4 col-md-6 mb-4">
                         <a href="/kegiatan/{{ $k->id }}/{{ strtolower(str_replace(' ', '-', $k->judul)) }}"
                             class="text-decoration-none">
-                            <div class="news-card">
+                            <div class="news-card animate-on-scroll scale-in delay-{{ $loop->iteration }}">
                                 <img class="news-img" src="{{ $k->gambar }}" alt="JDIH BANJARBARU">
                                 <div class="news-content">
                                     <div class="news-date">{{ strftime('%d %B %Y', strtotime($k->tanggal)) }}</div>
@@ -1761,9 +2151,9 @@ setlocale(LC_TIME, 'id_ID');
     </section>
 
     <!-- Awards Section -->
-    <section class="awards-section">
+    <section class="awards-section animate-on-scroll fade-in-up">
         <div class="container awards-container">
-            <h3 class="awards-title">{{ translateIt('Penghargaan') }}</h3>
+            <h3 class="awards-title animate-on-scroll fade-in-up">{{ translateIt('Penghargaan') }}</h3>
 
             @if (isset($penghargaan) && count($penghargaan) > 0)
                 <div class="row penghargaan-list" id="penghargaan-list">
@@ -1772,7 +2162,7 @@ setlocale(LC_TIME, 'id_ID');
                             $photos = is_string($award->foto) ? json_decode($award->foto, true) : $award->foto;
                             $firstPhoto = is_array($photos) && count($photos) > 0 ? $photos[0] : null;
                         @endphp
-                        <div class="penghargaan-item">
+                        <div class="penghargaan-item animate-on-scroll scale-in delay-{{ $loop->iteration }}">
                             <a href="{{ asset('storage/' . $firstPhoto) }}" target="_blank">
                                 <div class="penghargaan-img-wrapper">
                                     <img src="{{ asset('storage/' . $firstPhoto) }}" alt="{{ $award->nama }}"
@@ -1910,12 +2300,12 @@ setlocale(LC_TIME, 'id_ID');
     </section>
 
     <!-- Links Section -->
-    <section class="links-section">
+    <section class="links-section animate-on-scroll fade-in-up">
         <div class="container links-container">
-            <h3 class="links-title">{{ translateIt('Link Terkait') }}</h3>
+            <h3 class="links-title animate-on-scroll fade-in-up">{{ translateIt('Link Terkait') }}</h3>
             <div class="links-grid">
                 @foreach ($linkTerkait as $item)
-                    <div class="link-item">
+                    <div class="link-item animate-on-scroll scale-in delay-{{ $loop->iteration }}">
                         <a href="{{ $item['link'] }}" target="_blank"
                             class="text-decoration-none d-flex flex-column h-100 justify-content-between align-items-center">
                             <div class="text-center">
@@ -2908,6 +3298,25 @@ setlocale(LC_TIME, 'id_ID');
 
     <!-- custom js -->
     <script>
+        // ==========================================
+        // ANIMATION INITIALIZATION
+        // ==========================================
+        
+        // Page Loader
+        initPageLoader();
+        
+        // Scroll Progress Indicator
+        initScrollProgress();
+        
+        // Scroll Animations
+        initScrollAnimations();
+        
+        // Counter Animations
+        initCounterAnimations();
+        
+        // Parallax Effects
+        initParallaxEffects();
+        
         $(document).ready(function() {
             // Custom Hero Slider with Dynamic Motion
             initCustomHeroSlider();
@@ -2943,6 +3352,152 @@ setlocale(LC_TIME, 'id_ID');
                 speed: 300
             }).mount();
         });
+
+        // ==========================================
+        // PAGE LOADER
+        // ==========================================
+        function initPageLoader() {
+            const pageLoader = document.getElementById('pageLoader');
+            const body = document.body;
+            
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    pageLoader.classList.add('hidden');
+                    body.classList.remove('loading');
+                }, 500);
+            });
+        }
+
+        // ==========================================
+        // SCROLL PROGRESS INDICATOR
+        // ==========================================
+        function initScrollProgress() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                scrollProgress.style.width = scrollPercent + '%';
+            });
+        }
+
+        // ==========================================
+        // SCROLL ANIMATIONS
+        // ==========================================
+        function initScrollAnimations() {
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        
+                        // Add small delay for better visual effect
+                        requestAnimationFrame(function() {
+                            element.classList.add('is-visible');
+                        });
+                        
+                        // Stop observing after animation
+                        observer.unobserve(element);
+                    }
+                });
+            }, observerOptions);
+
+            animatedElements.forEach(function(element) {
+                observer.observe(element);
+            });
+        }
+
+        // ==========================================
+        // COUNTER ANIMATIONS
+        // ==========================================
+        function initCounterAnimations() {
+            const counters = document.querySelectorAll('.stat-number');
+            
+            const counterObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = parseInt(counter.textContent.replace(/,/g, ''));
+                        animateCounter(counter, target);
+                        counterObserver.unobserve(counter);
+                    }
+                });
+            }, {
+                threshold: 0.5
+            });
+
+            counters.forEach(function(counter) {
+                counterObserver.observe(counter);
+            });
+        }
+
+        function animateCounter(element, target) {
+            const duration = 2000;
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(function() {
+                current += increment;
+                
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // ==========================================
+        // PARALLAX EFFECTS
+        // ==========================================
+        function initParallaxEffects() {
+            const parallaxElements = document.querySelectorAll('.parallax-element');
+            
+            function updateParallax() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                parallaxElements.forEach(function(element) {
+                    const speed = parseFloat(element.dataset.parallaxSpeed) || 0.3;
+                    const yPos = -(scrollTop * speed);
+                    
+                    // Apply parallax transform directly for better performance
+                    if (element.classList.contains('hero-background')) {
+                        element.style.transform = `translateY(${yPos}px) scale(1)`;
+                    } else if (element.classList.contains('hero-slider')) {
+                        element.style.transform = `translateY(${yPos}px)`;
+                    } else {
+                        element.style.setProperty('--parallax-offset', yPos + 'px');
+                    }
+                });
+            }
+            
+            // Initial update
+            updateParallax();
+            
+            // Update on scroll with requestAnimationFrame for smooth performance
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateParallax();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, {
+                passive: true
+            });
+        }
 
         // Custom Beautiful Hero Slider
         function initCustomHeroSlider() {
@@ -3412,18 +3967,22 @@ setlocale(LC_TIME, 'id_ID');
                                 a: '{{ isset($tahunanperda[$i]) ? $tahunanperda[$i] : 0 }}',
                                 b: '{{ isset($tahunanperwal[$i]) ? $tahunanperwal[$i] : 0 }}',
                                 c: '{{ isset($tahunankepwal[$i]) ? $tahunankepwal[$i] : 0 }}',
-                                d: '{{ isset($tahunanpropemperda[$i]) ? $tahunanpropemperda[$i] : 0 }}'
+                                d: '{{ isset($tahunanpropemperda[$i]) ? $tahunanpropemperda[$i] : 0 }}',
+                                e: '{{ isset($tahunanbuku[$i]) ? $tahunanbuku[$i] : 0 }}',
+                                f: '{{ isset($tahunanputusan[$i]) ? $tahunanputusan[$i] : 0 }}'
                             },
                         @endfor
                     ];
-                    var colors = ['#3498DB', '#2ECC71', '#F39C12', '#9B59B'];
+                    var colors = ['#3498DB', '#2ECC71', '#F39C12', '#9B59B6', '#E74C3C', '#1ABC9C'];
                     var dataColors = $("#morris-bar-stacked").data('colors');
                     if (dataColors) {
                         colors = dataColors.split(",");
                     }
-                    this.createStackedChart('morris-bar-stacked', $stckedData, 'y', ['a', 'b', 'c', 'd'], ["Perda",
+                    this.createStackedChart('morris-bar-stacked', $stckedData, 'y', ['a', 'b', 'c', 'd', 'e', 'f'], ["Perda",
                         "Perwal", "Kepwal",
-                        "Propemperda"
+                        "Propemperda",
+                        "Monografi Hukum",
+                        "Putusan"
                     ], colors);
 
                 },

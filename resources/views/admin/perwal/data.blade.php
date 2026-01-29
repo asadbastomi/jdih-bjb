@@ -22,7 +22,7 @@ setlocale(LC_TIME, 'id_ID');
                 <td class="fix"></td>
                 <td class="fix">{{ $data->firstItem() + $key }}</td>
                 <td>
-                    {{ $row->nomor . ' Tahun ' . $row->tahun }} <br /> {{ $row->judul }}
+                    {{ $row->nomor_peraturan . ' Tahun ' . $row->tahun }} <br /> {{ $row->judul }}
                     @php ($temp = '') @endphp
                     @if (array_key_exists($row->id, $regubahcabut))
                     @foreach ($regubahcabut[$row->id] as $key => $ucrow)

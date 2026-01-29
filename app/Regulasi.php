@@ -22,38 +22,35 @@ class Regulasi extends Model
 
     protected $fillable = [
         "kategori_id",
-        "nomor",
+        "nomor_peraturan",
         "nomor_tahun",
+        "tahun_peraturan",
         "tahun",
         "judul",
-        "teu_badan",
+        "judul_lengkap",
+        "jenis_peraturan",
         "penandatangan",
         "tanggal_penetapan",
-        "tempat",
         "tanggal_diundangkan",
         "sumber",
         "subjek",
-        "bahasa",
-        "lokasi",
         "bidang_hukum",
-        "keterangan",
-        "file",
+        "urusan_pemerintahan",
+        "instansi_pemrakarsa",
+        "status_peraturan",
         "abstrak",
-        "skpd",
-        "no_reg_provinsi",
-        "nomor_panggil",
-        "isbn",
-        "nomor_induk_buku",
-        "penerbit",
-        "pengarang",
-        "deskripsi_fisik",
-        "edisi",
-        "halaman",
-        "cover" // Jika belum ada
+        "url_dokumen",
+        "file",
+        "keterangan",
+        "no_reg"
     ];
 
     public function scopeWithUbahCabut($query)
     {
+        // Support both old and new field names
+        $nomorColumn = \Schema::hasColumn('regulasi', 'nomor_peraturan') ? 'nomor_peraturan' : 'nomor';
+        $tahunColumn = \Schema::hasColumn('regulasi', 'tahun_peraturan') ? 'tahun_peraturan' : 'tahun';
+        
         $query->join('reg_ubah_cabut as ruc', 'ruc.id_reg_2', '=', 'regulasi.id')
             ->join('kategori as kat', 'regulasi.kategori_id', '=', 'kat.id')
             ->join('regulasi as reg', 'reg.id', '=', 'ruc.id_reg_1')
@@ -61,10 +58,10 @@ class Regulasi extends Model
             ->addSelect('ruc.id_reg_1')
             ->addSelect('ruc.id_reg_2')
             ->addSelect('ruc.jenis')
-            ->addSelect('regulasi.nomor')
+            ->addSelect("regulasi.$nomorColumn as nomor")
             ->addSelect('reg.keterangan')
             ->addSelect('kat.nama_singkat')
-            ->addSelect('regulasi.tahun')
+            ->addSelect("regulasi.$tahunColumn as tahun")
             ->addSelect('regulasi.judul');
     }
 

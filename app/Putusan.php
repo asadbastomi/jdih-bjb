@@ -9,12 +9,38 @@ class Putusan extends Model
     protected $table = 'putusan';
 
     protected $fillable = [
-        'judul', 'teu_badan', 'nomor', 'kategori_id', 'tempat', 'tanggal', 'sumber', 'subjek', 'status', 'keterangan', 'bahasa', 'bidang_hukum', 'loksai', 'file'
+        'judul',
+        'nomor_putusan',
+        'jenis_putusan',
+        'pengadilan',
+        'tingkat_peradilan',
+        'tempat_sidang',
+        'tanggal_putusan',
+        'tanggal_registrasi_perkara',
+        'para_pihak',
+        'penasihat_hukum',
+        'jaksa_penuntut_umum',
+        'majelis_hakim',
+        'panitera',
+        'bidang_hukum',
+        'subjek',
+        'kata_kunci',
+        'klasifikasi_perkara',
+        'status_hukum',
+        'amar_putusan',
+        'ringkasan_putusan',
+        'dasar_hukum',
+        'pertimbangan_hukum',
+        'bahasa',
+        'sumber',
+        'nomor_berkas',
+        'tahun_perkara',
+        'wilayah_yurisdiksi',
+        'format_dokumen',
+        'ukuran_file',
+        'checksum_file',
+        'url_dokumen',
+        'file'
     ];
-    
-    public function kategori()
-    {
-        return $this->belongsTo(Kategori::class, 'kategori_id', 'id');
-    }
 
 }

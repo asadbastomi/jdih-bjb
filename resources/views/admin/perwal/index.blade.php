@@ -72,10 +72,10 @@
                     </div>
                     <div class="modal-body p-4">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Nomor</label>
-                                    <input type="text" class="form-control send" id="nomor" placeholder="contoh: 5" required>
+                                    <label class="control-label">Nomor Peraturan</label>
+                                    <input type="text" class="form-control send" id="nomor_peraturan" placeholder="contoh: 5" required>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -86,42 +86,55 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Tempat Penetapan</label>
-                                    <input type="text" class="form-control send" id="tempat" placeholder="" autocomplete="off" required>
+                                    <label class="control-label">Jenis Peraturan <small>(optional)</small></label>
+                                    <input type="text" class="form-control send" id="jenis_peraturan" placeholder="" autocomplete="off">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Tanggal Penetapan</label>
-                                    <input type="text" class="form-control send" id="tanggal_penetapan" placeholder="Tanggal" autocomplete="off" required>
+                                    <label class="control-label">Status Peraturan</label>
+                                    <select class="form-control send" id="status_peraturan" required>
+                                        <option value="berlaku">Berlaku</option>
+                                        <option value="tidak_berlaku">Tidak Berlaku</option>
+                                        <option value="dicabut">Dicabut</option>
+                                        <option value="diubah">Diubah</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Judul</label>
                                     <input type="text" class="form-control send" id="judul" placeholder="Judul Peraturan / tentang peraturan" required>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Tanggal diundangkan</label>
-                                    <input type="text" class="form-control send" id="tanggal_diundangkan" placeholder="Tanggal" required>
+                                    <label class="control-label">Judul Lengkap <small>(optional)</small></label>
+                                    <input type="text" class="form-control send" id="judul_lengkap" placeholder="Judul lengkap peraturan">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">T.E.U Badan</label>
-                                    <input type="text" class="form-control send" id="teu_badan" placeholder="T.E.U Badan / Pengarang" required>
+                                    <label class="control-label">Tanggal Penetapan</label>
+                                    <input type="text" class="form-control send" id="tanggal_penetapan" placeholder="Tanggal" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Sumber</label>
-                                    <input type="text" class="form-control send" id="sumber" placeholder="Sumber / LD TLD" required>
+                                    <label class="control-label">Tanggal diundangkan</label>
+                                    <input type="text" class="form-control send" id="tanggal_diundangkan" placeholder="Tanggal" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">Instansi Pemrakarsa <small>(optional)</small></label>
+                                    <input type="text" class="form-control send" id="instansi_pemrakarsa" placeholder="">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -130,24 +143,18 @@
                                     <input type="text" class="form-control send" id="penandatangan" placeholder="" required>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Bahasa</label>
-                                    <input type="text" class="form-control send" id="bahasa" placeholder="Bahasa" required>
-                                </div>
-                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Subjek</label>
-                                    <input type="text" class="form-control send" id="subjek" placeholder="" required>
+                                    <label class="control-label">Sumber</label>
+                                    <input type="text" class="form-control send" id="sumber" placeholder="Sumber / LD TLD" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Lokasi</label>
-                                    <input type="text" class="form-control send" id="lokasi" placeholder="" required>
+                                    <label class="control-label">Subjek</label>
+                                    <input type="text" class="form-control send" id="subjek" placeholder="" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -158,8 +165,8 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Berita Daerah <small>(optional)</small></label>
-                                    <input type="text" class="form-control send" id="no_reg" placeholder="contoh: 13,109/2019">
+                                    <label class="control-label">Urusan Pemerintahan <small>(optional)</small></label>
+                                    <input type="text" class="form-control send" id="urusan_pemerintahan" placeholder="">
                                 </div>
                             </div>
                         </div>

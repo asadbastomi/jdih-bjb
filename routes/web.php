@@ -58,8 +58,10 @@ Route::post('/bye', 'Auth\LogoutController@bye')->name('logout.bye');
 Route::get('lang/{language}', 'LocalizationController@switch')->name('localization.switch');
 Route::get('/sync/jdihsync.php', 'PublicController@sync')->name('sync');
 
-Route::get('/putusanpengadilan-negeri', 'PublicController@putusanNegeri')->name('putusanpengadilan-negeri');
-Route::get('/putusanpengadilan-tu-negara', 'PublicController@putusanTU')->name('putusanpengadilan-tu-negara');
+Route::get('/putusanpengadilan-negeri', 'PublicController@putusanNegeri')->name('putusan-negeri');
+Route::get('/putusanpengadilan-negeri/{id}/{slug}', 'PublicController@detailPutusan')->name('putusan-negeri.detail');
+Route::get('/putusanpengadilan-tu-negara', 'PublicController@putusanTU')->name('putusan-tu');
+Route::get('/putusanpengadilan-tu-negara/{id}/{slug}', 'PublicController@detailPutusan')->name('putusan-tu.detail');
 
 Route::get('produk-hukum/{kategori}/{id}/{slug}', 'PublicController@halamanHukum')->name('halaman-hukum');
 

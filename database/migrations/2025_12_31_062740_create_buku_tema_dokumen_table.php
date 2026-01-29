@@ -13,18 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('buku_tema_dokumen', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('buku_id');
-            $table->unsignedBigInteger('tema_dokumen_id');
-            $table->timestamps();
+        // Schema::create('buku_tema_dokumen', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedBigInteger('buku_id');
+        //     $table->unsignedBigInteger('tema_dokumen_id');
+        //     $table->timestamps();
 
-            $table->foreign('buku_id')->references('id')->on('buku')->onDelete('cascade');
-            $table->foreign('tema_dokumen_id')->references('id')->on('tema_dokumen')->onDelete('cascade');
+        //     $table->foreign('buku_id')->references('id')->on('buku')->onDelete('cascade');
+        //     $table->foreign('tema_dokumen_id')->references('id')->on('tema_dokumen')->onDelete('cascade');
 
-            // Unique constraint to prevent duplicate entries
-            $table->unique(['buku_id', 'tema_dokumen_id']);
-        });
+        //     // Unique constraint to prevent duplicate entries
+        //     $table->unique(['buku_id', 'tema_dokumen_id']);
+        // });
     }
 
     /**
