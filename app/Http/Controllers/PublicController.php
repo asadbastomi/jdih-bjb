@@ -883,4 +883,53 @@ class PublicController extends Controller
 
         return view('public.putusan-detail', $this->data);
     }
+
+    /**
+     * Menampilkan halaman Sebaran Kelurahan Sadar Hukum dengan peta interaktif.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function kelurahanSadarHukum(Request $request)
+    {
+        $this->data['type'] = 'kelurahan-map';
+        $this->data['judul'] = 'Sebaran Kelurahan Sadar Hukum dan POSBANKUM';
+        $this->data['title'] = 'Kelurahan Sadar Hukum Distribution';
+        $this->data['fetch'] = 'api.kelurahan-sadar-hukum.map';
+        
+        // Filter parameters
+        if ($request->input('s')) {
+            $this->data['s'] = $request->input('s');
+        }
+        if ($request->input('status')) {
+            $this->data['status'] = $request->input('status');
+        }
+
+        return view('public.kelurahan-sadar-hukum', $this->data);
+    }
+
+    /**
+     * Menampilkan detail Kelurahan Sadar Hukum.
+     *
+     * @param int $id ID kelurahan
+     * @return \Illuminate\Http\Response
+     */
+    public function kelurahanSadarHukumDetail($id)
+    {
+        $this->data['type'] = 'kelurahan-detail';
+        $this->data['judul'] = 'Detail Kelurahan Sadar Hukum';
+        $this->data['title'] = 'Kelurahan Sadar Hukum Detail';
+        
+        // Fetch kelurahan data dengan relasi
+        $this->data['data'] = \App\KelurahanSadarHukum::with([
+            'agenda' => function($q) {
+                $q->active()->orderBy('tanggal', 'desc');
+            },
+            'infografis' => function($q) {
+                $q->active()->ordered();
+            }
+        ])->findOrFail($id);
+
+        return view('public.kelurahan-sadar-hukum-detail', $this->data);
+    }
 }

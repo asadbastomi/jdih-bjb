@@ -1052,6 +1052,7 @@ setlocale(LC_TIME, 'id_ID');
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
             margin-bottom: 40px;
+            min-height: 200px;
         }
 
         .gallery-item {
@@ -1062,7 +1063,14 @@ setlocale(LC_TIME, 'id_ID');
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             aspect-ratio: 4/3;
-            background: var(--gray-100);
+            width: 100%;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .gallery-item:hover {
@@ -2301,49 +2309,61 @@ setlocale(LC_TIME, 'id_ID');
         </div>
     </section>
 
+    <!-- Leaflet CSS and JS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <!-- Content Section -->
     <section class="content-section">
         <div class="container">
             <div class="row">
-                <div class="col-lg-7 mb-4">
+                <div class="col-lg-12 mb-4">
                     <div class="content-card">
-                        <h4 class="content-title">{{ translateIt(strtoupper($pagedasarhukum->judul)) }}</h4>
-                        <div>{!! translateIt($pagedasarhukum->konten) !!}</div>
-                    </div>
-                </div>
-                <div class="col-lg-5 mb-4">
-                    <div class="content-card">
-                        <h4 class="content-title">{{ translateIt(strtoupper('Jadwal Harian Bagian Hukum')) }}</h4>
-                        <h5 class="text-primary mb-3">
-                            {{ \Carbon\Carbon::now()->locale('id_ID')->isoFormat('dddd, D MMMM Y') }}</h5>
-                        <div class="table-responsive">
-                            <table class="schedule-table">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Acara</th>
-                                        <th>Waktu</th>
-                                        <th>Tempat</th>
-                                        <th>Penyelenggara</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($jadwal as $key => $value)
-                                        <tr>
-                                            <td>{{ $key + 1 }}</td>
-                                            <td>{{ $value->judul }}</td>
-                                            <td>{{ strftime('%H:%M', strtotime($value->waktu)) }}</td>
-                                            <td>{{ $value->tempat }}</td>
-                                            <td>{{ $value->penyelenggara }}</td>
-                                        </tr>
-                                    @endforeach
-                                    @if (!$jadwal->count())
-                                        <tr>
-                                            <td colspan="5">Belum ada Jadwal hari ini</td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
+                        <h4 class="content-title">KELURAHAN SADAR HUKUM</h4>
+                        
+                        <!-- Search/Filter Section -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label font-weight-bold">Cari Kelurahan</label>
+                                    <input type="text" id="searchKelurahan" class="form-control" placeholder="Ketik nama kelurahan...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label font-weight-bold">Filter Kecamatan</label>
+                                    <select id="filterKecamatan" class="form-control">
+                                        <option value="">Semua Kecamatan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label font-weight-bold">Filter Status</label>
+                                    <select id="filterStatus" class="form-control">
+                                        <option value="">Semua Status</option>
+                                        <option value="1">Aktif</option>
+                                        <option value="0">Tidak Aktif</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Leaflet Map for Kelurahan Sadar Hukum -->
+                        <div id="kelurahanMap" style="height: 450px; width: 100%; border-radius: 10px; margin-bottom: 15px;"></div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p class="text-muted small mb-0">
+                                    <i class="mdi mdi-information-outline"></i> Klik pada marker untuk melihat detail kelurahan sadar hukum
+                                </p>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <div id="kelurahanStats" class="text-primary">
+                                    <i class="mdi mdi-counter"></i> Total: <span id="totalKelurahan">0</span> | 
+                                    <i class="mdi mdi-check-circle"></i> Aktif: <span id="aktifKelurahan">0</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3557,14 +3577,14 @@ setlocale(LC_TIME, 'id_ID');
                     const speed = parseFloat(element.dataset.parallaxSpeed) || 0.3;
                     const yPos = -(scrollTop * speed);
                     
-                    // Apply parallax transform directly for better performance
-                    if (element.classList.contains('hero-background')) {
-                        element.style.transform = `translateY(${yPos}px) scale(1)`;
-                    } else if (element.classList.contains('hero-slider')) {
-                        element.style.transform = `translateY(${yPos}px)`;
-                    } else {
-                        element.style.setProperty('--parallax-offset', yPos + 'px');
-                    }
+                // Apply parallax transform directly for better performance
+                if (element.classList.contains('hero-background')) {
+                    element.style.transform = `translateY(${yPos}px) scale(1)`;
+                } else if (element.classList.contains('hero-slider')) {
+                    element.style.transform = `translateY(${yPos}px)`;
+                } else {
+                    element.style.setProperty('--parallax-offset', yPos + 'px');
+                }
                 });
             }
             
@@ -3616,7 +3636,7 @@ setlocale(LC_TIME, 'id_ID');
             // Update slide display
             function updateSlide() {
                 // Hide all slides
-                slider.slides.forEach((slide, index) => {
+                slider.slides.forEach(function(slide, index) {
                     slide.classList.remove('active');
                     if (slider.indicators.children[index]) {
                         slider.indicators.children[index].classList.remove('active');
@@ -3632,8 +3652,8 @@ setlocale(LC_TIME, 'id_ID');
                 // Reset and restart progress bar
                 slider.progressBar.style.transition = 'none';
                 slider.progressBar.style.width = '0%';
-                setTimeout(() => {
-                    slider.progressBar.style.transition = `width ${slider.autoplayDelay}ms linear`;
+                setTimeout(function() {
+                    slider.progressBar.style.transition = 'width ' + slider.autoplayDelay + 'ms linear';
                     slider.progressBar.style.width = '100%';
                 }, 50);
             }
@@ -3681,11 +3701,11 @@ setlocale(LC_TIME, 'id_ID');
             }
 
             // Event listeners
-            slider.prevBtn.addEventListener('click', () => {
+            slider.prevBtn.addEventListener('click', function() {
                 prevSlide();
             });
 
-            slider.nextBtn.addEventListener('click', () => {
+            slider.nextBtn.addEventListener('click', function() {
                 nextSlide();
             });
 
@@ -3702,7 +3722,7 @@ setlocale(LC_TIME, 'id_ID');
             });
 
             // Keyboard navigation
-            document.addEventListener('keydown', (e) => {
+            document.addEventListener('keydown', function(e) {
                 if (e.key === 'ArrowLeft') prevSlide();
                 if (e.key === 'ArrowRight') nextSlide();
             });
@@ -4140,6 +4160,240 @@ setlocale(LC_TIME, 'id_ID');
             
             // Memuat galeri untuk homepage
             loadGalleryHomepage();
+            
+            // Initialize Kelurahan Sadar Hukum Map
+            initKelurahanMap();
+            
+            function initKelurahanMap() {
+                // Initialize map centered on Banjarbaru
+                var map = L.map('kelurahanMap').setView([-3.4333, 114.8167], 12);
+                
+                // Add OpenStreetMap tile layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                
+                // Store all markers for filtering
+                var allMarkers = [];
+                var allKelurahanData = [];
+                
+                // Custom icon for kelurahan markers
+                function getKelurahanIcon(status) {
+                    var color = status ? '#10b981' : '#ef4444'; // Green for active, Red for inactive
+                    return L.divIcon({
+                        className: 'custom-div-icon',
+                        html: "<div style='background-color: " + color + "; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;'><i style='color: white; font-size: 16px;' class='mdi mdi-home'></i></div>",
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15],
+                        popupAnchor: [0, -15]
+                    });
+                }
+                
+                // Create popup content
+                function createPopupContent(kelurahan) {
+                    var statusColor = kelurahan.is_active ? '#10b981' : '#ef4444';
+                    var statusText = kelurahan.is_active ? 'Aktif' : 'Tidak Aktif';
+                    
+                    return `
+                        <div style="min-width: 200px;">
+                            <h6 style="margin: 0 0 10px 0; color: #6366f1; font-weight: 700;">${kelurahan.nama_kelurahan || 'N/A'}</h6>
+                            <div style="margin-bottom: 8px;">
+                                <strong>Kecamatan:</strong> ${kelurahan.kecamatan || '-'}
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <strong>Status Sadar Hukum:</strong> 
+                                <span style="color: ${statusColor}; font-weight: 600;">
+                                    ${kelurahan.is_active ? 'Aktif' : 'Tidak Aktif'}
+                                </span>
+                            </div>
+                            ${kelurahan.pos_bankum ? `
+                            <div style="margin-bottom: 8px;">
+                                <strong>POS BANTUAN HUKUM:</strong><br>
+                                ${kelurahan.pos_bankum}
+                            </div>
+                            ` : ''}
+                            ${kelurahan.jumlah_pos ? `
+                            <div style="margin-bottom: 8px;">
+                                <strong>Jumlah POS:</strong> ${kelurahan.jumlah_pos}
+                            </div>
+                            ` : ''}
+                            ${kelurahan.keterangan ? `
+                            <div style="margin-bottom: 8px;">
+                                <strong>Keterangan:</strong><br>
+                                <small>${kelurahan.keterangan}</small>
+                            </div>
+                            ` : ''}
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
+                                <a href="/kelurahan-sadar-hukum/${kelurahan.id}" target="_blank" style="color: #6366f1; text-decoration: none; font-weight: 600;">
+                                    Lihat Detail <i class="mdi mdi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Add marker to map and track it
+                function addMarker(kelurahan) {
+                    if (kelurahan.latitude && kelurahan.longitude) {
+                        var marker = L.marker([kelurahan.latitude, kelurahan.longitude], {
+                            icon: getKelurahanIcon(kelurahan.is_active)
+                        }).addTo(map);
+                        
+                        marker.bindPopup(createPopupContent(kelurahan));
+                        
+                        // Store marker and data for filtering
+                        allMarkers.push({
+                            marker: marker,
+                            data: kelurahan
+                        });
+                        
+                        return marker;
+                    }
+                    return null;
+                }
+                
+                // Load kelurahan data from API
+                $.ajax({
+                    url: '/api/kelurahan-sadar-hukum',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log('Kelurahan data loaded:', response);
+                        
+                        // Clear existing markers
+                        allMarkers.forEach(function(item) {
+                            map.removeLayer(item.marker);
+                        });
+                        allMarkers = [];
+                        allKelurahanData = [];
+                        
+                        // Populate kecamatan filter
+                        var kecamatans = new Set();
+                        
+                        if (response && response.data && response.data.length > 0) {
+                            allKelurahanData = response.data;
+                            
+                            // Add markers and collect kecamatans
+                            response.data.forEach(function(kelurahan) {
+                                addMarker(kelurahan);
+                                if (kelurahan.kecamatan) {
+                                    kecamatans.add(kelurahan.kecamatan);
+                                }
+                            });
+                            
+                            // Update kecamatan filter options
+                            var selectKecamatan = $('#filterKecamatan');
+                            selectKecamatan.find('option:not(:first)').remove();
+                            kecamatans.forEach(function(kecamatan) {
+                                selectKecamatan.append('<option value="' + kecamatan + '">' + kecamatan + '</option>');
+                            });
+                            
+                            // Update stats
+                            var total = response.data.length;
+                            var aktif = response.data.filter(function(k) { return k.is_active; }).length;
+                            $('#totalKelurahan').text(total);
+                            $('#aktifKelurahan').text(aktif);
+                            
+                            // Fit bounds to show all markers
+                            if (allMarkers.length > 0) {
+                                var group = new L.featureGroup(allMarkers.map(function(item) { return item.marker; }));
+                                map.fitBounds(group.getBounds(), { padding: [50, 50] });
+                            }
+                        } else {
+                            console.log('No kelurahan data found');
+                            $('#totalKelurahan').text('0');
+                            $('#aktifKelurahan').text('0');
+                            
+                            // Show message if no kelurahan data
+                            L.marker([-3.4333, 114.8167])
+                                .addTo(map)
+                                .bindPopup('Belum ada data Kelurahan Sadar Hukum')
+                                .openPopup();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading kelurahan data:', error);
+                        console.error('Status:', status);
+                        console.error('XHR:', xhr);
+                        console.error('Response:', xhr.responseText);
+                        
+                        $('#totalKelurahan').text('0');
+                        $('#aktifKelurahan').text('0');
+                        
+                        L.marker([-3.4333, 114.8167])
+                            .addTo(map)
+                            .bindPopup('Gagal memuat data Kelurahan Sadar Hukum')
+                            .openPopup();
+                    }
+                });
+                
+                // Filter function
+                function filterMarkers() {
+                    var searchValue = $('#searchKelurahan').val().toLowerCase();
+                    var kecamatanValue = $('#filterKecamatan').val();
+                    var statusValue = $('#filterStatus').val();
+                    
+                    var visibleCount = 0;
+                    var aktifCount = 0;
+                    var visibleMarkers = [];
+                    
+                    allMarkers.forEach(function(item) {
+                        var kelurahan = item.data;
+                        var visible = true;
+                        
+                        // Filter by search (kelurahan name)
+                        if (searchValue && kelurahan.nama_kelurahan) {
+                            if (kelurahan.nama_kelurahan.toLowerCase().indexOf(searchValue) === -1) {
+                                visible = false;
+                            }
+                        }
+                        
+                        // Filter by kecamatan
+                        if (kecamatanValue && kelurahan.kecamatan !== kecamatanValue) {
+                            visible = false;
+                        }
+                        
+                        // Filter by status
+                        if (statusValue !== '') {
+                            var isAktif = kelurahan.is_active ? 1 : 0;
+                            if (parseInt(statusValue) !== isAktif) {
+                                visible = false;
+                            }
+                        }
+                        
+                        // Show/hide marker
+                        if (visible) {
+                            if (!map.hasLayer(item.marker)) {
+                                item.marker.addTo(map);
+                            }
+                            visibleCount++;
+                            if (kelurahan.is_active) {
+                                aktifCount++;
+                            }
+                            visibleMarkers.push(item.marker);
+                        } else {
+                            if (map.hasLayer(item.marker)) {
+                                map.removeLayer(item.marker);
+                            }
+                        }
+                    });
+                    
+                    // Update stats
+                    $('#totalKelurahan').text(visibleCount);
+                    $('#aktifKelurahan').text(aktifCount);
+                    
+                    // Fit bounds if there are visible markers
+                    if (visibleMarkers.length > 0) {
+                        var group = new L.featureGroup(visibleMarkers);
+                        map.fitBounds(group.getBounds(), { padding: [50, 50] });
+                    }
+                }
+                
+                // Bind filter events
+                $('#searchKelurahan').on('input', filterMarkers);
+                $('#filterKecamatan').on('change', filterMarkers);
+                $('#filterStatus').on('change', filterMarkers);
+            }
 
             function loadTemaDokumenHomepage() {
                 $.ajax({
@@ -4150,7 +4404,7 @@ setlocale(LC_TIME, 'id_ID');
                         var temaContainer = $('#tema-dokumen-container');
                         temaContainer.empty();
 
-                        if (response.data && response.data.length >0) {
+                        if (response.data && response.data.length > 0) {
                             $.each(response.data, function(index, tema) {
                                 if (tema.status) {
                                     var jumlahPeraturan = tema.jumlah_peraturan || 0;
@@ -4189,7 +4443,7 @@ setlocale(LC_TIME, 'id_ID');
                         var galleryContainer = $('#gallery-container');
                         galleryContainer.empty();
 
-                        // Access the nested data array: response.data.data
+                        // Access data array from pagination response.data.data
                         if (response.data && response.data.data && response.data.data.length > 0) {
                             // Tampilkan maksimal 6 galeri terbaru
                             var galleryItems = response.data.data.slice(0, 6);
@@ -4199,9 +4453,11 @@ setlocale(LC_TIME, 'id_ID');
                                 var firstImage = Array.isArray(images) && images.length > 0 ? images[0] : null;
                                 
                                 if (firstImage) {
+                                    // Use the path directly - it already includes /storage/ prefix from API
+                                    var imageUrl = typeof firstImage === 'string' ? firstImage : '';
                                     var galleryHtml = `
-                                        <div class="gallery-item animate-on-scroll scale-in delay-${(index + 1) * 100}" data-aos="zoom-in">
-                                            <img src="${firstImage}" alt="${galeri.nama_kegiatan || 'Galeri'}" />
+                                        <div class="gallery-item">
+                                            <img src="${imageUrl}" alt="${galeri.nama_kegiatan || 'Galeri'}" />
                                             <div class="gallery-overlay">
                                                 <div class="gallery-icon">
                                                     <i class="mdi mdi-magnify-plus-outline"></i>

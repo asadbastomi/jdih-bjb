@@ -25,9 +25,24 @@ class GaleriController extends BaseController
             });
         }
         
-        $data['data'] = $dataset->orderBy('created_at', 'desc')->paginate($item);
+        $galeriData = $dataset->orderBy('created_at', 'desc')->paginate($item);
         
-        return $this->sendResponse($data['data'], 'Gallery data retrieved successfully');
+        // Transform image paths to include /storage/ prefix
+        $galeriData->getCollection()->transform(function ($galeri) {
+            if ($galeri->foto_kegiatan) {
+                $photos = is_string($galeri->foto_kegiatan) ? json_decode($galeri->foto_kegiatan, true) : $galeri->foto_kegiatan;
+                if (is_array($photos)) {
+                    $galeri->foto_kegiatan = array_map(function($photo) {
+                        // Add /storage/ prefix if not already present
+                        $path = ltrim($photo, '/');
+                        return '/storage/' . $path;
+                    }, $photos);
+                }
+            }
+            return $galeri;
+        });
+        
+        return $this->sendResponse($galeriData, 'Gallery data retrieved successfully');
     }
 
     public function fetch(Request $request)

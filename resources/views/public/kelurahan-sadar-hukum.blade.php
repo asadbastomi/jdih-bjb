@@ -195,7 +195,7 @@ function displayMarkers() {
             iconAnchor: [10, 10]
         });
 
-        const marker = L.marker([kel.lat, kel.lng], { icon: markerIcon })
+        const marker = L.marker([kel.latitude, kel.longitude], { icon: markerIcon })
             .addTo(map)
             .bindPopup(`
                 <div style="min-width: 250px;">
@@ -204,8 +204,8 @@ function displayMarkers() {
                     <p style="margin: 4px 0;"><strong>Status:</strong> <span class="badge ${kel.status === 'Sadar Hukum' ? 'bg-success' : 'bg-warning'}">${kel.status}</span></p>
                     <p style="margin: 4px 0;"><strong>SK Walikota:</strong> ${kel.sk_walikota_nomor || '-'}</p>
                     <p style="margin: 4px 0;"><strong>SK Gubernur:</strong> ${kel.sk_gubernur_nomor || '-'}</p>
-                    <p style="margin: 4px 0;"><strong>Agenda:</strong> ${kel.agenda_count}</p>
-                    <p style="margin: 4px 0;"><strong>Infografis:</strong> ${kel.infografis_count}</p>
+                    <p style="margin: 4px 0;"><strong>Agenda:</strong> ${kel.agendas ? kel.agendas.length : 0}</p>
+                    <p style="margin: 4px 0;"><strong>Infografis:</strong> ${kel.infografis ? kel.infografis.length : 0}</p>
                     <button onclick="viewDetail(${kel.id})" class="btn btn-primary btn-sm mt-2" style="width: 100%;">Lihat Detail</button>
                 </div>
             `);
@@ -280,8 +280,8 @@ function resetFilters() {
 function focusOnMarker(id) {
     const kel = allKelurahan.find(k => k.id === id);
     if (kel) {
-        map.setView([kel.lat, kel.lng], 15);
-        const marker = markers.find(m => m.getLatLng().lat === kel.lat && m.getLatLng().lng === kel.lng);
+        map.setView([kel.latitude, kel.longitude], 15);
+        const marker = markers.find(m => m.getLatLng().lat === kel.latitude && m.getLatLng().lng === kel.longitude);
         if (marker) {
             marker.openPopup();
         }
