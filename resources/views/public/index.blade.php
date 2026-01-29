@@ -852,11 +852,12 @@ setlocale(LC_TIME, 'id_ID');
             color: #6c757d;
         }
 
-        /* Statistics Section */
+        /* Statistics Section - Symmetrical Grid Design */
         .stats-section {
-            padding: 80px 0;
-            background: var(--gray-50);
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             position: relative;
+            overflow: hidden;
         }
 
         .stats-section::before {
@@ -870,36 +871,45 @@ setlocale(LC_TIME, 'id_ID');
         }
 
         .stats-title {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 2.8rem;
+            font-weight: 800;
             color: var(--dark-color);
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
             text-align: center;
             position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .stats-title::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
+            width: 80px;
             height: 4px;
             background: var(--gradient-primary);
             border-radius: 2px;
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
         .stat-card {
             background: #fff;
-            border-radius: var(--border-radius-lg);
-            padding: 32px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            transition: all 0.3s ease;
+            border-radius: var(--border-radius-xl);
+            padding: 0;
+            box-shadow: var(--shadow-xl);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             height: 100%;
             position: relative;
             overflow: hidden;
+            border: 2px solid transparent;
         }
 
         .stat-card::before {
@@ -907,57 +917,236 @@ setlocale(LC_TIME, 'id_ID');
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
+            width: 100%;
+            height: 6px;
+            background: var(--card-color, var(--gradient-primary));
         }
 
         .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-2xl);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border-color: var(--card-color, #6366f1);
+        }
+
+        .stat-icon-wrapper {
+            padding: 32px 24px 20px;
+            text-align: center;
         }
 
         .stat-icon {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
-        .stat-icon::before {
+        .stat-icon::after {
             content: '';
             position: absolute;
-            inset: -4px;
+            inset: -8px;
             border-radius: 50%;
             background: inherit;
-            opacity: 0.2;
+            opacity: 0.15;
             z-index: -1;
+            filter: blur(8px);
         }
 
         .stat-icon i {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             color: #fff;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .stat-content {
+            padding: 0 24px 32px;
+            text-align: center;
         }
 
         .stat-number {
-            font-size: 2.8rem;
-            font-weight: 700;
+            font-size: 3rem;
+            font-weight: 800;
             color: var(--dark-color);
             margin-bottom: 8px;
-            background: var(--gradient-primary);
+            line-height: 1;
+            background: var(--card-color, var(--gradient-primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: inline-block;
         }
 
         .stat-label {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: var(--gray-600);
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--success-color);
+            font-weight: 600;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-radius: 20px;
+            margin-top: 8px;
+        }
+
+        .stat-trend i {
+            font-size: 1.2rem;
+        }
+
+        .stat-trend span {
+            color: var(--gray-700);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            padding: 100px 0;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gradient-primary);
+        }
+
+        .gallery-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .gallery-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            text-align: center;
+            margin-bottom: 3rem;
             font-weight: 500;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: var(--border-radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            aspect-ratio: 4/3;
+            background: var(--gray-100);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%);
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .gallery-loader {
+            padding: 60px;
+            text-align: center;
+        }
+
+        .charts-section {
+            margin-top: 40px;
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            padding: 8px 16px;
+            background: var(--gray-50);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .legend-item:hover {
+            background: var(--gradient-primary);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .legend-item i {
+            font-size: 0.8rem;
         }
 
         /* Chart Section */
@@ -1968,106 +2157,144 @@ setlocale(LC_TIME, 'id_ID');
     <section class="stats-section animate-on-scroll fade-in-up">
         <div class="container">
             <h3 class="stats-title animate-on-scroll fade-in-up">{{ translateIt('STATISTIK PRODUK HUKUM') }}</h3>
-            <div class="row">
-                <div class="col-md-6 col-xl-3 mb-4">
-                    <div class="stat-card animate-on-scroll scale-in delay-100">
-                        <div class="stat-icon" style="background-color: #3498DB;">
+            
+            <!-- Symmetrical Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card animate-on-scroll scale-in delay-100" data-color="#3498DB">
+                    <div class="stat-icon-wrapper">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #3498DB 0%, #2980b9 100%);">
                             <i class="mdi mdi-book-open-page-variant"></i>
                         </div>
+                    </div>
+                    <div class="stat-content">
                         <div class="stat-number" data-plugin="counterup">{{ $totalperda }}</div>
-                        <div class="stat-label">{{ translateIt('Total') }} Perda</div>
+                        <div class="stat-label">{{ translateIt('Total Perda') }}</div>
+                        <div class="stat-trend">
+                            <i class="mdi mdi-trending-up"></i>
+                            <span>Dokumen Resmi</span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: #2ECC71;">
-                            <i class="mdi mdi-book-open-page-variant"></i>
+
+                <div class="stat-card animate-on-scroll scale-in delay-200" data-color="#2ECC71">
+                    <div class="stat-icon-wrapper">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #2ECC71 0%, #27ae60 100%);">
+                            <i class="mdi mdi-file-document"></i>
                         </div>
+                    </div>
+                    <div class="stat-content">
                         <div class="stat-number" data-plugin="counterup">{{ $totalperwal }}</div>
-                        <div class="stat-label">{{ translateIt('Total') }} Perwal</div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-xl-3 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: #F39C12;">
-                            <i class="mdi mdi-bookshelf"></i>
+                        <div class="stat-label">{{ translateIt('Total Perwal') }}</div>
+                        <div class="stat-trend">
+                            <i class="mdi mdi-trending-up"></i>
+                            <span>Peraturan Walikota</span>
                         </div>
-                        <div class="stat-number" data-plugin="counterup">{{ $totalkepwal }}</div>
-                        <div class="stat-label">{{ translateIt('Total Keputusan Wali Kota') }}</div>
                     </div>
                 </div>
-                <div class="col-md-6 col-xl-3 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: #9B59B6;">
-                            <i class="mdi mdi-book-open-variant"></i>
-                        </div>
-                        <div class="stat-number" data-plugin="counterup">{{ $totalpropemperda }}</div>
-                        <div class="stat-label">{{ translateIt('Total') }} Propemperda</div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-xl-3 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: #E74C3C;">
-                            <i class="mdi mdi-book-multiple"></i>
-                        </div>
-                        <div class="stat-number" data-plugin="counterup">{{ $totalmonografihukum ?? 0 }}</div>
-                        <div class="stat-label">{{ translateIt('Total') }} Monografi Hukum</div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-xl-3 mb-4">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: #1ABC9C;">
+
+                <div class="stat-card animate-on-scroll scale-in delay-300" data-color="#F39C12">
+                    <div class="stat-icon-wrapper">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #F39C12 0%, #f39c12 100%);">
                             <i class="mdi mdi-gavel"></i>
                         </div>
-                        <div class="stat-number" data-plugin="counterup">{{ $totalputusan ?? 0 }}</div>
-                        <div class="stat-label">{{ translateIt('Total') }} Putusan</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="row mt-4">
-                <div class="col-lg-12 mb-4">
-                    <div class="chart-container">
-                        <div class="text-center mb-3">
-                            <p class="text-muted">
-                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
-                                        style="color: #3498DB"></i> Perda</span>
-                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
-                                        style="color: #2ECC71"></i> Perwal</span>
-                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
-                                        style="color: #F39C12"></i> Keputusan Wali Kota</span>
-                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
-                                        style="color: #9B59B6"></i> Propemperda</span>
-                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
-                                        style="color: #E74C3C"></i> Monografi Hukum</span>
-                                <span class="mx-2"><i class="mdi mdi-checkbox-blank-circle"
-                                        style="color: #1ABC9C"></i> Putusan</span>
-                            </p>
+                    <div class="stat-content">
+                        <div class="stat-number" data-plugin="counterup">{{ $totalkepwal }}</div>
+                        <div class="stat-label">{{ translateIt('Keputusan Wali Kota') }}</div>
+                        <div class="stat-trend">
+                            <i class="mdi mdi-trending-up"></i>
+                            <span>SK Wali Kota</span>
                         </div>
-                        <div id="morris-bar-stacked" style="height: 250px;" class="morris-chart"
-                            data-colors="#3498DB,#2ECC71,#F39C12,#9B59B6,#E74C3C,#1ABC9C"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-on-scroll scale-in delay-400" data-color="#9B59B6">
+                    <div class="stat-icon-wrapper">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #9B59B6 0%, #8e44ad 100%);">
+                            <i class="mdi mdi-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-plugin="counterup">{{ $totalpropemperda }}</div>
+                        <div class="stat-label">{{ translateIt('Propemperda') }}</div>
+                        <div class="stat-trend">
+                            <i class="mdi mdi-trending-up"></i>
+                            <span>Program Pembentukan</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-on-scroll scale-in delay-500" data-color="#E74C3C">
+                    <div class="stat-icon-wrapper">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #E74C3C 0%, #c0392b 100%);">
+                            <i class="mdi mdi-book-multiple"></i>
+                        </div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-plugin="counterup">{{ $totalmonografihukum ?? 0 }}</div>
+                        <div class="stat-label">{{ translateIt('Monografi Hukum') }}</div>
+                        <div class="stat-trend">
+                            <i class="mdi mdi-trending-up"></i>
+                            <span>Pustaka Hukum</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-on-scroll scale-in delay-600" data-color="#1ABC9C">
+                    <div class="stat-icon-wrapper">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #1ABC9C 0%, #16a085 100%);">
+                            <i class="mdi mdi-scale-balance"></i>
+                        </div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-plugin="counterup">{{ $totalputusan ?? 0 }}</div>
+                        <div class="stat-label">{{ translateIt('Putusan') }}</div>
+                        <div class="stat-trend">
+                            <i class="mdi mdi-trending-up"></i>
+                            <span>Putusan Pengadilan</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <div class="chart-container">
-                        <h4 class="chart-title">{{ translateIt('Status Berlaku') }}</h4>
-                        <div id="pie-chart-status" class="ct-chart" style="height: 250px"></div>
+            <!-- Charts Section -->
+            <div class="charts-section mt-5">
+                <div class="row">
+                    <div class="col-lg-8 mb-4">
+                        <div class="chart-container">
+                            <h4 class="chart-title">{{ translateIt('Tren Produk Hukum per Tahun') }}</h4>
+                            <div class="chart-legend mb-3">
+                                <span class="legend-item"><i class="mdi mdi-circle" style="color: #3498DB"></i> Perda</span>
+                                <span class="legend-item"><i class="mdi mdi-circle" style="color: #2ECC71"></i> Perwal</span>
+                                <span class="legend-item"><i class="mdi mdi-circle" style="color: #F39C12"></i> Keputusan</span>
+                                <span class="legend-item"><i class="mdi mdi-circle" style="color: #9B59B6"></i> Propemperda</span>
+                                <span class="legend-item"><i class="mdi mdi-circle" style="color: #E74C3C"></i> Monografi</span>
+                                <span class="legend-item"><i class="mdi mdi-circle" style="color: #1ABC9C"></i> Putusan</span>
+                            </div>
+                            <div id="morris-bar-stacked" style="height: 300px;" class="morris-chart"
+                                data-colors="#3498DB,#2ECC71,#F39C12,#9B59B6,#E74C3C,#1ABC9C"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <div class="chart-container h-100">
+                            <h4 class="chart-title">{{ translateIt('Status Berlaku') }}</h4>
+                            <div id="pie-chart-status" class="ct-chart" style="height: 280px;"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-4 mb-4">
-                    <div class="chart-container">
-                        <h4 class="chart-title">{{ translateIt('Paling Banyak dicari') }}</h4>
-                        <div id="pie-chart-pencarian" class="ct-chart" style="height: 250px"></div>
+
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="chart-container">
+                            <h4 class="chart-title">{{ translateIt('Paling Banyak Dicari') }}</h4>
+                            <div id="pie-chart-pencarian" class="ct-chart" style="height: 280px;"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <div class="chart-container">
-                        <h4 class="chart-title">{{ translateIt('Paling Banyak diunduh') }}</h4>
-                        <div id="pie-chart-unduhan" class="ct-chart" style="height: 250px"></div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="chart-container">
+                            <h4 class="chart-title">{{ translateIt('Paling Banyak Diunduh') }}</h4>
+                            <div id="pie-chart-unduhan" class="ct-chart" style="height: 280px;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2146,6 +2373,30 @@ setlocale(LC_TIME, 'id_ID');
             </div>
             <div class="text-center mt-4">
                 <a href="/kegiatan" class="btn btn-light btn-lg rounded-pill px-4">Berita Lainnya</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section animate-on-scroll fade-in-up">
+        <div class="container">
+            <h3 class="gallery-title animate-on-scroll fade-in-up">{{ translateIt('Galeri Kegiatan') }}</h3>
+            <p class="gallery-subtitle">{{ translateIt('Dokumentasi kegiatan dan aktivitas JDIH Kota Banjarbaru') }}</p>
+            
+            <div class="gallery-grid" id="gallery-container">
+                <div class="text-center w-100">
+                    <div class="gallery-loader">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Memuat galeri...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="/galeri" class="btn btn-primary btn-lg rounded-pill px-5">
+                    <i class="mdi mdi-images mr-2"></i> {{ translateIt('Lihat Semua Galeri') }}
+                </a>
             </div>
         </div>
     </section>
@@ -2542,335 +2793,322 @@ setlocale(LC_TIME, 'id_ID');
     <!-- Back to top -->
     <a href="#" class="back-to-top" id="back-to-top"> <i class="mdi mdi-chevron-up"> </i> </a>
 
-    <!-- Comprehensive Accessibility Widget -->
+    <!-- Accessibility Widget -->
     <div id="accessibilityWidget">
-        <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Accessibility Options">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z"/>
-            </svg>
+        <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Opsi Aksesibilitas">
+            <div class="accessibility-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="32" height="32">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z"/>
+                </svg>
+            </div>
         </button>
         
         <div id="accessibilityPanel" class="accessibility-panel" role="dialog" aria-modal="true" aria-labelledby="a11y-title">
             <div class="accessibility-header">
-                <h3 id="a11y-title">Accessibility Options</h3>
-                <button class="close-panel" aria-label="Close accessibility panel">&times;</button>
+                <h3 id="a11y-title">Opsi Aksesibilitas</h3>
+                <button class="close-panel" aria-label="Tutup panel aksesibilitas">&times;</button>
             </div>
             
             <div class="accessibility-content">
-                <!-- Font Size -->
-                <div class="accessibility-group">
-                    <label>Text Size</label>
-                    <div class="accessibility-controls">
-                        <button class="btn-access" data-action="font-decrease" aria-label="Decrease font size">
-                            <i class="mdi mdi-minus"></i>
-                        </button>
-                        <span class="control-value" id="fontSizeValue">100%</span>
-                        <button class="btn-access" data-action="font-increase" aria-label="Increase font size">
-                            <i class="mdi mdi-plus"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Text Spacing -->
-                <div class="accessibility-group">
-                    <label>Text Spacing</label>
-                    <div class="accessibility-controls">
-                        <button class="btn-access" data-action="spacing-decrease" aria-label="Decrease text spacing">
-                            <i class="mdi mdi-minus"></i>
-                        </button>
-                        <span class="control-value" id="spacingValue">Normal</span>
-                        <button class="btn-access" data-action="spacing-increase" aria-label="Increase text spacing">
-                            <i class="mdi mdi-plus"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Line Height -->
-                <div class="accessibility-group">
-                    <label>Line Height</label>
-                    <div class="accessibility-controls">
-                        <button class="btn-access" data-action="line-decrease" aria-label="Decrease line height">
-                            <i class="mdi mdi-minus"></i>
-                        </button>
-                        <span class="control-value" id="lineHeightValue">1.5</span>
-                        <button class="btn-access" data-action="line-increase" aria-label="Increase line height">
-                            <i class="mdi mdi-plus"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Contrast -->
-                <div class="accessibility-group">
-                    <label>Contrast</label>
-                    <div class="accessibility-controls">
-                        <button class="btn-access" data-action="contrast-normal" aria-label="Normal contrast">Normal</button>
-                        <button class="btn-access" data-action="contrast-high" aria-label="High contrast">High</button>
-                        <button class="btn-access" data-action="contrast-inverted" aria-label="Inverted colors">Inverted</button>
-                    </div>
-                </div>
-
-                <!-- Font -->
-                <div class="accessibility-group">
-                    <label>Font Type</label>
-                    <div class="accessibility-controls">
-                        <button class="btn-access" data-action="font-default" aria-label="Default font">Default</button>
-                        <button class="btn-access" data-action="font-dyslexic" aria-label="Dyslexia-friendly font" style="font-family: Arial, sans-serif;">Dyslexic</button>
-                    </div>
-                </div>
-
                 <!-- Text to Speech -->
                 <div class="accessibility-group">
-                    <label>Text to Speech</label>
+                    <label>Teks ke Suara</label>
                     <div class="accessibility-controls">
-                        <button class="btn-access" data-action="tts-toggle" id="ttsToggle" aria-label="Toggle text to speech">
-                            <i class="mdi mdi-volume-up"></i> <span>Start</span>
+                        <button class="btn-access" data-action="tts-toggle" id="ttsToggle" aria-label="Toggle teks ke suara">
+                            <i class="mdi mdi-volume-up"></i> <span>Mulai</span>
                         </button>
-                        <button class="btn-access" data-action="tts-stop" id="ttsStop" aria-label="Stop text to speech">
+                        <button class="btn-access" data-action="tts-stop" id="ttsStop" aria-label="Hentikan teks ke suara">
                             <i class="mdi mdi-stop"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Highlights -->
-                <div class="accessibility-group">
-                    <label>Highlights</label>
-                    <div class="accessibility-controls">
-                        <label class="accessibility-checkbox">
-                            <input type="checkbox" id="highlightLinks">
-                            <span>Highlight Links</span>
-                        </label>
-                        <label class="accessibility-checkbox">
-                            <input type="checkbox" id="highlightHeadings">
-                            <span>Highlight Headings</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Mouse Pointer -->
-                <div class="accessibility-group">
-                    <label>Mouse Pointer</label>
-                    <div class="accessibility-controls">
-                        <button class="btn-access" data-action="pointer-default" aria-label="Default mouse pointer">Default</button>
-                        <button class="btn-access" data-action="pointer-large" aria-label="Large mouse pointer">Large</button>
-                    </div>
-                </div>
-
                 <!-- Stop Animations -->
                 <div class="accessibility-group">
-                    <label>Motion</label>
+                    <label>Gerakan</label>
                     <div class="accessibility-controls">
                         <label class="accessibility-checkbox">
                             <input type="checkbox" id="stopAnimations">
-                            <span>Stop Animations</span>
+                            <span>Hentikan Animasi</span>
                         </label>
                     </div>
-                </div>
-
-                <!-- Reset -->
-                <div class="accessibility-group">
-                    <button class="btn-reset" data-action="reset" aria-label="Reset all accessibility settings">
-                        <i class="mdi mdi-refresh"></i> Reset All
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <style>
-        /* Accessibility Widget Styles */
-        #accessibilityWidget * {
-            box-sizing: border-box;
-        }
+        /* Accessibility Widget Styles - Matching Chat Widget Design */
 
+        /* Floating Button - MATCH CHAT WIDGET STYLE */
         .accessibility-toggle {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            color: white;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            z-index: 999999;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4),
+                        0 4px 15px rgba(139, 92, 246, 0.3);
+            z-index: 2147483646 !important;
             cursor: pointer;
-            border: 3px solid white;
+            border: 4px solid white;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
+            pointer-events: auto !important;
         }
 
         .accessibility-toggle:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+            transform: translateY(-4px) scale(1.08);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.5),
+                        0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .accessibility-toggle:active {
+            transform: translateY(-2px) scale(1.02);
         }
 
         .accessibility-toggle:focus {
-            outline: 2px solid #6366f1;
-            outline-offset: 2px;
+            outline: 3px solid rgba(99, 102, 241, 0.5);
+            outline-offset: 3px;
         }
 
-        .accessibility-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            z-index: 1000000;
-            opacity: 0;
-            visibility: hidden;
+        .accessibility-icon {
+            color: white;
             transition: all 0.3s ease;
-            min-width: 400px;
-            max-width: 90vw;
+        }
+
+        .accessibility-icon svg {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        /* Accessibility Menu Panel - MATCH CHAT WIDGET HEIGHT */
+        .accessibility-panel {
+            position: fixed !important;
+            bottom: 110px;
+            right: 30px;
+            width: 400px;
+            max-width: calc(100vw - 80px);
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.35),
+                        0 15px 40px rgba(0, 0, 0, 0.25);
+            z-index: 2147483645 !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateY(30px) scale(0.95) !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+            border: 1px solid rgba(99, 102, 241, 0.15);
             max-height: 85vh;
-            overflow-y: auto;
         }
 
         .accessibility-panel.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) scale(1) !important;
+            pointer-events: auto !important;
         }
 
         .accessibility-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            padding: 24px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .accessibility-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: header-shine 8s linear infinite;
+        }
+
+        @keyframes header-shine {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .accessibility-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
             margin: 0;
-            color: #333;
-            font-size: 1.5rem;
-            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .close-panel {
-            background: none;
+            background: rgba(255, 255, 255, 0.15);
             border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #666;
-            width: 36px;
-            height: 36px;
+            color: white;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
             outline: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 24px;
+            position: relative;
+            z-index: 1;
         }
 
         .close-panel:hover {
-            background: #f3f4f6;
-            color: #333;
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .close-panel:focus {
-            outline: 2px solid #6366f1;
+            outline: 2px solid white;
             outline-offset: 2px;
         }
 
         .accessibility-content {
-            padding: 24px;
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 0;
+        }
+
+        .accessibility-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .accessibility-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .accessibility-content::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
         }
 
         .accessibility-group {
-            margin-bottom: 24px;
-        }
-
-        .accessibility-group:last-child {
             margin-bottom: 0;
         }
 
         .accessibility-group label {
             display: block;
-            font-weight: 600;
-            color: #374151;
+            font-weight: 700;
+            color: #1e293b;
             margin-bottom: 12px;
-            font-size: 0.95rem;
+            font-size: 15px;
+            letter-spacing: 0.3px;
         }
 
         .accessibility-controls {
             display: flex;
-            gap: 8px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .btn-access {
             flex: 1;
-            min-width: 80px;
-            padding: 12px 16px;
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #374151;
+            min-width: calc(50% - 6px);
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #475569;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .btn-access:hover {
-            background: #6366f1;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             border-color: #6366f1;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
         }
 
         .btn-access.active {
-            background: #6366f1;
-            border-color: #6366f1;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
+            border-color: #6366f1;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
         }
 
         .btn-access:focus {
-            outline: 2px solid #6366f1;
+            outline: 3px solid rgba(99, 102, 241, 0.4);
             outline-offset: 2px;
         }
 
-        .control-value {
-            min-width: 70px;
-            text-align: center;
-            font-weight: 600;
+        .btn-access i {
+            font-size: 20px;
             color: #6366f1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-access:hover i,
+        .btn-access.active i {
+            color: white;
         }
 
         .accessibility-checkbox {
             flex: 1;
-            min-width: 150px;
+            min-width: calc(50% - 6px);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             cursor: pointer;
-            padding: 12px 16px;
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            transition: all 0.2s ease;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             user-select: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            color: #475569;
+            font-size: 15px;
         }
 
         .accessibility-checkbox:hover {
             border-color: #6366f1;
-            background: #f3f4f6;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
         }
 
         .accessibility-checkbox input {
@@ -2878,123 +3116,102 @@ setlocale(LC_TIME, 'id_ID');
             height: 20px;
             cursor: pointer;
             accent-color: #6366f1;
+            flex-shrink: 0;
+        }
+
+        .accessibility-checkbox input:checked + span {
+            color: white;
         }
 
         .accessibility-checkbox span {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .btn-reset {
-            width: 100%;
-            padding: 14px 20px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            font-size: 15px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            outline: none;
+            color: inherit;
         }
 
-        .btn-reset:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-reset:focus {
-            outline: 2px solid #ef4444;
-            outline-offset: 2px;
-        }
-
-        /* Accessibility Effects */
-        body.accessibility-high-contrast {
-            filter: contrast(1.5) saturate(0.5);
-        }
-
-        body.accessibility-inverted {
-            filter: invert(1);
-        }
-
-        body.accessibility-dyslexic {
-            font-family: Arial, sans-serif !important;
-            letter-spacing: 0.5px;
-        }
-
-        body.accessibility-large-pointer * {
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewport='0 0 64 64' style='fill:black;font-size:64px;'><text y='50%'>👆</text></svg>"), auto !important;
-        }
-
+        /* Stop Animations Effect */
         body.accessibility-stop-animations *,
         body.accessibility-stop-animations *::before,
         body.accessibility-stop-animations *::after {
-            animation-duration: 0s !important;
-            animation-delay: 0s !important;
-            transition-duration: 0s !important;
-            transition-delay: 0s !important;
+            animation: none !important;
+            transition: none !important;
+            transform: none !important;
         }
 
-        body.accessibility-highlight-links a {
-            background: #fef08a;
-            padding: 2px 4px;
-            border-radius: 3px;
-            border: 2px solid #eab308;
-        }
-
-        body.accessibility-highlight-headings h1,
-        body.accessibility-highlight-headings h2,
-        body.accessibility-highlight-headings h3,
-        body.accessibility-highlight-headings h4,
-        body.accessibility-highlight-headings h5,
-        body.accessibility-highlight-headings h6 {
-            background: #bbf7d0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 2px solid #22c55e;
+        body.accessibility-stop-animations .page-loader {
+            display: none !important;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .accessibility-toggle {
-                bottom: 80px;
+                bottom: 20px;
                 right: 20px;
-                width: 50px;
-                height: 50px;
-            }
-
-            .accessibility-toggle svg {
-                width: 24px;
-                height: 24px;
+                width: 60px;
+                height: 60px;
             }
 
             .accessibility-panel {
-                min-width: 320px;
-                width: 90vw;
+                bottom: 90px;
+                right: 15px;
+                left: 15px;
+                width: auto;
+                max-width: calc(100vw - 30px);
+                max-height: calc(100vh - 130px);
+                border-radius: 20px;
+            }
+
+            .accessibility-header {
+                padding: 20px 24px;
+            }
+
+            .accessibility-header h3 {
+                font-size: 16px;
+            }
+
+            .accessibility-content {
+                padding: 20px 24px;
+                gap: 16px;
             }
 
             .btn-access {
-                font-size: 0.85rem;
-                padding: 10px 12px;
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+
+            .accessibility-checkbox {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+        }
+
+        /* Reduced Motion for Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .accessibility-toggle,
+            .accessibility-panel {
+                transition: none !important;
+            }
+            
+            .accessibility-toggle:hover {
+                transform: none !important;
             }
         }
     </style>
 
     <script>
-    (function() {
+    document.addEventListener('DOMContentLoaded', function() {
         'use strict';
 
         var accessibilityToggle = document.getElementById('accessibilityToggle');
         var accessibilityPanel = document.getElementById('accessibilityPanel');
         var closePanel = document.querySelector('.close-panel');
         var body = document.body;
+
+        // Check if elements exist
+        if (!accessibilityToggle || !accessibilityPanel) {
+            console.error('Accessibility widget elements not found');
+            return;
+        }
 
         // State
         var state = {
@@ -3012,6 +3229,7 @@ setlocale(LC_TIME, 'id_ID');
 
         // Toggle panel
         accessibilityToggle.addEventListener('click', function() {
+            console.log('Toggle clicked');
             accessibilityPanel.classList.toggle('active');
             if (accessibilityPanel.classList.contains('active')) {
                 closePanel.focus();
@@ -3019,10 +3237,12 @@ setlocale(LC_TIME, 'id_ID');
         });
 
         // Close panel
-        closePanel.addEventListener('click', function() {
-            accessibilityPanel.classList.remove('active');
-            accessibilityToggle.focus();
-        });
+        if (closePanel) {
+            closePanel.addEventListener('click', function() {
+                accessibilityPanel.classList.remove('active');
+                accessibilityToggle.focus();
+            });
+        }
 
         // Close on outside click
         document.addEventListener('click', function(e) {
@@ -3039,243 +3259,110 @@ setlocale(LC_TIME, 'id_ID');
             }
         });
 
-        // Font Size
-        function updateFontSize(value) {
-            state.fontSize = value;
-            document.documentElement.style.fontSize = value + '%';
-            document.getElementById('fontSizeValue').textContent = value + '%';
-        }
-
-        document.querySelector('[data-action="font-increase"]').addEventListener('click', function() {
-            var newVal = Math.min(state.fontSize + 10, 150);
-            updateFontSize(newVal);
-        });
-
-        document.querySelector('[data-action="font-decrease"]').addEventListener('click', function() {
-            var newVal = Math.max(state.fontSize - 10, 70);
-            updateFontSize(newVal);
-        });
-
-        // Text Spacing
-        function updateLetterSpacing(value) {
-            state.letterSpacing = value;
-            document.documentElement.style.letterSpacing = value + 'px';
-            var label = value === 0 ? 'Normal' : value + 'px';
-            document.getElementById('spacingValue').textContent = label;
-        }
-
-        document.querySelector('[data-action="spacing-increase"]').addEventListener('click', function() {
-            var newVal = Math.min(state.letterSpacing + 1, 5);
-            updateLetterSpacing(newVal);
-        });
-
-        document.querySelector('[data-action="spacing-decrease"]').addEventListener('click', function() {
-            var newVal = Math.max(state.letterSpacing - 1, 0);
-            updateLetterSpacing(newVal);
-        });
-
-        // Line Height
-        function updateLineHeight(value) {
-            state.lineHeight = value;
-            document.documentElement.style.lineHeight = value;
-            document.getElementById('lineHeightValue').textContent = value.toFixed(1);
-        }
-
-        document.querySelector('[data-action="line-increase"]').addEventListener('click', function() {
-            var newVal = Math.min(state.lineHeight + 0.3, 2.4);
-            updateLineHeight(newVal);
-        });
-
-        document.querySelector('[data-action="line-decrease"]').addEventListener('click', function() {
-            var newVal = Math.max(state.lineHeight - 0.3, 1.2);
-            updateLineHeight(newVal);
-        });
-
-        // Contrast
-        function setContrast(type) {
-            body.classList.remove('accessibility-high-contrast', 'accessibility-inverted');
-            state.contrast = type;
-
-            if (type === 'high') {
-                body.classList.add('accessibility-high-contrast');
-            } else if (type === 'inverted') {
-                body.classList.add('accessibility-inverted');
-            }
-
-            // Update button states
-            document.querySelectorAll('[data-action^="contrast-"]').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector('[data-action="contrast-' + type + '"]').classList.add('active');
-        }
-
-        document.querySelector('[data-action="contrast-normal"]').addEventListener('click', function() {
-            setContrast('normal');
-        });
-
-        document.querySelector('[data-action="contrast-high"]').addEventListener('click', function() {
-            setContrast('high');
-        });
-
-        document.querySelector('[data-action="contrast-inverted"]').addEventListener('click', function() {
-            setContrast('inverted');
-        });
-
-        // Font Type
-        function setFont(type) {
-            body.classList.remove('accessibility-dyslexic');
-            state.font = type;
-
-            if (type === 'dyslexic') {
-                body.classList.add('accessibility-dyslexic');
-            }
-
-            // Update button states
-            document.querySelectorAll('[data-action^="font-"]').forEach(btn => {
-                if (!btn.hasAttribute('data-action', 'reset')) {
-                    btn.classList.remove('active');
-                }
-            });
-            document.querySelector('[data-action="font-' + type + '"]').classList.add('active');
-        }
-
-        document.querySelector('[data-action="font-default"]').addEventListener('click', function() {
-            setFont('default');
-        });
-
-        document.querySelector('[data-action="font-dyslexic"]').addEventListener('click', function() {
-            setFont('dyslexic');
-        });
 
         // Text to Speech
         var synthesis = window.speechSynthesis;
         var currentUtterance = null;
 
-        document.getElementById('ttsToggle').addEventListener('click', function() {
-            var btn = this;
-            var span = btn.querySelector('span');
-
-            if (!state.ttsEnabled) {
-                state.ttsEnabled = true;
-                span.textContent = 'Reading';
-                btn.classList.add('active');
-
-                var text = document.body.innerText;
-                currentUtterance = new SpeechSynthesisUtterance(text);
-                currentUtterance.rate = 0.9;
-                currentUtterance.pitch = 1;
-
-                synthesis.speak(currentUtterance);
-
-                currentUtterance.onend = function() {
-                    state.ttsEnabled = false;
-                    span.textContent = 'Start';
-                    btn.classList.remove('active');
-                };
-            } else {
-                synthesis.cancel();
-                state.ttsEnabled = false;
-                span.textContent = 'Start';
-                btn.classList.remove('active');
-            }
-        });
-
-        document.getElementById('ttsStop').addEventListener('click', function() {
-            synthesis.cancel();
-            state.ttsEnabled = false;
-            var btn = document.getElementById('ttsToggle');
-            btn.querySelector('span').textContent = 'Start';
-            btn.classList.remove('active');
-        });
-
-        // Highlights
-        document.getElementById('highlightLinks').addEventListener('change', function() {
-            state.highlightLinks = this.checked;
-            if (this.checked) {
-                body.classList.add('accessibility-highlight-links');
-            } else {
-                body.classList.remove('accessibility-highlight-links');
-            }
-        });
-
-        document.getElementById('highlightHeadings').addEventListener('change', function() {
-            state.highlightHeadings = this.checked;
-            if (this.checked) {
-                body.classList.add('accessibility-highlight-headings');
-            } else {
-                body.classList.remove('accessibility-highlight-headings');
-            }
-        });
-
-        // Mouse Pointer
-        function setPointer(type) {
-            body.classList.remove('accessibility-large-pointer');
-            state.pointer = type;
-
-            if (type === 'large') {
-                body.classList.add('accessibility-large-pointer');
-            }
-
-            // Update button states
-            document.querySelectorAll('[data-action^="pointer-"]').forEach(btn => {
-                btn.classList.remove('active');
+        var ttsToggleBtn = document.getElementById('ttsToggle');
+        var ttsStopBtn = document.getElementById('ttsStop');
+        
+        // Set Indonesian voice
+        function getIndonesianVoice() {
+            var voices = synthesis.getVoices();
+            var indonesianVoice = voices.find(function(voice) {
+                return voice.lang.toLowerCase() === 'id-id' || voice.lang.toLowerCase() === 'indonesian';
             });
-            document.querySelector('[data-action="pointer-' + type + '"]').classList.add('active');
+            return indonesianVoice || null;
         }
 
-        document.querySelector('[data-action="pointer-default"]').addEventListener('click', function() {
-            setPointer('default');
-        });
+        // Load voices (needed for some browsers)
+        if (synthesis.onvoiceschanged !== undefined) {
+            synthesis.onvoiceschanged = function() {
+                var voices = synthesis.getVoices();
+                console.log('Available voices:', voices.length);
+            };
+        }
 
-        document.querySelector('[data-action="pointer-large"]').addEventListener('click', function() {
-            setPointer('large');
-        });
+        if (ttsToggleBtn) {
+            ttsToggleBtn.addEventListener('click', function() {
+                var btn = this;
+                var span = btn.querySelector('span');
+
+                if (!state.ttsEnabled) {
+                    state.ttsEnabled = true;
+                    span.textContent = 'Membaca';
+                    btn.classList.add('active');
+
+                    var text = document.body.innerText;
+                    currentUtterance = new SpeechSynthesisUtterance(text);
+                    currentUtterance.rate = 0.9;
+                    currentUtterance.pitch = 1;
+                    currentUtterance.lang = 'id-ID';
+                    
+                    // Try to use Indonesian voice
+                    var indonesianVoice = getIndonesianVoice();
+                    if (indonesianVoice) {
+                        currentUtterance.voice = indonesianVoice;
+                        console.log('Using Indonesian voice:', indonesianVoice.name);
+                    }
+
+                    synthesis.speak(currentUtterance);
+
+                    currentUtterance.onend = function() {
+                        state.ttsEnabled = false;
+                        span.textContent = 'Mulai';
+                        btn.classList.remove('active');
+                    };
+
+                    currentUtterance.onerror = function(event) {
+                        console.error('TTS Error:', event.error);
+                        state.ttsEnabled = false;
+                        span.textContent = 'Mulai';
+                        btn.classList.remove('active');
+                    };
+                } else {
+                    synthesis.cancel();
+                    state.ttsEnabled = false;
+                    span.textContent = 'Mulai';
+                    btn.classList.remove('active');
+                }
+            });
+        }
+        
+        if (ttsStopBtn) {
+            ttsStopBtn.addEventListener('click', function() {
+                synthesis.cancel();
+                state.ttsEnabled = false;
+                var btn = document.getElementById('ttsToggle');
+                if (btn) {
+                    btn.querySelector('span').textContent = 'Mulai';
+                    btn.classList.remove('active');
+                }
+            });
+        }
 
         // Stop Animations
-        document.getElementById('stopAnimations').addEventListener('change', function() {
-            state.stopAnimations = this.checked;
-            if (this.checked) {
-                body.classList.add('accessibility-stop-animations');
-            } else {
-                body.classList.remove('accessibility-stop-animations');
-            }
-        });
-
-        // Reset
-        document.querySelector('[data-action="reset"]').addEventListener('click', function() {
-            updateFontSize(100);
-            updateLetterSpacing(0);
-            updateLineHeight(1.5);
-            setContrast('normal');
-            setFont('default');
-            setPointer('default');
-
-            document.getElementById('highlightLinks').checked = false;
-            state.highlightLinks = false;
-            body.classList.remove('accessibility-highlight-links');
-
-            document.getElementById('highlightHeadings').checked = false;
-            state.highlightHeadings = false;
-            body.classList.remove('accessibility-highlight-headings');
-
-            document.getElementById('stopAnimations').checked = false;
-            state.stopAnimations = false;
-            body.classList.remove('accessibility-stop-animations');
-
-            synthesis.cancel();
-            state.ttsEnabled = false;
-            var btn = document.getElementById('ttsToggle');
-            btn.querySelector('span').textContent = 'Start';
-            btn.classList.remove('active');
-
-            accessibilityPanel.classList.remove('active');
-        });
+        var stopAnimationsCheckbox = document.getElementById('stopAnimations');
+        
+        if (stopAnimationsCheckbox) {
+            stopAnimationsCheckbox.addEventListener('change', function() {
+                state.stopAnimations = this.checked;
+                if (this.checked) {
+                    body.classList.add('accessibility-stop-animations');
+                } else {
+                    body.classList.remove('accessibility-stop-animations');
+                }
+            });
+        }
 
         // Initialize
-        setContrast('normal');
-        setFont('default');
-        setPointer('default');
-    })();
+        if (stopAnimationsCheckbox) {
+            stopAnimationsCheckbox.checked = false;
+        }
+        
+        console.log('Accessibility widget initialized successfully');
+    });
     </script>
 
     <!-- javascript -->
@@ -4050,6 +4137,9 @@ setlocale(LC_TIME, 'id_ID');
         $(document).ready(function() {
             // Memuat tema dokumen untuk homepage
             loadTemaDokumenHomepage();
+            
+            // Memuat galeri untuk homepage
+            loadGalleryHomepage();
 
             function loadTemaDokumenHomepage() {
                 $.ajax({
@@ -4060,7 +4150,7 @@ setlocale(LC_TIME, 'id_ID');
                         var temaContainer = $('#tema-dokumen-container');
                         temaContainer.empty();
 
-                        if (response.data && response.data.length > 0) {
+                        if (response.data && response.data.length >0) {
                             $.each(response.data, function(index, tema) {
                                 if (tema.status) {
                                     var jumlahPeraturan = tema.jumlah_peraturan || 0;
@@ -4087,6 +4177,61 @@ setlocale(LC_TIME, 'id_ID');
                         $('#tema-dokumen-container').html(
                             '<p class="text-center">Gagal memuat data tema dokumen</p>');
                     }
+                });
+            }
+
+            function loadGalleryHomepage() {
+                $.ajax({
+                    url: '/api/galeri',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        var galleryContainer = $('#gallery-container');
+                        galleryContainer.empty();
+
+                        // Access the nested data array: response.data.data
+                        if (response.data && response.data.data && response.data.data.length > 0) {
+                            // Tampilkan maksimal 6 galeri terbaru
+                            var galleryItems = response.data.data.slice(0, 6);
+                            
+                            $.each(galleryItems, function(index, galeri) {
+                                var images = typeof galeri.foto_kegiatan === 'string' ? JSON.parse(galeri.foto_kegiatan) : galeri.foto_kegiatan;
+                                var firstImage = Array.isArray(images) && images.length > 0 ? images[0] : null;
+                                
+                                if (firstImage) {
+                                    var galleryHtml = `
+                                        <div class="gallery-item animate-on-scroll scale-in delay-${(index + 1) * 100}" data-aos="zoom-in">
+                                            <img src="${firstImage}" alt="${galeri.nama_kegiatan || 'Galeri'}" />
+                                            <div class="gallery-overlay">
+                                                <div class="gallery-icon">
+                                                    <i class="mdi mdi-magnify-plus-outline"></i>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                                    galleryContainer.append(galleryHtml);
+                                }
+                            });
+                        } else {
+                            galleryContainer.html(`
+                                <div class="col-12 text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="mdi mdi-image-off" style="font-size: 3rem;"></i>
+                                        <p class="mt-3">Belum ada galeri yang tersedia</p>
+                                    </div>
+                                </div>
+                            `);
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error loading gallery:', error);
+                        $('#gallery-container').html(`
+                            <div class="col-12 text-center py-5">
+                                <div class="text-danger">
+                                    <i class="mdi mdi-alert-circle-outline" style="font-size: 3rem;"></i>
+                                    <p class="mt-3">Gagal memuat galeri</p>
+                                </div>
+                            </div>
+                        `);
                 });
             }
         });

@@ -32,6 +32,7 @@ Route::post('putusanpengadilan-tu-negara/publicfetch', 'API\PutusanController@pu
 Route::post('artikel/publicfetch', 'API\ArtikelController@publicfetch')->name('api.artikel.publicfetch');
 Route::get('skm', 'API\SkmController@publicfetch')->name('api.skm.publicfetch');
 Route::post('skm', 'API\SkmController@store')->name('api.skm');
+Route::get('galeri', 'API\GaleriController@publicfetch')->name('api.galeri.publicfetch');
 // Route pembersihan cover buku
 Route::get('buku/clean-covers', 'API\BukuController@cleanCoverPaths')->name('buku.clean-covers');
 

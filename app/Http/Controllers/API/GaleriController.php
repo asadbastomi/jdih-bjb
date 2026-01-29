@@ -12,6 +12,24 @@ use Illuminate\Support\Facades\Validator;
 
 class GaleriController extends BaseController
 {
+    public function publicfetch(Request $request)
+    {
+        $item = $request->input('per_page', 10);
+        $search = $request->input('search', '');
+        
+        $dataset = Galeri::select('*');
+        
+        if ($search != "") {
+            $dataset->where(function ($query) use ($search) {
+                $query->where('nama_kegiatan', 'like', '%' . $search . '%');
+            });
+        }
+        
+        $data['data'] = $dataset->orderBy('created_at', 'desc')->paginate($item);
+        
+        return $this->sendResponse($data['data'], 'Gallery data retrieved successfully');
+    }
+
     public function fetch(Request $request)
     {
         $item = 10;
