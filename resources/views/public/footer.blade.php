@@ -206,4 +206,8 @@
         <div style="position: absolute; bottom: -30%; left: -5%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
     </div>
 </footer>
+
+<!-- Chat Widget -->
+@include('public.chat-widget')
+
 <!-- footer end -->

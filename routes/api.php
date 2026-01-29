@@ -35,6 +35,10 @@ Route::post('skm', 'API\SkmController@store')->name('api.skm');
 // Route pembersihan cover buku
 Route::get('buku/clean-covers', 'API\BukuController@cleanCoverPaths')->name('buku.clean-covers');
 
+// Chat AI Routes
+Route::post('chat/message', 'API\ChatController@ask')->name('api.chat.message');
+Route::get('chat/examples', 'API\ChatController@getExamples')->name('api.chat.examples');
+
 // Tema Dokumen Routes
 Route::get('tema-dokumen', 'API\TemaDokumenController@index')->name('api.tema-dokumen.index');
 Route::get('tema-dokumen/{id}', 'API\TemaDokumenController@show')->name('api.tema-dokumen.show');
