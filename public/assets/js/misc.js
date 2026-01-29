@@ -159,6 +159,13 @@ function getData(url, option = null) {
                         el = $('#' + actSuccess.modal + ' form#' + actSuccess.form + ' #' + val);
                         console.log('#' + actSuccess.modal + ' form#' + actSuccess.form + ' #' + val);
                         console.log(el);
+                        
+                        // Check if element exists before accessing its tagName
+                        if (el.length === 0) {
+                            console.warn('Element not found: #' + val);
+                            return; // Skip this element
+                        }
+                        
                         element = el.prop("tagName").toLowerCase();
                         if (element == 'input') {
                             tipe = el.attr('type');
