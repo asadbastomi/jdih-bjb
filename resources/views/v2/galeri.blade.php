@@ -29,7 +29,7 @@
             </div> --}}
 
             <div class="relative w-full flex items-end justify-start text-left bg-cover bg-center hover:cursor-pointer hover:shadow transition-all duration-300"
-                style="height: 450px; background-image:url({{ asset('storage' . $galeri->foto_kegiatan[0]) }});"
+                style="height: 450px; background-image:url({{ isset($galeri->foto_kegiatan) && is_array($galeri->foto_kegiatan) && count($galeri->foto_kegiatan) > 0 ? asset('storage' . $galeri->foto_kegiatan[0]) : asset('assets/images/placeholder.jpg') }});"
                 onclick="document.getElementById('dialog-{{$galeri->nama_kegiatan}}').showModal()">
                 <div class="absolute top-0 mt-20 right-0 bottom-0 left-0 bg-gradient-to-b from-transparent to-gray-900">
                 </div>
@@ -59,11 +59,17 @@
 
                     <section class="overflow-y-auto scrollbar">
                         <div class="space-y-4 grid grid-cols-1 md:!grid-cols-2 gap-4 p-4">
-                            @foreach ($galeri->foto_kegiatan as $foto)
-                                <div class="h-auto shadow">
-                                    <img src="{{ asset('storage' . $foto) }}" alt="" loading="lazy" class="w-full h-full">
+                            @if(isset($galeri->foto_kegiatan) && is_array($galeri->foto_kegiatan))
+                                @foreach ($galeri->foto_kegiatan as $foto)
+                                    <div class="h-auto shadow">
+                                        <img src="{{ asset('storage' . $foto) }}" alt="{{ $galeri->nama_kegiatan }}" loading="lazy" class="w-full h-full">
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="col-span-2 text-center text-muted-foreground">
+                                    <p>Tidak ada foto tersedia</p>
                                 </div>
-                            @endforeach
+                            @endif
                         </div>
                     </section>
 

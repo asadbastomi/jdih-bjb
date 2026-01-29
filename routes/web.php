@@ -53,6 +53,8 @@ Route::get('/perwal', 'PublicController@perwal')->name('perwal');
 Route::get('/perwal/{id}/{slug}', 'PublicController@perwal')->name('perwal.detail');
 
 Route::get('/keputusan-wali-kota', 'PublicController@kepWalikota')->name('keputusan-wali-kota');
+Route::get('/kelurahan-sadar-hukum', 'PublicController@kelurahanSadarHukum')->name('kelurahan-sadar-hukum');
+Route::get('/kelurahan-sadar-hukum/{id}', 'PublicController@kelurahanSadarHukumDetail')->name('kelurahan-sadar-hukum.detail');
 Route::view('/404', 'pages.404-two')->name('404');
 Route::post('/bye', 'Auth\LogoutController@bye')->name('logout.bye');
 Route::get('lang/{language}', 'LocalizationController@switch')->name('localization.switch');
@@ -128,6 +130,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('/relaas-v2', 'RelaasV2Controller')->only(['index']);
         // SOP
         Route::resource('/sop', 'SopController')->only(['index']);
+        
+        // Kelurahan Sadar Hukum
+        Route::resource('/kelurahan-sadar-hukum', 'KelurahanSadarHukumController')->only(['index']);
         
         // Dashboard catch-all routes (only within /dashboard)
         Route::get('{first}/{second}/{third}', '\App\Http\Controllers\RoutingController@thirdLevel')->name('dashboard.catchall.third');

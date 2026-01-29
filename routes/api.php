@@ -33,6 +33,14 @@ Route::post('artikel/publicfetch', 'API\ArtikelController@publicfetch')->name('a
 Route::get('skm', 'API\SkmController@publicfetch')->name('api.skm.publicfetch');
 Route::post('skm', 'API\SkmController@store')->name('api.skm');
 Route::get('galeri', 'API\GaleriController@publicfetch')->name('api.galeri.publicfetch');
+
+// Kelurahan Sadar Hukum - Public Routes
+Route::get('kelurahan-sadar-hukum', 'API\KelurahanSadarHukumController@index')->name('api.kelurahan-sadar-hukum.index');
+Route::get('kelurahan-sadar-hukum/map', 'API\KelurahanSadarHukumController@getMapData')->name('api.kelurahan-sadar-hukum.map');
+Route::get('kelurahan-sadar-hukum/{id}', 'API\KelurahanSadarHukumController@show')->name('api.kelurahan-sadar-hukum.show');
+Route::get('kelurahan-sadar-hukum/{id}/agenda', 'API\KelurahanSadarHukumController@getAgenda')->name('api.kelurahan-sadar-hukum.agenda');
+Route::get('kelurahan-sadar-hukum/{id}/infografis', 'API\KelurahanSadarHukumController@getInfografis')->name('api.kelurahan-sadar-hukum.infografis');
+
 // Route pembersihan cover buku
 Route::get('buku/clean-covers', 'API\BukuController@cleanCoverPaths')->name('buku.clean-covers');
 
@@ -149,6 +157,12 @@ Route::middleware('auth.api.or.web')->group(function () {
         // SOP
         Route::post('sop/fetch', 'API\SopController@fetch')->name('sop.fetch');
         Route::resource('sop', 'API\SopController')->only(['store', 'edit', 'update', 'destroy']);
+
+        // Kelurahan Sadar Hukum - Admin Routes
+        Route::post('kelurahan-sadar-hukum/fetch', 'API\KelurahanSadarHukumController@fetch')->name('kelurahan-sadar-hukum.fetch');
+        Route::post('kelurahan-sadar-hukum/upload-infografis', 'API\KelurahanSadarHukumController@uploadInfografis')->name('kelurahan-sadar-hukum.upload-infografis');
+        Route::delete('kelurahan-sadar-hukum/infografis/{id}', 'API\KelurahanSadarHukumController@deleteInfografis')->name('kelurahan-sadar-hukum.delete-infografis');
+        Route::resource('kelurahan-sadar-hukum', 'API\KelurahanSadarHukumController')->only(['store', 'edit', 'update', 'destroy']);
     });
 });
 Route::middleware('auth:api')->get('/user', function (Request $request) {

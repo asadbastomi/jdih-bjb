@@ -4232,6 +4232,7 @@ setlocale(LC_TIME, 'id_ID');
                                 </div>
                             </div>
                         `);
+                    }
                 });
             }
         });
