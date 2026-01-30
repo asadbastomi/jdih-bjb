@@ -71,7 +71,13 @@
                     </div>
                     <div class="modal-body p-4">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Tipe Dokumen <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control send" id="tipe_dokumen" placeholder="Contoh: Monografi Hukum" value="Monografi Hukum" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Judul <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="judul" placeholder="Judul buku" required>
@@ -457,19 +463,19 @@
                     });
 
                     // Isi form dengan data
-                    option = {
-                        'success' : {
-                            'request' : 'appliedtoform',
-                            'modal' : 'modalform',
-                            'form' : '{{ $form }}',
-                            'field' : [
-                                'judul', 'penerbit', 'tahun_terbit', 'keterangan', 'cetakan_edisi', 'jumlah', 'teu_orang_badan',
-                                'nomor_panggil', 'cetakan_edisi', 'tempat_terbit', 'deskripsi_fisik',
-                                'pengarang', 'subjek', 'isbn_issn', 'bahasa', 'bidang_hukum', 'nomor_induk_buku',
-                                'lokasi', 'kategori_id'
-                            ]
-                        }
-                    }
+                            option = {
+                                'success' : {
+                                    'request' : 'appliedtoform',
+                                    'modal' : 'modalform',
+                                    'form' : '{{ $form }}',
+                                    'field' : [
+                                        'tipe_dokumen', 'judul', 'penerbit', 'tahun_terbit', 'keterangan', 'cetakan_edisi', 'jumlah', 'teu_orang_badan',
+                                        'nomor_panggil', 'cetakan_edisi', 'tempat_terbit', 'deskripsi_fisik',
+                                        'pengarang', 'subjek', 'isbn_issn', 'bahasa', 'bidang_hukum', 'nomor_induk_buku',
+                                        'lokasi', 'kategori_id'
+                                    ]
+                                }
+                            }
                     getData('{{ url('api') }}/{{ $module }}/'+rowid+'/edit', option);
 
                     // Set kategori yang dipilih setelah form diisi

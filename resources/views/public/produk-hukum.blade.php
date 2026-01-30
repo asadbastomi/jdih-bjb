@@ -65,7 +65,7 @@ setlocale(LC_TIME, 'id_ID');
                                 <tr>
                                     <td style="font-size: 18px;font-weight: 600;border-top: 0px">
                                         <small class="m-0">Tipe Dokumen</small>
-                                        <h4 class="m-0">{{ $data->kategori->tipeDokumen->nama }}</h4>
+                                        <h4 class="m-0">{{ $data->tipe_dokumen ?? $data->kategori->tipeDokumen->nama }}</h4>
                                     </td>
                                 </tr>
                                 @if (array_key_exists($data->id, $regubahcabut))

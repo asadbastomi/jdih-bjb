@@ -5,6 +5,7 @@
                 <th class="toogle" data-sort-ignore="true"></th>
                 <th class="fix" data-sort-ignore="true"> No </th>
                 <th data-sort-ignore="true"> Cover </th>
+                <th data-hide="phone"> Tipe Dokumen </th>
                 <th> Judul </th>
                 <th data-hide="phone"> Pengarang </th>
                 <th data-hide="phone"> Penerbit </th>
@@ -35,6 +36,7 @@
                                 <span class="badge badge-light-secondary">No Cover</span>
                             @endif
                         </td>
+                        <td>{{ $b->tipe_dokumen ?? '-' }}</td>
                         <td>{{ $b->judul }}</td>
                         <td>{{ $b->teu_orang_badan }}</td>
                         <td>{{ $b->penerbit }}</td>
@@ -60,13 +62,13 @@
             @else
                 <tr class="empty">
                     <td></td>
-                    <td colspan="18">Data is empty</td>
+                    <td colspan="19">Data is empty</td>
                 </tr>
             @endif
         </tbody>
         <tfoot>
             <tr class="active">
-                <td colspan="18">
+                <td colspan="19">
                     <div class="text-right">
                         @include('layouts.shared.paginate', ['paginator' => $buku])
                     </div>
