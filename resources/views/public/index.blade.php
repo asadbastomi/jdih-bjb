@@ -2830,6 +2830,103 @@ setlocale(LC_TIME, 'id_ID');
             </div>
             
             <div class="accessibility-content">
+                <!-- Font Size -->
+                <div class="accessibility-group">
+                    <label>Ukuran Font</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access btn-access-sm" data-action="font-size-decrease" aria-label="Perkecil font">
+                            <i class="mdi mdi-minus"></i>
+                        </button>
+                        <span class="font-size-display" id="fontSizeDisplay">100%</span>
+                        <button class="btn-access btn-access-sm" data-action="font-size-increase" aria-label="Perbesar font">
+                            <i class="mdi mdi-plus"></i>
+                        </button>
+                        <button class="btn-access btn-access-sm" data-action="font-size-reset" aria-label="Reset ukuran font">
+                            <i class="mdi mdi-undo"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contrast -->
+                <div class="accessibility-group">
+                    <label>Kontras</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="contrast-normal" aria-label="Kontras normal">
+                            <i class="mdi mdi-circle"></i> Normal
+                        </button>
+                        <button class="btn-access" data-action="contrast-high" aria-label="Kontras tinggi">
+                            <i class="mdi mdi-circle-outline"></i> Tinggi
+                        </button>
+                        <button class="btn-access" data-action="contrast-dark" aria-label="Mode gelap">
+                            <i class="mdi mdi-weather-night"></i> Gelap
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Saturation -->
+                <div class="accessibility-group">
+                    <label>Saturasi</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="saturation-color" aria-label="Warna penuh">
+                            <i class="mdi mdi-palette"></i> Warna
+                        </button>
+                        <button class="btn-access" data-action="saturation-grayscale" aria-label="Skala abu-abu">
+                            <i class="mdi mdi-format-color-reset"></i> Abu-abu
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Text Position -->
+                <div class="accessibility-group">
+                    <label>Posisi Teks</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="text-left" aria-label="Rata kiri">
+                            <i class="mdi mdi-format-align-left"></i>
+                        </button>
+                        <button class="btn-access" data-action="text-center" aria-label="Rata tengah">
+                            <i class="mdi mdi-format-align-center"></i>
+                        </button>
+                        <button class="btn-access" data-action="text-justify" aria-label="Rata kanan-kiri">
+                            <i class="mdi mdi-format-align-justify"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Font Style -->
+                <div class="accessibility-group">
+                    <label>Font Mudah Dibaca</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="font-default" aria-label="Font default">
+                            <i class="mdi mdi-format-text"></i> Default
+                        </button>
+                        <button class="btn-access" data-action="font-readable" aria-label="Font mudah dibaca">
+                            <i class="mdi mdi-text"></i> Sans-serif
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Highlight Headings -->
+                <div class="accessibility-group">
+                    <label>Sorotan Judul</label>
+                    <div class="accessibility-controls">
+                        <label class="accessibility-checkbox">
+                            <input type="checkbox" id="highlightHeadings">
+                            <span>Sorot Judul</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Highlight Links -->
+                <div class="accessibility-group">
+                    <label>Sorotan Tautan</label>
+                    <div class="accessibility-controls">
+                        <label class="accessibility-checkbox">
+                            <input type="checkbox" id="highlightLinks">
+                            <span>Sorot Tautan</span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Text to Speech -->
                 <div class="accessibility-group">
                     <label>Teks ke Suara</label>
@@ -2851,6 +2948,16 @@ setlocale(LC_TIME, 'id_ID');
                             <input type="checkbox" id="stopAnimations">
                             <span>Hentikan Animasi</span>
                         </label>
+                    </div>
+                </div>
+
+                <!-- Reset All -->
+                <div class="accessibility-group">
+                    <label>Reset</label>
+                    <div class="accessibility-controls">
+                        <button class="btn-access" data-action="reset-all" aria-label="Reset semua pengaturan aksesibilitas">
+                            <i class="mdi mdi-restore"></i> Reset Semua
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3362,6 +3469,149 @@ setlocale(LC_TIME, 'id_ID');
             });
         }
 
+        // Font Size Controls
+        var fontSizeDisplay = document.getElementById('fontSizeDisplay');
+        
+        function updateFontSizeDisplay() {
+            if (fontSizeDisplay) {
+                fontSizeDisplay.textContent = state.fontSize + '%';
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            var action = e.target.closest('[data-action]');
+            if (!action) return;
+
+            switch(action.dataset.action) {
+                case 'font-size-decrease':
+                    if (state.fontSize > 80) {
+                        state.fontSize -= 10;
+                        body.style.fontSize = state.fontSize + '%';
+                        updateFontSizeDisplay();
+                    }
+                    break;
+
+                case 'font-size-increase':
+                    if (state.fontSize < 150) {
+                        state.fontSize += 10;
+                        body.style.fontSize = state.fontSize + '%';
+                        updateFontSizeDisplay();
+                    }
+                    break;
+
+                case 'font-size-reset':
+                    state.fontSize = 100;
+                    body.style.fontSize = '100%';
+                    updateFontSizeDisplay();
+                    break;
+
+                case 'contrast-normal':
+                    body.style.filter = '';
+                    body.style.backgroundColor = '';
+                    body.style.color = '';
+                    state.contrast = 'normal';
+                    break;
+
+                case 'contrast-high':
+                    body.style.filter = 'contrast(1.5) brightness(1.1)';
+                    body.style.backgroundColor = '#ffffff';
+                    body.style.color = '#000000';
+                    state.contrast = 'high';
+                    break;
+
+                case 'contrast-dark':
+                    body.style.filter = 'invert(0.9) hue-rotate(180deg)';
+                    body.style.backgroundColor = '#1a1a1a';
+                    body.style.color = '#ffffff';
+                    state.contrast = 'dark';
+                    break;
+
+                case 'saturation-color':
+                    body.style.filter = body.style.filter.replace('grayscale(100%)', '').replace('saturate(0%)', '');
+                    break;
+
+                case 'saturation-grayscale':
+                    body.style.filter = 'grayscale(100%)';
+                    break;
+
+                case 'text-left':
+                    body.style.textAlign = 'left';
+                    break;
+
+                case 'text-center':
+                    body.style.textAlign = 'center';
+                    break;
+
+                case 'text-justify':
+                    body.style.textAlign = 'justify';
+                    break;
+
+                case 'font-default':
+                    body.style.fontFamily = '';
+                    state.font = 'default';
+                    break;
+
+                case 'font-readable':
+                    body.style.fontFamily = 'Arial, Helvetica, sans-serif';
+                    state.font = 'readable';
+                    break;
+
+                case 'reset-all':
+                    resetAllAccessibility();
+                    break;
+            }
+        });
+
+        // Highlight Headings
+        var highlightHeadingsCheckbox = document.getElementById('highlightHeadings');
+        
+        if (highlightHeadingsCheckbox) {
+            highlightHeadingsCheckbox.addEventListener('change', function() {
+                state.highlightHeadings = this.checked;
+                var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                
+                headings.forEach(function(heading) {
+                    if (state.highlightHeadings) {
+                        heading.style.backgroundColor = '#fffacd';
+                        heading.style.padding = '8px';
+                        heading.style.borderLeft = '4px solid #6366f1';
+                        heading.style.borderRadius = '4px';
+                    } else {
+                        heading.style.backgroundColor = '';
+                        heading.style.padding = '';
+                        heading.style.borderLeft = '';
+                        heading.style.borderRadius = '';
+                    }
+                });
+            });
+        }
+
+        // Highlight Links
+        var highlightLinksCheckbox = document.getElementById('highlightLinks');
+        
+        if (highlightLinksCheckbox) {
+            highlightLinksCheckbox.addEventListener('change', function() {
+                state.highlightLinks = this.checked;
+                var links = document.querySelectorAll('a');
+                
+                links.forEach(function(link) {
+                    if (state.highlightLinks) {
+                        link.style.backgroundColor = '#ffeb3b';
+                        link.style.color = '#000';
+                        link.style.padding = '2px 4px';
+                        link.style.borderRadius = '3px';
+                        link.style.textDecoration = 'underline';
+                    } else {
+                        link.style.backgroundColor = '';
+                        link.style.color = '';
+                        link.style.padding = '';
+                        link.style.borderRadius = '';
+                        link.style.textDecoration = '';
+                    }
+                });
+            });
+        }
+
         // Stop Animations
         var stopAnimationsCheckbox = document.getElementById('stopAnimations');
         
@@ -3376,10 +3626,83 @@ setlocale(LC_TIME, 'id_ID');
             });
         }
 
+        // Reset All Function
+        function resetAllAccessibility() {
+            // Reset font size
+            state.fontSize = 100;
+            body.style.fontSize = '100%';
+            updateFontSizeDisplay();
+
+            // Reset contrast
+            body.style.filter = '';
+            body.style.backgroundColor = '';
+            body.style.color = '';
+            state.contrast = 'normal';
+
+            // Reset text alignment
+            body.style.textAlign = '';
+
+            // Reset font
+            body.style.fontFamily = '';
+            state.font = 'default';
+
+            // Reset headings highlight
+            state.highlightHeadings = false;
+            if (highlightHeadingsCheckbox) {
+                highlightHeadingsCheckbox.checked = false;
+            }
+            var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            headings.forEach(function(heading) {
+                heading.style.backgroundColor = '';
+                heading.style.padding = '';
+                heading.style.borderLeft = '';
+                heading.style.borderRadius = '';
+            });
+
+            // Reset links highlight
+            state.highlightLinks = false;
+            if (highlightLinksCheckbox) {
+                highlightLinksCheckbox.checked = false;
+            }
+            var links = document.querySelectorAll('a');
+            links.forEach(function(link) {
+                link.style.backgroundColor = '';
+                link.style.color = '';
+                link.style.padding = '';
+                link.style.borderRadius = '';
+                link.style.textDecoration = '';
+            });
+
+            // Reset animations
+            state.stopAnimations = false;
+            if (stopAnimationsCheckbox) {
+                stopAnimationsCheckbox.checked = false;
+            }
+            body.classList.remove('accessibility-stop-animations');
+
+            // Stop TTS
+            synthesis.cancel();
+            state.ttsEnabled = false;
+            var ttsToggleBtn = document.getElementById('ttsToggle');
+            if (ttsToggleBtn) {
+                ttsToggleBtn.querySelector('span').textContent = 'Mulai';
+                ttsToggleBtn.classList.remove('active');
+            }
+
+            console.log('All accessibility settings reset');
+        }
+
         // Initialize
         if (stopAnimationsCheckbox) {
             stopAnimationsCheckbox.checked = false;
         }
+        if (highlightHeadingsCheckbox) {
+            highlightHeadingsCheckbox.checked = false;
+        }
+        if (highlightLinksCheckbox) {
+            highlightLinksCheckbox.checked = false;
+        }
+        updateFontSizeDisplay();
         
         console.log('Accessibility widget initialized successfully');
     });
