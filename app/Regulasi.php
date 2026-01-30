@@ -29,6 +29,7 @@ class Regulasi extends Model
         "judul",
         "judul_lengkap",
         "jenis_peraturan",
+        "tipe_dokumen",
         "penandatangan",
         "tanggal_penetapan",
         "tanggal_diundangkan",

@@ -208,6 +208,9 @@ class PerwalController extends BaseController
         if ($request->jenis_peraturan) {
             $table->jenis_peraturan = $request->jenis_peraturan;
         }
+        if ($request->tipe_dokumen) {
+            $table->tipe_dokumen = $request->tipe_dokumen;
+        }
         if ($request->urusan_pemerintahan) {
             $table->urusan_pemerintahan = $request->urusan_pemerintahan;
         }
@@ -355,6 +358,9 @@ class PerwalController extends BaseController
         }
         if ($request->jenis_peraturan) {
             $table->jenis_peraturan = $request->jenis_peraturan;
+        }
+        if ($request->tipe_dokumen) {
+            $table->tipe_dokumen = $request->tipe_dokumen;
         }
         if ($request->urusan_pemerintahan) {
             $table->urusan_pemerintahan = $request->urusan_pemerintahan;

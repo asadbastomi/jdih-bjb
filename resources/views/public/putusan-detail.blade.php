@@ -71,66 +71,95 @@
                             <table class="table table-bordered table-striped">
                                 <tbody>
                                     <tr>
-                                        <th width="200">Nomor</th>
-                                        <td>{{ $data->nomor ?? '-' }}</td>
+                                        <th width="200">Judul</th>
+                                        <td>{{ $data->judul ?? '-' }}</td>
                                     </tr>
                                     
                                     <tr>
-                                        <th>Kategori</th>
-                                        <td>{{ $data->kategori->nama ?? '-' }}</td>
+                                        <th>T.E.U. Badan</th>
+                                        <td>{{ $data->tingkat_peradilan ?? '-' }}</td>
                                     </tr>
                                     
                                     <tr>
-                                        <th>Tanggal</th>
+                                        <th>Nomor Putusan</th>
+                                        <td>{{ $data->nomor_putusan ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Jenis Peradilan</th>
+                                        <td>{{ $data->pengadilan ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Tipe Dokumen</th>
+                                        <td>{{ $data->tipe_dokumen ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Tempat Peradilan</th>
+                                        <td>{{ $data->tempat_sidang ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Tanggal Dibacakan</th>
                                         <td>{{ $data->tanggal_putusan ? strftime('%d %B %Y', strtotime($data->tanggal_putusan)) : '-' }}</td>
                                     </tr>
                                     
-                                    @if($data->jenis)
+                                    <tr>
+                                        <th>Sumber</th>
+                                        <td>{{ $data->sumber ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Subjek</th>
+                                        <td>{{ $data->subjek ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Status Putusan</th>
+                                        <td>{{ $data->status_hukum ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Bahasa</th>
+                                        <td>{{ $data->bahasa ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Bidang Hukum/Jenis Perkara</th>
+                                        <td>{{ $data->bidang_hukum ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Lokasi</th>
+                                        <td>{{ $data->wilayah_yurisdiksi ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    @if($data->para_pihak)
                                         <tr>
-                                            <th>Jenis</th>
-                                            <td>{{ $data->jenis }}</td>
+                                            <th>Para Pihak</th>
+                                            <td>{{ $data->para_pihak }}</td>
                                         </tr>
                                     @endif
                                     
-                                    @if($data->tergugat)
+                                    @if($data->majelis_hakim)
                                         <tr>
-                                            <th>Tergugat</th>
-                                            <td>{{ $data->tergugat }}</td>
+                                            <th>Majelis Hakim</th>
+                                            <td>{{ $data->majelis_hakim }}</td>
                                         </tr>
                                     @endif
                                     
-                                    @if($data->penggugat)
+                                    @if($data->amar_putusan)
                                         <tr>
-                                            <th>Penggugat</th>
-                                            <td>{{ $data->penggugat }}</td>
+                                            <th>Amar Putusan</th>
+                                            <td>{{ $data->amar_putusan }}</td>
                                         </tr>
                                     @endif
                                     
-                                    @if($data->amar)
+                                    @if($data->ringkasan_putusan)
                                         <tr>
-                                            <th>Amar</th>
-                                            <td>{{ $data->amar }}</td>
-                                        </tr>
-                                    @endif
-                                    
-                                    @if($data->pendahuluan)
-                                        <tr>
-                                            <th>Pendahuluan</th>
-                                            <td>{{ $data->pendahuluan }}</td>
-                                        </tr>
-                                    @endif
-                                    
-                                    @if($data->pokok_sengketa)
-                                        <tr>
-                                            <th>Pokok Sengketa</th>
-                                            <td>{{ $data->pokok_sengketa }}</td>
-                                        </tr>
-                                    @endif
-                                    
-                                    @if($data->pertimbangan)
-                                        <tr>
-                                            <th>Pertimbangan</th>
-                                            <td>{{ $data->pertimbangan }}</td>
+                                            <th>Ringkasan Putusan</th>
+                                            <td>{{ $data->ringkasan_putusan }}</td>
                                         </tr>
                                     @endif
                                     
@@ -141,10 +170,10 @@
                                         </tr>
                                     @endif
                                     
-                                    @if($data->putusan_hukum)
+                                    @if($data->pertimbangan_hukum)
                                         <tr>
-                                            <th>Putusan Hukum</th>
-                                            <td>{{ $data->putusan_hukum }}</td>
+                                            <th>Pertimbangan Hukum</th>
+                                            <td>{{ $data->pertimbangan_hukum }}</td>
                                         </tr>
                                     @endif
                                 </tbody>

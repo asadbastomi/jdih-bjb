@@ -72,7 +72,13 @@
                     </div>
                     <div class="modal-body p-4">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label">Tipe Dokumen</label>
+                                    <input type="text" class="form-control send" id="tipe_dokumen" placeholder="Contoh: Peraturan Walikota" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">Nomor Peraturan</label>
                                     <input type="text" class="form-control send" id="nomor_peraturan" placeholder="contoh: 5" required>
@@ -84,13 +90,7 @@
                                     <input type="text" class="form-control send" id="tahun" placeholder="contoh: 2023" autocomplete="off" required>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Jenis Peraturan <small>(optional)</small></label>
-                                    <input type="text" class="form-control send" id="jenis_peraturan" placeholder="" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Status Peraturan</label>
                                     <select class="form-control send" id="status_peraturan" required>

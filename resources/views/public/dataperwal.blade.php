@@ -9,6 +9,7 @@ setlocale(LC_TIME, 'id_ID');
                 <th class="fix" data-sort-ignore="true"> No </th>
                 <th data-hide="phone" width="110"> Status </th>
                 <th> Judul </th>
+                <th data-hide="phone" width="150"> Tipe Dokumen </th>
                 <th data-hide="phone" width="166"> Tgl diundangkan </th>
             </tr>
         </thead>
@@ -83,8 +84,8 @@ setlocale(LC_TIME, 'id_ID');
                                 @endforeach
                             @endif
                         </td>
-                        <td>{{ $row->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($row->tanggal_diundangkan)) : '' }}
-                        </td>
+                        <td>{{ $row->tipe_dokumen ?? '-' }}</td>
+                        <td>{{ $row->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($row->tanggal_diundangkan)) : '' }}</td>
                     </tr>
                 @endforeach
             @else

@@ -12,6 +12,7 @@ class Putusan extends Model
         'judul',
         'nomor_putusan',
         'jenis_putusan',
+        'tipe_dokumen',
         'pengadilan',
         'tingkat_peradilan',
         'tempat_sidang',
