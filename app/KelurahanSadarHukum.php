@@ -16,7 +16,6 @@ class KelurahanSadarHukum extends Model
         'nama_kecamatan',
         'kota',
         'alamat',
-        'agenda',
     ];
 
     protected $fillable = [
@@ -130,11 +129,4 @@ class KelurahanSadarHukum extends Model
         return $this->kelurahan ? $this->kelurahan->alamat : null;
     }
 
-    /**
-     * Get agenda attribute (alias for agendas)
-     */
-    public function getAgendaAttribute()
-    {
-        return $this->agendas;
-    }
 }

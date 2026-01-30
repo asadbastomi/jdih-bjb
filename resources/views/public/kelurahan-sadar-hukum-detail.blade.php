@@ -34,7 +34,7 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Kecamatan</strong></td>
-                                    <td>: {{ $data->kecamatan }}</td>
+                                    <td>: {{ $data->nama_kecamatan }}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Kota</strong></td>
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     L.marker([lat, lng], { icon: markerIcon })
         .addTo(detailMap)
-        .bindPopup(`<strong>{{ $data->nama_kelurahan }}</strong><br>{{ $data->kecamatan }}`)
+        .bindPopup(`<strong>{{ $data->nama_kelurahan }}</strong><br>{{ $data->nama_kecamatan }}`)
         .openPopup();
 });
 @endif

@@ -922,7 +922,7 @@ class PublicController extends Controller
         
         // Fetch kelurahan data dengan relasi
         $this->data['data'] = \App\KelurahanSadarHukum::with([
-            'agenda' => function($q) {
+            'agendas' => function($q) {
                 $q->active()->orderBy('tanggal', 'desc');
             },
             'infografis' => function($q) {

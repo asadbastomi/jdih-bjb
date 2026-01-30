@@ -76,7 +76,7 @@ class KelurahanSadarHukumController extends Controller
 
     public function show($id)
     {
-        $kelurahan = KelurahanSadarHukum::with(['agenda' => function($q) {
+        $kelurahan = KelurahanSadarHukum::with(['agendas' => function($q) {
             $q->active()->orderBy('tanggal', 'desc');
         }, 'infografis' => function($q) {
             $q->active()->ordered();
@@ -94,9 +94,23 @@ class KelurahanSadarHukumController extends Controller
             ->whereNotNull('latitude')
             ->whereNotNull('longitude');
         
-        // Apply search filter
+        // Apply search filter (search by kelurahan name or kecamatan name)
         if ($request->has('search') && !empty($request->search)) {
-            $query->search($request->search);
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('kelurahan', function($subQ) use ($search) {
+                    $subQ->where('nama_kelurahan', 'like', "%{$search}%");
+                })->orWhereHas('kecamatan', function($subQ) use ($search) {
+                    $subQ->where('nama_kecamatan', 'like', "%{$search}%");
+                });
+            });
+        }
+        
+        // Filter by kecamatan
+        if ($request->has('kecamatan') && !empty($request->kecamatan)) {
+            $query->whereHas('kecamatan', function($q) use ($request) {
+                $q->where('nama_kecamatan', $request->kecamatan);
+            });
         }
         
         // Filter by status (using is_active)

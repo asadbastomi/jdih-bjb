@@ -133,7 +133,7 @@ class ChatController extends Controller
         }
 
         if ($validDownloadCount === 0) {
-            $response .= "\n⚠️ Maaf, tidak ada dokumen yang tersedia untuk diunduh saat ini. Silakan hubungi Bagian Hukum Sekretariat Daerah Kota Banjarmasin untuk informasi lebih lanjut.";
+            $response .= "\n⚠️ Maaf, tidak ada dokumen yang tersedia untuk diunduh saat ini. Silakan hubungi Bagian Hukum Sekretariat Daerah Kota Banjarbaru untuk informasi lebih lanjut.";
         } elseif ($results->count() > 5) {
             $response .= "Dan " . ($results->count() - 5) . " hasil lainnya...";
         }
@@ -237,7 +237,7 @@ class ChatController extends Controller
         $results = $this->searchRegulations($keywords);
 
         if (count($results) === 0) {
-            return "Maaf, saya tidak menemukan peraturan dengan kata kunci \"" . implode(' ', $keywords) . "\" di database JDIH Kota Banjarmasin.\n\nTips:\n• Coba gunakan kata kunci yang lebih umum\n• Periksa ejaan kata kunci\n• Gunakan nama topik atau bidang hukum\n• Peraturan mungkin belum tersedia di database";
+            return "Maaf, saya tidak menemukan peraturan dengan kata kunci \"" . implode(' ', $keywords) . "\" di database JDIH Kota Banjarbaru.\n\nTips:\n• Coba gunakan kata kunci yang lebih umum\n• Periksa ejaan kata kunci\n• Gunakan nama topik atau bidang hukum\n• Peraturan mungkin belum tersedia di database";
         }
 
         // Get the first result for detailed response
@@ -268,7 +268,7 @@ class ChatController extends Controller
         $downloadLink = $this->getDownloadLink($reg);
         
         // Build detailed response
-        $response = "Halo! Sebagai asisten AI JDIH Kota Banjarmasin, saya akan bantu memberikan informasi yang akurat mengenai " . ucfirst($kategori) . " yang Anda cari.\n\n";
+        $response = "Halo! Sebagai asisten AI JDIH Kota Banjarbaru, saya akan bantu memberikan informasi yang akurat mengenai " . ucfirst($kategori) . " yang Anda cari.\n\n";
         
         $response .= "Berdasarkan konteks peraturan yang Anda berikan, saya menemukan dokumen yang sangat relevan, yaitu:\n\n";
         
@@ -317,7 +317,7 @@ class ChatController extends Controller
         $response .= "\n\n";
         
         // Relevance section
-        $response .= "<strong>Relevansi:</strong> Dokumen ini secara langsung menjawab pertanyaan Anda karena judulnya sesuai dengan yang Anda cari dan isinya spesifik mengatur mengenai topik yang Anda tanyakan di JDIH Kota Banjarmasin.\n\n";
+        $response .= "<strong>Relevansi:</strong> Dokumen ini secara langsung menjawab pertanyaan Anda karena judulnya sesuai dengan yang Anda cari dan isinya spesifik mengatur mengenai topik yang Anda tanyakan di JDIH Kota Banjarbaru.\n\n";
         
         // Download link
         if ($downloadLink) {
@@ -326,7 +326,7 @@ class ChatController extends Controller
         }
         
         // Contact information
-        $response .= "Untuk informasi lebih lanjut atau jika Anda memerlukan konsultasi hukum gratis mengenai Peraturan ini atau hal lainnya, Anda dapat datang langsung ke Bagian Hukum Sekretariat Daerah Kota Banjarmasin.\n\n";
+        $response .= "Untuk informasi lebih lanjut atau jika Anda memerlukan konsultasi hukum gratis mengenai Peraturan ini atau hal lainnya, Anda dapat datang langsung ke Bagian Hukum Sekretariat Daerah Kota Banjarbaru.\n\n";
         
         // Show additional results if available
         if ($totalResults > 1) {

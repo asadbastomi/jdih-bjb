@@ -34,6 +34,9 @@ Route::get('skm', 'API\SkmController@publicfetch')->name('api.skm.publicfetch');
 Route::post('skm', 'API\SkmController@store')->name('api.skm');
 Route::get('galeri', 'API\GaleriController@publicfetch')->name('api.galeri.publicfetch');
 
+// Kecamatan - Public Routes
+Route::get('kecamatan', 'API\KecamatanController@index')->name('api.kecamatan.index');
+
 // Kelurahan Sadar Hukum - Public Routes
 Route::get('kelurahan-sadar-hukum', 'API\KelurahanSadarHukumController@index')->name('api.kelurahan-sadar-hukum.index');
 Route::get('kelurahan-sadar-hukum/map', 'API\KelurahanSadarHukumController@getMapData')->name('api.kelurahan-sadar-hukum.map');
