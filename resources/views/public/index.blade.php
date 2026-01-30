@@ -2814,8 +2814,8 @@ setlocale(LC_TIME, 'id_ID');
     <a href="#" class="back-to-top" id="back-to-top"> <i class="mdi mdi-chevron-up"> </i> </a>
 
     <!-- Accessibility Widget -->
-    <div id="accessibilityWidget">
-        <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Opsi Aksesibilitas">
+    <div id="accessibilityWidget" style="position: fixed !important; bottom: 0 !important; right: 0 !important; z-index: 2147483647 !important; display: block !important; opacity: 1 !important; visibility: visible !important; pointer-events: none !important;">
+        <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Opsi Aksesibilitas" style="position: fixed !important; bottom: 30px !important; right: 30px !important; width: 70px !important; height: 70px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important; border-radius: 50% !important; border: 4px solid white !important; box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4), 0 4px 15px rgba(139, 92, 246, 0.3) !important; z-index: 2147483648 !important; cursor: pointer !important; pointer-events: auto !important; opacity: 1 !important; visibility: visible !important; margin: 0 !important; padding: 0 !important; left: auto !important; top: auto !important; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important; outline: none !important;">
             <div class="accessibility-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="32" height="32">
                     <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9H15V22H13V16H11V22H9V9H3V7H21V9Z"/>
@@ -2967,26 +2967,53 @@ setlocale(LC_TIME, 'id_ID');
     <style>
         /* Accessibility Widget Styles - Matching Chat Widget Design */
 
+        /* Widget Container */
+        #accessibilityWidget {
+            position: fixed !important;
+            bottom: 0 !important;
+            right: 0 !important;
+            z-index: 2147483647 !important;
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
         /* Floating Button - MATCH CHAT WIDGET STYLE */
         .accessibility-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 30px !important;
+            width: 70px !important;
+            height: 70px !important;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
             box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4),
-                        0 4px 15px rgba(139, 92, 246, 0.3);
-            z-index: 2147483646 !important;
-            cursor: pointer;
-            border: 4px solid white;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
+                        0 4px 15px rgba(139, 92, 246, 0.3) !important;
+            z-index: 2147483648 !important;
+            cursor: pointer !important;
+            border: 4px solid white !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            outline: none !important;
             pointer-events: auto !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: none !important;
+            max-height: none !important;
+            clip: none !important;
+            clip-path: none !important;
+            left: auto !important;
+            top: auto !important;
+            right: 30px !important;
+            bottom: 30px !important;
+            min-width: 70px !important;
+            min-height: 70px !important;
         }
 
         .accessibility-toggle:hover {
@@ -3016,25 +3043,29 @@ setlocale(LC_TIME, 'id_ID');
         /* Accessibility Menu Panel - MATCH CHAT WIDGET HEIGHT */
         .accessibility-panel {
             position: fixed !important;
-            bottom: 110px;
-            right: 30px;
-            width: 400px;
-            max-width: calc(100vw - 80px);
+            bottom: 110px !important;
+            right: 30px !important;
+            width: 400px !important;
+            max-width: calc(100vw - 80px) !important;
             background: white;
             border-radius: 24px;
             box-shadow: 0 30px 100px rgba(0, 0, 0, 0.35),
                         0 15px 40px rgba(0, 0, 0, 0.25);
-            z-index: 2147483645 !important;
+            z-index: 2147483647 !important;
             opacity: 0 !important;
             visibility: hidden !important;
             transform: translateY(30px) scale(0.95) !important;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
             display: flex !important;
             flex-direction: column !important;
             overflow: hidden !important;
             pointer-events: none !important;
             border: 1px solid rgba(99, 102, 241, 0.15);
             max-height: 85vh;
+            left: auto !important;
+            top: auto !important;
         }
 
         .accessibility-panel.active {
@@ -3323,6 +3354,16 @@ setlocale(LC_TIME, 'id_ID');
                 transform: none !important;
             }
         }
+
+        /* Force widget to be visible during page load */
+        body.loading #accessibilityWidget,
+        body.loading #accessibilityWidget *,
+        body.loading .accessibility-toggle {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: none !important;
+        }
     </style>
 
     <script>
@@ -3337,8 +3378,16 @@ setlocale(LC_TIME, 'id_ID');
         // Check if elements exist
         if (!accessibilityToggle || !accessibilityPanel) {
             console.error('Accessibility widget elements not found');
+            console.log('accessibilityToggle:', accessibilityToggle);
+            console.log('accessibilityPanel:', accessibilityPanel);
             return;
         }
+
+        // Ensure panel is properly initialized
+        console.log('Accessibility widget initializing...');
+        console.log('Toggle button found:', !!accessibilityToggle);
+        console.log('Panel found:', !!accessibilityPanel);
+        console.log('Panel classes:', accessibilityPanel.className);
 
         // State
         var state = {
@@ -3705,6 +3754,28 @@ setlocale(LC_TIME, 'id_ID');
         updateFontSizeDisplay();
         
         console.log('Accessibility widget initialized successfully');
+        
+        // Ensure panel starts hidden
+        accessibilityPanel.classList.remove('active');
+        
+        // Force reflow to ensure CSS is applied
+        void accessibilityPanel.offsetWidth;
+        
+        console.log('Panel initial state:', {
+            opacity: getComputedStyle(accessibilityPanel).opacity,
+            visibility: getComputedStyle(accessibilityPanel).visibility,
+            transform: getComputedStyle(accessibilityPanel).transform,
+            hasActiveClass: accessibilityPanel.classList.contains('active')
+        });
+        
+        // Force visibility after page load
+        setTimeout(function() {
+            body.classList.remove('loading');
+            accessibilityToggle.style.display = 'flex';
+            accessibilityToggle.style.opacity = '1';
+            accessibilityToggle.style.visibility = 'visible';
+            console.log('Accessibility widget forced to be visible');
+        }, 100);
     });
     </script>
 
@@ -4201,7 +4272,7 @@ setlocale(LC_TIME, 'id_ID');
                     if (v.jawab == 'Kurang Baik') {
                         kurang_baik = parseFloat(v.jumlah);
                     }
-                    var data = {
+                    var skmData = {
                         series: [sangat_baik, baik, cukup_baik, kurang_baik]
                     };
                     var sum = function(a, b) {
@@ -4215,7 +4286,7 @@ setlocale(LC_TIME, 'id_ID');
                             labelDirection: 'explode',
                             showLabel: true,
                             labelInterpolationFnc: function(value) {
-                                return Math.round(value / data.series.reduce(sum) *
+                                return Math.round(value / skmData.series.reduce(sum) *
                                     100) + '%';
                             }
                         }],
@@ -4225,7 +4296,7 @@ setlocale(LC_TIME, 'id_ID');
                             chartPadding: 20
                         }]
                     ];
-                    new Chartist.Pie('#pie-chart', data, options, responsiveOptions);
+                    new Chartist.Pie('#pie-chart', skmData, options, responsiveOptions);
                 })
             });
 

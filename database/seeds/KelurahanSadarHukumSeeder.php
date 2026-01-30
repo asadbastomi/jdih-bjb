@@ -9,6 +9,19 @@ use Illuminate\Support\Str;
 class KelurahanSadarHukumSeeder extends Seeder
 {
     /**
+     * Generate random coordinates for Banjarbaru area
+     *
+     * @return array
+     */
+    private function randomBanjarbaruCoord()
+    {
+        return [
+            'latitude' => mt_rand(-350000, -338000) / 100000,
+            'longitude' => mt_rand(1147500, 1149200) / 10000,
+        ];
+    }
+
+    /**
      * Run the database seeds.
      *
      * @return void
@@ -20,14 +33,6 @@ class KelurahanSadarHukumSeeder extends Seeder
 
         // Get kelurahan IDs mapping
         $kelurahanIds = DB::table('kelurahans')->pluck('id', 'nama_kelurahan')->toArray();
-
-        function randomBanjarbaruCoord()
-        {
-            return [
-                'latitude' => mt_rand(-350000, -338000) / 100000,
-                'longitude' => mt_rand(1147500, 1149200) / 10000,
-            ];
-        }
         // Kelurahan Sadar Hukum data for Banjarbaru with POSBANKUM
         $kelurahanSadarHukumData = [
             array_merge([
@@ -47,7 +52,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Sungai Besar'],
                 'kecamatan_id' => $kecamatanIds['Banjarbaru Selatan'],
@@ -65,7 +70,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Palam'],
                 'kecamatan_id' => $kecamatanIds['Banjarbaru Utara'],
@@ -83,7 +88,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Sungai Tiung'],
                 'kecamatan_id' => $kecamatanIds['Banjarbaru Utara'],
@@ -101,7 +106,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Cempaka'],
                 'kecamatan_id' => $kecamatanIds['Cempaka'],
@@ -119,7 +124,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Landasan Ulin Tengah'],
                 'kecamatan_id' => $kecamatanIds['Landasan Ulin'],
@@ -137,7 +142,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Landasan Ulin Utara'],
                 'kecamatan_id' => $kecamatanIds['Landasan Ulin'],
@@ -155,7 +160,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Liang Anggang'],
                 'kecamatan_id' => $kecamatanIds['Liang Anggang'],
@@ -173,7 +178,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
             array_merge([
                 'kelurahan_id' => $kelurahanIds['Sungai Lulut'],
                 'kecamatan_id' => $kecamatanIds['Liang Anggang'],
@@ -191,7 +196,7 @@ class KelurahanSadarHukumSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], randomBanjarbaruCoord()),
+            ], $this->randomBanjarbaruCoord()),
         ];
 
         // Insert Kelurahan Sadar Hukum data

@@ -136,24 +136,26 @@
 
     /* Chat Toggle Button */
     .chat-toggle-btn {
-        position: fixed;
-        bottom: 30px;
-        left: 30px;
+        position: fixed !important;
+        bottom: 30px !important;
+        left: 30px !important;
         width: 70px;
         height: 70px;
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
         border-radius: 50%;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4),
                     0 4px 15px rgba(139, 92, 246, 0.3);
-        z-index: 2147483647 !important;
+        z-index: 999999999 !important;
         cursor: pointer;
         border: 4px solid white;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         outline: none;
         pointer-events: auto !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 
     .chat-toggle-btn:hover {
@@ -221,8 +223,8 @@
     /* Chat Window - ENLARGED */
     .chat-window {
         position: fixed !important;
-        bottom: 110px;
-        left: 30px;
+        bottom: 110px !important;
+        left: 30px !important;
         width: 700px;
         max-width: calc(100vw - 80px);
         max-height: 85vh;
@@ -230,7 +232,7 @@
         border-radius: 32px;
         box-shadow: 0 30px 100px rgba(0, 0, 0, 0.35),
                     0 15px 40px rgba(0, 0, 0, 0.25);
-        z-index: 999999999 !important;
+        z-index: 999999998 !important;
         opacity: 0 !important;
         visibility: hidden !important;
         transform: translateY(30px) scale(0.95) !important;
@@ -260,7 +262,7 @@
     body .chat-window:not(.active) {
         opacity: 0 !important;
         visibility: hidden !important;
-        display: none !important;
+        pointer-events: none !important;
     }
 
     /* Chat Header - ENLARGED PADDING */
@@ -850,17 +852,17 @@
     /* Responsive */
     @media (max-width: 768px) {
         .chat-window {
-            bottom: 90px;
+            bottom: 90px !important;
             right: 15px;
-            left: 15px;
+            left: 15px !important;
             width: calc(100vw - 30px);
             max-height: calc(100vh - 130px);
             border-radius: 24px;
         }
 
         .chat-toggle-btn {
-            bottom: 20px;
-            left: 20px;
+            bottom: 20px !important;
+            left: 20px !important;
             width: 60px;
             height: 60px;
         }
