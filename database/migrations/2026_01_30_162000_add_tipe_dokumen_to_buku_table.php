@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('buku', function (Blueprint $table) {
             if (!Schema::hasColumn('buku', 'tipe_dokumen')) {
-                $table->string('tipe_dokumen')->nullable()->default('Monografi Hukum');
+                $table->string('tipe_dokumen')->nullable();
             }
         });
     }
