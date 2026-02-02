@@ -90,8 +90,8 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3">
-                                    @if($data->cover)
-                                        <img src="{{ url($data->cover) }}" alt="{{ $data->judul }}" class="img-fluid rounded mb-3">
+                                    @if($data->cover_url)
+                                        <img src="{{ $data->cover_url }}" alt="{{ $data->judul }}" class="img-fluid rounded mb-3">
                                     @else
                                         <div class="text-center bg-light p-5 rounded mb-3">
                                             <i class="mdi mdi-book-open-page-variant display-4 text-muted"></i>
@@ -249,8 +249,8 @@
 
                                     <!-- Action Buttons -->
                                     <div class="mt-3">
-                                        @if($data->file)
-                                            <a href="{{ url($data->file) }}" 
+                                        @if($data->file_url)
+                                            <a href="{{ $data->file_url }}" 
                                                class="btn btn-primary waves-effect waves-light" 
                                                target="_blank"
                                                onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id ?? 9 }})">

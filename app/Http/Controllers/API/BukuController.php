@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Pagination\Paginator;
 use App\Http\Controllers\API\BaseController as BaseController;
@@ -127,6 +128,8 @@ class BukuController extends BaseController
             'judul' => ['required'],
             'tahun_terbit' => ['required', 'numeric'],
             'jumlah' => ['required', 'numeric'],
+            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
+            'cover' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif'],
         ]);
 
         if ($validator->fails()) {
@@ -153,6 +156,22 @@ class BukuController extends BaseController
         $table->jumlah = $request->jumlah;
         $table->keterangan = $request->keterangan;
         $table->kategori_id = $request->kategori_id ?? 9; // Default to Monografi
+
+        // Handle cover image upload
+        if ($request->hasFile('cover')) {
+            $cover = $request->file('cover');
+            $coverFilename = time() . '_' . $cover->getClientOriginalName();
+            $coverPath = $cover->storeAs('upload/buku/cover', $coverFilename);
+            $table->cover = $coverPath;
+        }
+
+        // Handle file upload (optional)
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileFilename = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('upload/buku/file', $fileFilename);
+            $table->file = $filePath;
+        }
 
         if ($table->save()){
             // Handle tema dokumen relationships
@@ -183,6 +202,8 @@ class BukuController extends BaseController
             'judul' => ['required'],
             'tahun_terbit' => ['required', 'numeric'],
             'jumlah' => ['required', 'numeric'],
+            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
+            'cover' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif'],
         ]);
 
         if ($validator->fails()) {
@@ -209,6 +230,30 @@ class BukuController extends BaseController
         $table->jumlah = $request->jumlah;
         $table->keterangan = $request->keterangan;
         $table->kategori_id = $request->kategori_id ?? 9; // Default to Monografi
+
+        // Handle cover image upload
+        if ($request->hasFile('cover')) {
+            // Delete old cover if exists
+            if ($table->cover) {
+                Storage::delete($table->cover);
+            }
+            $cover = $request->file('cover');
+            $coverFilename = time() . '_' . $cover->getClientOriginalName();
+            $coverPath = $cover->storeAs('upload/buku/cover', $coverFilename);
+            $table->cover = $coverPath;
+        }
+
+        // Handle file upload (optional)
+        if ($request->hasFile('file')) {
+            // Delete old file if exists
+            if ($table->file) {
+                Storage::delete($table->file);
+            }
+            $file = $request->file('file');
+            $fileFilename = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('upload/buku/file', $fileFilename);
+            $table->file = $filePath;
+        }
 
         if ($table->save()){
             // Handle tema dokumen relationships

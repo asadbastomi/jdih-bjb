@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Buku extends Model
 {
@@ -31,6 +32,38 @@ class Buku extends Model
         'cover',
         'file'
     ];
+
+    protected $appends = ['cover_url', 'file_url'];
+
+    public function getCoverUrlAttribute()
+    {
+        if ($this->cover) {
+            // Check if it's already a full URL or has /storage prefix
+            if (strpos($this->cover, 'http') === 0) {
+                return $this->cover;
+            }
+            if (strpos($this->cover, '/storage/') === 0) {
+                return url($this->cover);
+            }
+            return Storage::url($this->cover);
+        }
+        return null;
+    }
+
+    public function getFileUrlAttribute()
+    {
+        if ($this->file) {
+            // Check if it's already a full URL or has /storage prefix
+            if (strpos($this->file, 'http') === 0) {
+                return $this->file;
+            }
+            if (strpos($this->file, '/storage/') === 0) {
+                return url($this->file);
+            }
+            return Storage::url($this->file);
+        }
+        return null;
+    }
 
     public function kategori()
     {

@@ -30,8 +30,8 @@
                         <td class="fix"></td>
                         <td class="fix">{{ $buku->firstItem() + $key }}</td>
                         <td class="text-center">
-                            @if($b->cover)
-                                <img src="{{ url($b->cover) }}" alt="cover" class="img-thumbnail" style="max-width:60px; max-height:80px; object-fit:cover;">
+                            @if($b->cover_url)
+                                <img src="{{ $b->cover_url }}" alt="cover" class="img-thumbnail" style="max-width:60px; max-height:80px; object-fit:cover;">
                             @else
                                 <span class="badge badge-light-secondary">No Cover</span>
                             @endif

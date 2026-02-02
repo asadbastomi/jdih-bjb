@@ -66,8 +66,8 @@ setlocale(LC_TIME, 'id_ID');
                     <div
                         style="border: 1px solid #f3f3f3; border-radius: 5px; box-shadow: 20px 20px 40px -30px #bebebe5e, -20px -20px 60px #ffffff; ">
                         <div class="text-center p-3">
-                            @if($data->cover)
-                                <img src="{{ url($data->cover) }}" alt="Cover Buku" class="img-fluid cover-img">
+                            @if($data->cover_url)
+                                <img src="{{ $data->cover_url }}" alt="Cover Buku" class="img-fluid cover-img">
                             @else
                                 <img src="{{ asset('assets/images/no-cover.png') }}" alt="No Cover" class="img-fluid cover-img">
                             @endif
