@@ -195,6 +195,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Lampiran</label>
+                                    <textarea class="form-control send" id="lampiran" rows="2" placeholder="Informasi lampiran buku"></textarea>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Tambahan Tema Dokumen -->
                         <div class="row">
@@ -472,7 +480,7 @@
                                         'tipe_dokumen', 'judul', 'penerbit', 'tahun_terbit', 'keterangan', 'cetakan_edisi', 'jumlah', 'teu_orang_badan',
                                         'nomor_panggil', 'cetakan_edisi', 'tempat_terbit', 'deskripsi_fisik',
                                         'pengarang', 'subjek', 'isbn_issn', 'bahasa', 'bidang_hukum', 'nomor_induk_buku',
-                                        'lokasi', 'kategori_id'
+                                        'lokasi', 'kategori_id', 'lampiran'
                                     ]
                                 }
                             }
