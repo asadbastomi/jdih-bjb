@@ -93,11 +93,6 @@ setlocale(LC_TIME, 'id_ID');
                                     <td style="border-top: 0px">{{ $data->judul ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="field">Pengarang</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->pengarang ?? '-' }}</td>
-                                </tr>
-                                <tr>
                                     <th scope="row" class="field">Penerbit</th>
                                     <td class="spacer">:</td>
                                     <td>{{ $data->penerbit ?? '-' }}</td>

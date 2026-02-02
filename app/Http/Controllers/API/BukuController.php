@@ -35,7 +35,6 @@ class BukuController extends BaseController
                 $data['buku'] = Buku::with(['kategori', 'temaDokumen'])->where(function ($query) use ($search) {
                     $query->where('judul', 'like', '%'.$search.'%')
                         ->orWhere('teu_orang_badan', 'like', '%'.$search.'%')
-                        ->orWhere('pengarang', 'like', '%'.$search.'%')
                         ->orWhere('penerbit', 'like', '%'.$search.'%')
                         ->orWhere('tahun_terbit', 'like', '%'.$search.'%')
                         ->orWhere('subjek', 'like', '%'.$search.'%')
@@ -51,7 +50,6 @@ class BukuController extends BaseController
                 $data['buku'] = Buku::where(function ($query) use ($search) {
                     $query->where('judul', 'like', '%'.$search.'%')
                         ->orWhere('teu_orang_badan', 'like', '%'.$search.'%')
-                        ->orWhere('pengarang', 'like', '%'.$search.'%')
                         ->orWhere('penerbit', 'like', '%'.$search.'%')
                         ->orWhere('tahun_terbit', 'like', '%'.$search.'%')
                         ->orWhere('subjek', 'like', '%'.$search.'%')
@@ -95,7 +93,6 @@ class BukuController extends BaseController
             $dataset->where(function ($query) use ($search) {
                 $query->where('judul', 'like', '%'.$search.'%')
                     ->orWhere('teu_orang_badan', 'like', '%'.$search.'%')
-                    ->orWhere('pengarang', 'like', '%'.$search.'%')
                     ->orWhere('penerbit', 'like', '%'.$search.'%')
                     ->orWhere('tahun_terbit', 'like', '%'.$search.'%')
                     ->orWhere('subjek', 'like', '%'.$search.'%')
@@ -143,7 +140,6 @@ class BukuController extends BaseController
         $table->nomor_panggil = $request->nomor_panggil;
         $table->cetakan_edisi = $request->cetakan_edisi;
         $table->tempat_terbit = $request->tempat_terbit;
-        $table->pengarang = $request->pengarang;
         $table->penerbit = $request->penerbit;
         $table->tahun_terbit = $request->tahun_terbit;
         $table->deskripsi_fisik = $request->deskripsi_fisik;
@@ -200,7 +196,6 @@ class BukuController extends BaseController
         $table->nomor_panggil = $request->nomor_panggil;
         $table->cetakan_edisi = $request->cetakan_edisi;
         $table->tempat_terbit = $request->tempat_terbit;
-        $table->pengarang = $request->pengarang;
         $table->penerbit = $request->penerbit;
         $table->tahun_terbit = $request->tahun_terbit;
         $table->deskripsi_fisik = $request->deskripsi_fisik;

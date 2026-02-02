@@ -11,11 +11,10 @@ class Buku extends Model
     protected $fillable = [
         'tipe_dokumen',
         'judul',
-        'teu_orang_badan',
         'nomor_panggil',
         'cetakan_edisi',
         'tempat_terbit',
-        'pengarang',
+        'teu_orang_badan',
         'penerbit',
         'tahun_terbit',
         'deskripsi_fisik',

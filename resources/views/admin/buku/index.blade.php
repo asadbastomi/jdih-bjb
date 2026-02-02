@@ -123,12 +123,6 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Pengarang</label>
-                                    <input type="text" class="form-control send" id="pengarang" placeholder="Contoh: Bratakusumah, Deddy Supriadi">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
                                     <label class="control-label">Penerbit</label>
                                     <input type="text" class="form-control send" id="penerbit" placeholder="Contoh: Gramedia Pustaka Utama">
                                 </div>
@@ -479,7 +473,7 @@
                                     'field' : [
                                         'tipe_dokumen', 'judul', 'penerbit', 'tahun_terbit', 'keterangan', 'cetakan_edisi', 'jumlah', 'teu_orang_badan',
                                         'nomor_panggil', 'cetakan_edisi', 'tempat_terbit', 'deskripsi_fisik',
-                                        'pengarang', 'subjek', 'isbn_issn', 'bahasa', 'bidang_hukum', 'nomor_induk_buku',
+                                        'subjek', 'isbn_issn', 'bahasa', 'bidang_hukum', 'nomor_induk_buku',
                                         'lokasi', 'kategori_id', 'lampiran'
                                     ]
                                 }

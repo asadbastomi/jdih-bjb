@@ -7,7 +7,7 @@
                 <th data-sort-ignore="true"> Cover </th>
                 <th data-hide="phone"> Tipe Dokumen </th>
                 <th> Judul </th>
-                <th data-hide="phone"> Pengarang </th>
+                <th data-hide="phone"> T.E.U. Orang/Badan </th>
                 <th data-hide="phone"> Penerbit </th>
                 <th data-hide="phone"> Tahun </th>
                 <th data-hide="phone"> Bidang Hukum </th>

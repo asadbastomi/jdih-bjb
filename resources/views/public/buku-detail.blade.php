@@ -126,13 +126,6 @@
                                                 </tr>
                                             @endif
                                             
-                                            @if($data->pengarang)
-                                                <tr>
-                                                    <th>Pengarang</th>
-                                                    <td>{{ $data->pengarang }}</td>
-                                                </tr>
-                                            @endif
-                                            
                                             @if($data->penerbit)
                                                 <tr>
                                                     <th>Penerbit</th>
