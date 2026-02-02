@@ -129,7 +129,7 @@ class BukuController extends BaseController
             'tahun_terbit' => ['required', 'numeric'],
             'jumlah' => ['required', 'numeric'],
             'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
-            'cover' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif'],
+            'cover' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,webp'],
         ]);
 
         if ($validator->fails()) {
@@ -203,7 +203,7 @@ class BukuController extends BaseController
             'tahun_terbit' => ['required', 'numeric'],
             'jumlah' => ['required', 'numeric'],
             'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
-            'cover' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif'],
+            'cover' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,webp'],
         ]);
 
         if ($validator->fails()) {
