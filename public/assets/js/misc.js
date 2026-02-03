@@ -99,14 +99,12 @@ function makeForm(formname, method) {
             }
         } else if ($(this).attr('type') == 'file') {
             if ($(this).val() !== '') {
-                var bypassFormData = true;
                 var valdata = [];
                 for (var i = 0; i < $(this)[0].files.length; i++) {
                     valdata.push($(this)[0].files[i]);
                 }
                 $.each(valdata, function (i, v) {
-                    arrayfield = field + '[]';
-                    formData.append(arrayfield, v);
+                    formData.append(field, v);
                 })
             } else {
                 var valdata = '';
@@ -115,7 +113,7 @@ function makeForm(formname, method) {
                 }
             }
         }
-        if (!bypassFormData) {
+        if ($(this).attr('type') != 'file') {
             formData.append(field, valdata);
         }
     });

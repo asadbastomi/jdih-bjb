@@ -161,7 +161,7 @@ class BukuController extends BaseController
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
             $coverFilename = time() . '_' . $cover->getClientOriginalName();
-            $coverPath = $cover->storeAs('upload/buku/cover', $coverFilename);
+            $coverPath = $cover->storeAs('upload/buku/cover', $coverFilename, 'public');
             $table->cover = $coverPath;
         }
 
@@ -169,7 +169,7 @@ class BukuController extends BaseController
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $fileFilename = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('upload/buku/file', $fileFilename);
+            $filePath = $file->storeAs('upload/buku/file', $fileFilename, 'public');
             $table->file = $filePath;
         }
 
@@ -235,11 +235,11 @@ class BukuController extends BaseController
         if ($request->hasFile('cover')) {
             // Delete old cover if exists
             if ($table->cover) {
-                Storage::delete($table->cover);
+                Storage::disk('public')->delete($table->cover);
             }
             $cover = $request->file('cover');
             $coverFilename = time() . '_' . $cover->getClientOriginalName();
-            $coverPath = $cover->storeAs('upload/buku/cover', $coverFilename);
+            $coverPath = $cover->storeAs('upload/buku/cover', $coverFilename, 'public');
             $table->cover = $coverPath;
         }
 
@@ -247,11 +247,11 @@ class BukuController extends BaseController
         if ($request->hasFile('file')) {
             // Delete old file if exists
             if ($table->file) {
-                Storage::delete($table->file);
+                Storage::disk('public')->delete($table->file);
             }
             $file = $request->file('file');
             $fileFilename = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('upload/buku/file', $fileFilename);
+            $filePath = $file->storeAs('upload/buku/file', $fileFilename, 'public');
             $table->file = $filePath;
         }
 
