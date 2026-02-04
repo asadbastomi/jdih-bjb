@@ -4588,11 +4588,48 @@ setlocale(LC_TIME, 'id_ID');
                     var statusColor = kelurahan.is_active ? '#10b981' : '#ef4444';
                     var statusText = kelurahan.is_active ? 'Aktif' : 'Tidak Aktif';
                     
+                    // Helper function to safely extract kecamatan name
+                    function getKecamatanName(kelurahan) {
+                        // Priority 1: Check if nama_kecamatan is a string
+                        if (kelurahan.nama_kecamatan && typeof kelurahan.nama_kecamatan === 'string' && kelurahan.nama_kecamatan.trim() !== '') {
+                            return kelurahan.nama_kecamatan.trim();
+                        }
+                        
+                        // Priority 2: Check if nama_kecamatan is an object with nama_kecamatan property
+                        if (kelurahan.nama_kecamatan && typeof kelurahan.nama_kecamatan === 'object') {
+                            if (kelurahan.nama_kecamatan.nama_kecamatan && typeof kelurahan.nama_kecamatan.nama_kecamatan === 'string') {
+                                return kelurahan.nama_kecamatan.nama_kecamatan.trim();
+                            }
+                        }
+                        
+                        // Priority 3: Check if kecamatan is a string
+                        if (kelurahan.kecamatan && typeof kelurahan.kecamatan === 'string' && kelurahan.kecamatan.trim() !== '') {
+                            return kelurahan.kecamatan.trim();
+                        }
+                        
+                        // Priority 4: Check if kecamatan is an object with nama_kecamatan property
+                        if (kelurahan.kecamatan && typeof kelurahan.kecamatan === 'object') {
+                            if (kelurahan.kecamatan.nama_kecamatan && typeof kelurahan.kecamatan.nama_kecamatan === 'string') {
+                                return kelurahan.kecamatan.nama_kecamatan.trim();
+                            }
+                        }
+                        
+                        // Priority 5: Check nested structures
+                        if (kelurahan.kecamatan && kelurahan.kecamatan.kecamatan && typeof kelurahan.kecamatan.kecamatan.nama_kecamatan === 'string') {
+                            return kelurahan.kecamatan.kecamatan.nama_kecamatan.trim();
+                        }
+                        
+                        // Default fallback
+                        return 'N/A';
+                    }
+                    
+                    var namaKecamatan = getKecamatanName(kelurahan);
+                    
                     return `
                         <div style="min-width: 200px;">
                             <h6 style="margin: 0 0 10px 0; color: #6366f1; font-weight: 700;">${kelurahan.nama_kelurahan || 'N/A'}</h6>
                             <div style="margin-bottom: 8px;">
-                                <strong>Kecamatan:</strong> ${kelurahan.kecamatan || '-'}
+                                <strong>Kecamatan:</strong> ${namaKecamatan}
                             </div>
                             <div style="margin-bottom: 8px;">
                                 <strong>Status Sadar Hukum:</strong> 
@@ -4661,26 +4698,29 @@ setlocale(LC_TIME, 'id_ID');
                         allMarkers = [];
                         allKelurahanData = [];
                         
-                        // Populate kecamatan filter
-                        var kecamatans = new Set();
-                        
-                        if (response && response.data && response.data.length > 0) {
-                            allKelurahanData = response.data;
+                            // Populate kecamatan filter
+                            var kecamatans = new Set();
                             
-                            // Add markers and collect kecamatans
-                            response.data.forEach(function(kelurahan) {
-                                addMarker(kelurahan);
-                                if (kelurahan.kecamatan) {
-                                    kecamatans.add(kelurahan.kecamatan);
-                                }
-                            });
-                            
-                            // Update kecamatan filter options
-                            var selectKecamatan = $('#filterKecamatan');
-                            selectKecamatan.find('option:not(:first)').remove();
-                            kecamatans.forEach(function(kecamatan) {
-                                selectKecamatan.append('<option value="' + kecamatan + '">' + kecamatan + '</option>');
-                            });
+                            if (response && response.data && response.data.length > 0) {
+                                allKelurahanData = response.data;
+                                
+                                // Add markers and collect kecamatans
+                                response.data.forEach(function(kelurahan) {
+                                    addMarker(kelurahan);
+                                    // Use nama_kecamatan (string) instead of kecamatan (object)
+                                    if (kelurahan.nama_kecamatan) {
+                                        kecamatans.add(kelurahan.nama_kecamatan);
+                                    }
+                                });
+                                
+                                // Update kecamatan filter options
+                                var selectKecamatan = $('#filterKecamatan');
+                                selectKecamatan.find('option:not(:first)').remove();
+                                // Sort kecamatans alphabetically
+                                var sortedKecamatans = Array.from(kecamatans).sort();
+                                sortedKecamatans.forEach(function(kecamatan) {
+                                    selectKecamatan.append('<option value="' + kecamatan + '">' + kecamatan + '</option>');
+                                });
                             
                             // Update stats
                             var total = response.data.length;
@@ -4743,7 +4783,7 @@ setlocale(LC_TIME, 'id_ID');
                         }
                         
                         // Filter by kecamatan
-                        if (kecamatanValue && kelurahan.kecamatan !== kecamatanValue) {
+                        if (kecamatanValue && kelurahan.nama_kecamatan !== kecamatanValue) {
                             visible = false;
                         }
                         

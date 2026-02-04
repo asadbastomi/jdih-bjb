@@ -14,9 +14,14 @@ class KelurahanSadarHukumController extends Controller
 {
     public function index(Request $request)
     {
-        $query = KelurahanSadarHukum::with(['kelurahan', 'kecamatan', 'agendas', 'infografis'])
+        $query = KelurahanSadarHukum::with(['kelurahan.kecamatan', 'kecamatan', 'agendas', 'infografis'])
             ->leftJoin('kelurahans', 'kelurahan_sadar_hukum.kelurahan_id', '=', 'kelurahans.id')
-            ->select('kelurahan_sadar_hukum.*');
+            ->leftJoin('kecamatans as k1', 'kelurahan_sadar_hukum.kecamatan_id', '=', 'k1.id')
+            ->select(
+                'kelurahan_sadar_hukum.*',
+                'kelurahans.nama_kelurahan as nama_kelurahan_from_join',
+                'k1.nama_kecamatan as nama_kecamatan_from_join'
+            );
         
         // Search functionality
         if ($request->has('search') && !empty($request->search)) {
@@ -36,11 +41,59 @@ class KelurahanSadarHukumController extends Controller
             });
         }
         
-        $kelurahan = $query->orderBy('kelurahans.nama_kelurahan', 'asc')->get();
+        $kelurahan = $query->orderBy('nama_kelurahan_from_join', 'asc')->get();
+        
+        // Transform data to include accessor values and ensure proper types
+        $transformedData = $kelurahan->map(function($item) {
+            // Helper function to get string value with fallback
+            $getString = function($value, $fallback) {
+                if (is_string($value) && !empty($value)) return $value;
+                if (is_object($value) && isset($value->nama_kecamatan) && is_string($value->nama_kecamatan) && !empty($value->nama_kecamatan)) {
+                    return $value->nama_kecamatan;
+                }
+                if (is_object($value) && isset($value->nama_kelurahan) && is_string($value->nama_kelurahan) && !empty($value->nama_kelurahan)) {
+                    return $value->nama_kelurahan;
+                }
+                return $fallback;
+            };
+            
+            return [
+                'id' => $item->id,
+                'kelurahan_id' => $item->kelurahan_id,
+                'kecamatan_id' => $item->kecamatan_id,
+                'latitude' => $item->latitude,
+                'longitude' => $item->longitude,
+                'sk_walikota_nomor' => $item->sk_walikota_nomor,
+                'sk_walikota_tanggal' => $item->sk_walikota_tanggal,
+                'sk_walikota_detail' => $item->sk_walikota_detail,
+                'sk_gubernur_nomor' => $item->sk_gubernur_nomor,
+                'sk_gubernur_tanggal' => $item->sk_gubernur_tanggal,
+                'sk_gubernur_detail' => $item->sk_gubernur_detail,
+                'is_active' => (bool)$item->is_active,
+                'status' => $item->status,
+                'posbankum_alamat' => $item->posbankum_alamat,
+                'posbankum_jadwal' => $item->posbankum_jadwal,
+                'posbankum_telepon' => $item->posbankum_telepon,
+                'posbankum_keterangan' => $item->posbankum_keterangan,
+                // Use joined fields directly, fall back to accessors
+                'nama_kelurahan' => $getString($item->nama_kelurahan, $item->nama_kelurahan_from_join),
+                'nama_kecamatan' => $getString($item->nama_kecamatan, $item->nama_kecamatan_from_join),
+                'kota' => $getString($item->kota, 'Banjarbaru'),
+                'alamat' => $getString($item->alamat, $item->kelurahan ? $item->kelurahan->alamat : null),
+                'pos_bankum' => $item->pos_bankum,
+                'jumlah_pos' => $item->jumlah_pos,
+                'keterangan' => $item->keterangan,
+                // Include related data if needed
+                'kelurahan' => $item->kelurahan,
+                'kecamatan' => $item->kecamatan,
+                'agendas' => $item->agendas,
+                'infografis' => $item->infografis,
+            ];
+        });
         
         return response()->json([
             'success' => true,
-            'data' => $kelurahan
+            'data' => $transformedData
         ]);
     }
 
@@ -90,9 +143,16 @@ class KelurahanSadarHukumController extends Controller
 
     public function getMapData(Request $request)
     {
-        $query = KelurahanSadarHukum::with(['kelurahan', 'kecamatan', 'agendas', 'infografis'])
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude');
+        $query = KelurahanSadarHukum::with(['kelurahan.kecamatan', 'kecamatan', 'agendas', 'infografis'])
+            ->leftJoin('kelurahans', 'kelurahan_sadar_hukum.kelurahan_id', '=', 'kelurahans.id')
+            ->leftJoin('kecamatans as k1', 'kelurahan_sadar_hukum.kecamatan_id', '=', 'k1.id')
+            ->select(
+                'kelurahan_sadar_hukum.*',
+                'kelurahans.nama_kelurahan as nama_kelurahan_from_join',
+                'k1.nama_kecamatan as nama_kecamatan_from_join'
+            )
+            ->whereNotNull('kelurahan_sadar_hukum.latitude')
+            ->whereNotNull('kelurahan_sadar_hukum.longitude');
         
         // Apply search filter (search by kelurahan name or kecamatan name)
         if ($request->has('search') && !empty($request->search)) {
@@ -121,22 +181,37 @@ class KelurahanSadarHukumController extends Controller
         
         $kelurahan = $query->get();
         
-        // Transform data to include accessor values
-        $transformedData = $kelurahan->map(function($item) {
+        // Helper function to get string value with fallback
+        $getString = function($value, $fallback) {
+            if (is_string($value) && !empty($value)) return $value;
+            if (is_object($value) && isset($value->nama_kecamatan) && is_string($value->nama_kecamatan) && !empty($value->nama_kecamatan)) {
+                return $value->nama_kecamatan;
+            }
+            if (is_object($value) && isset($value->nama_kelurahan) && is_string($value->nama_kelurahan) && !empty($value->nama_kelurahan)) {
+                return $value->nama_kelurahan;
+            }
+            return $fallback;
+        };
+        
+        // Transform data to include accessor values with fallbacks
+        $transformedData = $kelurahan->map(function($item) use ($getString) {
             return [
                 'id' => $item->id,
-                'nama_kelurahan' => $item->nama_kelurahan,
-                'kecamatan' => $item->nama_kecamatan,
-                'kota' => $item->kota,
-                'alamat' => $item->alamat,
+                'nama_kelurahan' => $getString($item->nama_kelurahan, $item->nama_kelurahan_from_join),
+                'nama_kecamatan' => $getString($item->nama_kecamatan, $item->nama_kecamatan_from_join),
+                'kota' => $getString($item->kota, 'Banjarbaru'),
+                'alamat' => $getString($item->alamat, $item->kelurahan ? $item->kelurahan->alamat : null),
                 'latitude' => $item->latitude,
                 'longitude' => $item->longitude,
                 'status' => $item->status,
-                'is_active' => $item->is_active,
+                'is_active' => (bool)$item->is_active,
                 'sk_walikota_nomor' => $item->sk_walikota_nomor,
                 'sk_gubernur_nomor' => $item->sk_gubernur_nomor,
                 'agendas' => $item->agendas,
                 'infografis' => $item->infografis,
+                // Include related data for JavaScript access
+                'kelurahan' => $item->kelurahan,
+                'kecamatan' => $item->kecamatan,
             ];
         });
         

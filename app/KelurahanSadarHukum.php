@@ -16,6 +16,9 @@ class KelurahanSadarHukum extends Model
         'nama_kecamatan',
         'kota',
         'alamat',
+        'pos_bankum',
+        'jumlah_pos',
+        'keterangan',
     ];
 
     protected $fillable = [
@@ -31,6 +34,10 @@ class KelurahanSadarHukum extends Model
         'sk_gubernur_detail',
         'is_active',
         'status',
+        'posbankum_alamat',
+        'posbankum_jadwal',
+        'posbankum_telepon',
+        'posbankum_keterangan',
     ];
 
     protected $casts = [
@@ -98,27 +105,110 @@ class KelurahanSadarHukum extends Model
     }
 
     /**
-     * Get nama_kelurahan attribute from relationship
+     * Get the nama_kelurahan attribute.
+     * Returns the kelurahan name from the relationship.
+     *
+     * @return string|null
      */
     public function getNamaKelurahanAttribute()
     {
-        return $this->kelurahan ? $this->kelurahan->nama_kelurahan : null;
+        if ($this->relationLoaded('kelurahan') && $this->kelurahan) {
+            $nama = $this->kelurahan->nama_kelurahan;
+            return is_string($nama) ? $nama : null;
+        }
+        
+        if ($this->kelurahan_id && !$this->relationLoaded('kelurahan')) {
+            $this->load('kelurahan');
+            if ($this->kelurahan && $this->kelurahan->nama_kelurahan) {
+                $nama = $this->kelurahan->nama_kelurahan;
+                return is_string($nama) ? $nama : null;
+            }
+        }
+        
+        return null;
     }
 
     /**
-     * Get nama_kecamatan attribute from relationship
-     */
-    public function getNamaKecamatanAttribute()
-    {
-        return $this->kecamatan ? $this->kecamatan->nama_kecamatan : null;
-    }
-
-    /**
-     * Get kota attribute from relationship
+     * Get the kota attribute.
+     * Returns the city name from the kecamatan relationship.
+     *
+     * @return string|null
      */
     public function getKotaAttribute()
     {
-        return $this->kecamatan ? $this->kecamatan->kota : null;
+        // Try direct kecamatan relationship first
+        if ($this->relationLoaded('kecamatan') && $this->kecamatan) {
+            $nama = $this->kecamatan->kota;
+            return is_string($nama) ? $nama : null;
+        }
+        
+        // Try nested kelurahan->kecamatan relationship
+        if ($this->relationLoaded('kelurahan') && $this->kelurahan && $this->kelurahan->relationLoaded('kecamatan') && $this->kelurahan->kecamatan) {
+            $nama = $this->kelurahan->kecamatan->kota;
+            return is_string($nama) ? $nama : null;
+        }
+        
+        // Try to load the direct kecamatan relationship
+        if ($this->kecamatan_id && !$this->relationLoaded('kecamatan')) {
+            $this->load('kecamatan');
+            if ($this->kecamatan && $this->kecamatan->kota) {
+                $nama = $this->kecamatan->kota;
+                return is_string($nama) ? $nama : null;
+            }
+        }
+        
+        // Try to load via kelurahan
+        if ($this->kelurahan_id && !$this->relationLoaded('kelurahan')) {
+            $this->load('kelurahan.kecamatan');
+            if ($this->kelurahan && $this->kelurahan->kecamatan && $this->kelurahan->kecamatan->kota) {
+                $nama = $this->kelurahan->kecamatan->kota;
+                return is_string($nama) ? $nama : null;
+            }
+        }
+        
+        return 'Banjarbaru'; // Default city
+    }
+
+    /**
+     * Get the nama_kecamatan attribute.
+     * Returns the kecamatan name from either the direct kecamatan relationship
+     * or from the nested kelurahan->kecamatan relationship.
+     *
+     * @return string|null
+     */
+    public function getNamaKecamatanAttribute()
+    {
+        // Try direct kecamatan relationship first
+        if ($this->relationLoaded('kecamatan') && $this->kecamatan) {
+            $nama = $this->kecamatan->nama_kecamatan;
+            return is_string($nama) ? $nama : null;
+        }
+        
+        // Try nested kelurahan->kecamatan relationship
+        if ($this->relationLoaded('kelurahan') && $this->kelurahan && $this->kelurahan->relationLoaded('kecamatan') && $this->kelurahan->kecamatan) {
+            $nama = $this->kelurahan->kecamatan->nama_kecamatan;
+            return is_string($nama) ? $nama : null;
+        }
+        
+        // Try to load the direct kecamatan relationship
+        if ($this->kecamatan_id && !$this->relationLoaded('kecamatan')) {
+            $this->load('kecamatan');
+            if ($this->kecamatan && $this->kecamatan->nama_kecamatan) {
+                $nama = $this->kecamatan->nama_kecamatan;
+                return is_string($nama) ? $nama : null;
+            }
+        }
+        
+        // Try to load via kelurahan
+        if ($this->kelurahan_id && !$this->relationLoaded('kelurahan')) {
+            $this->load('kelurahan.kecamatan');
+            if ($this->kelurahan && $this->kelurahan->kecamatan && $this->kelurahan->kecamatan->nama_kecamatan) {
+                $nama = $this->kelurahan->kecamatan->nama_kecamatan;
+                return is_string($nama) ? $nama : null;
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -126,7 +216,45 @@ class KelurahanSadarHukum extends Model
      */
     public function getAlamatAttribute()
     {
-        return $this->kelurahan ? $this->kelurahan->alamat : null;
+        if ($this->relationLoaded('kelurahan') && $this->kelurahan) {
+            $alamat = $this->kelurahan->alamat;
+            return is_string($alamat) ? $alamat : null;
+        }
+        
+        if ($this->kelurahan_id && !$this->relationLoaded('kelurahan')) {
+            $this->load('kelurahan');
+            if ($this->kelurahan && $this->kelurahan->alamat) {
+                $alamat = $this->kelurahan->alamat;
+                return is_string($alamat) ? $alamat : null;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get pos_bankum attribute for compatibility (legacy field name)
+     */
+    public function getPosBankumAttribute()
+    {
+        return $this->posbankum_alamat;
+    }
+
+    /**
+     * Get jumlah_pos attribute (derived from POSBANKUM data)
+     */
+    public function getJumlahPosAttribute()
+    {
+        // This can be customized based on business logic
+        return $this->posbankum_alamat ? 1 : 0;
+    }
+
+    /**
+     * Get keterangan attribute for compatibility (POSBANKUM keterangan)
+     */
+    public function getKeteranganAttribute()
+    {
+        return $this->posbankum_keterangan;
     }
 
 }

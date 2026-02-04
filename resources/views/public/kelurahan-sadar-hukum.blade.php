@@ -128,6 +128,8 @@ setlocale(LC_TIME, 'id_ID');
         // Store all markers for filtering
         var allMarkers = [];
         var allKelurahanData = [];
+        var allKecamatanList = [];
+        var kecamatanFilterLoaded = false;
         
         // Custom icon for kelurahan markers
         function getKelurahanIcon(status) {
@@ -146,11 +148,38 @@ setlocale(LC_TIME, 'id_ID');
             var statusColor = kelurahan.is_active ? '#10b981' : '#ef4444';
             var statusText = kelurahan.is_active ? 'Aktif' : 'Tidak Aktif';
             
+            // Debug logging
+            console.log('🔍 [Popup Debug] kelurahan.nama_kecamatan:', kelurahan.nama_kecamatan);
+            console.log('🔍 [Popup Debug] kelurahan.nama_kecamatan type:', typeof kelurahan.nama_kecamatan);
+            console.log('🔍 [Popup Debug] kelurahan.kecamatan:', kelurahan.kecamatan);
+            
+            // Safely extract nama_kecamatan - handle both string and object
+            var namaKecamatan = null;
+            if (kelurahan.nama_kecamatan) {
+                if (typeof kelurahan.nama_kecamatan === 'string') {
+                    namaKecamatan = kelurahan.nama_kecamatan;
+                    console.log('✅ [Popup Debug] Extracted from string:', namaKecamatan);
+                } else if (kelurahan.nama_kecamatan.nama_kecamatan && typeof kelurahan.nama_kecamatan.nama_kecamatan === 'string') {
+                    namaKecamatan = kelurahan.nama_kecamatan.nama_kecamatan;
+                    console.log('✅ [Popup Debug] Extracted from nested object:', namaKecamatan);
+                } else {
+                    console.log('⚠ [Popup Debug] nama_kecamatan is object but structure is unexpected:', JSON.stringify(kelurahan.nama_kecamatan));
+                }
+            }
+            
+            // Fallback to kecamatan object if available
+            if (!namaKecamatan && kelurahan.kecamatan && kelurahan.kecamatan.nama_kecamatan) {
+                namaKecamatan = kelurahan.kecamatan.nama_kecamatan;
+                console.log('✅ [Popup Debug] Extracted from kecamatan object:', namaKecamatan);
+            }
+            
+            console.log('🏁 [Popup Debug] Final namaKecamatan:', namaKecamatan);
+            
             return `
                 <div style="min-width: 200px;">
                     <h6 style="margin: 0 0 10px 0; color: #6366f1; font-weight: 700;">${kelurahan.nama_kelurahan || 'N/A'}</h6>
                     <div style="margin-bottom: 8px;">
-                        <strong>Kecamatan:</strong> ${kelurahan.nama_kecamatan || '-'}
+                        <strong>Kecamatan:</strong> ${namaKecamatan || '-'}
                     </div>
                     <div style="margin-bottom: 8px;">
                         <strong>Status Sadar Hukum:</strong> 
@@ -187,6 +216,13 @@ setlocale(LC_TIME, 'id_ID');
         // Add marker to map and track it
         function addMarker(kelurahan) {
             if (kelurahan.latitude && kelurahan.longitude) {
+                // Log entire kelurahan object for debugging
+                console.log('📍 [Marker Debug] Adding marker for:', kelurahan.nama_kelurahan);
+                console.log('📍 [Marker Debug] Full kelurahan object:', kelurahan);
+                console.log('📍 [Marker Debug] nama_kecamatan:', kelurahan.nama_kecamatan);
+                console.log('📍 [Marker Debug] nama_kecamatan type:', typeof kelurahan.nama_kecamatan);
+                console.log('📍 [Marker Debug] kecamatan object:', kelurahan.kecamatan);
+                
                 var marker = L.marker([kelurahan.latitude, kelurahan.longitude], {
                     icon: getKelurahanIcon(kelurahan.is_active)
                 }).addTo(map);
@@ -204,12 +240,91 @@ setlocale(LC_TIME, 'id_ID');
             return null;
         }
         
-        // Load kelurahan data from API
-        $.ajax({
-            url: '/api/kelurahan-sadar-hukum',
-            method: 'GET',
-            dataType: 'json',
-            success: function(response) {
+        // Function to load all kecamatans for filter dropdown
+        function loadKecamatanFilter() {
+            console.log('🔍 [Kecamatan Fetch] Starting to load kecamatans...');
+            
+            $.ajax({
+                url: '/api/kelurahan-sadar-hukum',
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    console.log('✅ [Kecamatan Fetch] API response received:', response);
+                    
+                    if (response && response.data && response.data.length > 0) {
+                        console.log('📊 [Kecamatan Fetch] Total kelurahan records:', response.data.length);
+                        
+                        // Collect all unique kecamatans
+                        var kecamatans = new Set();
+                        var processedCount = 0;
+                        var skippedCount = 0;
+                        
+                        response.data.forEach(function(kelurahan) {
+                            var kecName = kelurahan.nama_kecamatan;
+                            console.log('📝 [Kecamatan Fetch] Processing kelurahan:', kelurahan.nama_kelurahan, '| nama_kecamatan:', kecName, '| Type:', typeof kecName);
+                            
+                            if (kecName && typeof kecName === 'string') {
+                                kecamatans.add(kecName);
+                                processedCount++;
+                                console.log('✓ [Kecamatan Fetch] Added kecamatan (string):', kecName);
+                            } else if (kecName && kecName.nama_kecamatan) {
+                                kecamatans.add(kecName.nama_kecamatan);
+                                processedCount++;
+                                console.log('✓ [Kecamatan Fetch] Added kecamatan (object):', kecName.nama_kecamatan);
+                            } else {
+                                skippedCount++;
+                                console.log('⚠ [Kecamatan Fetch] Skipped - invalid nama_kecamatan:', kecName);
+                            }
+                        });
+                        
+                        allKecamatanList = Array.from(kecamatans).sort();
+                        
+                        console.log('📈 [Kecamatan Fetch] Summary:');
+                        console.log('  - Processed:', processedCount, 'kelurahan');
+                        console.log('  - Skipped:', skippedCount, 'kelurahan');
+                        console.log('  - Unique kecamatans:', kecamatans.size);
+                        console.log('  - Kecamatan list:', allKecamatanList);
+                        
+                        // Populate kecamatan filter dropdown
+                        var selectKecamatan = $('#filterKecamatan');
+                        selectKecamatan.find('option:not(:first)').remove();
+                        allKecamatanList.forEach(function(kecamatan) {
+                            var kecName = typeof kecamatan === 'string' ? kecamatan : String(kecamatan);
+                            selectKecamatan.append('<option value="' + kecName + '">' + kecName + '</option>');
+                        });
+                        
+                        console.log('✅ [Kecamatan Fetch] Dropdown populated with', allKecamatanList.length, 'options');
+                        kecamatanFilterLoaded = true;
+                    } else {
+                        console.log('⚠ [Kecamatan Fetch] No data found in response');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ [Kecamatan Fetch] Error loading kecamatan filter:', error);
+                    console.error('❌ [Kecamatan Fetch] Status:', status);
+                    console.error('❌ [Kecamatan Fetch] XHR:', xhr);
+                    console.error('❌ [Kecamatan Fetch] Response:', xhr.responseText);
+                }
+            });
+        }
+        
+        // Function to load kelurahan data with filters
+        function loadKelurahanData() {
+            var searchValue = $('#searchKelurahan').val();
+            var kecamatanValue = $('#filterKecamatan').val();
+            var statusValue = $('#filterStatus').val();
+            
+            var params = {};
+            if (searchValue) params.search = searchValue;
+            if (kecamatanValue) params.kecamatan = kecamatanValue;
+            if (statusValue !== '') params.status = statusValue;
+            
+            $.ajax({
+                url: '/api/kelurahan-sadar-hukum',
+                method: 'GET',
+                dataType: 'json',
+                data: params,
+                success: function(response) {
                 console.log('Kelurahan data loaded:', response);
                 
                 // Clear existing markers
@@ -219,25 +334,12 @@ setlocale(LC_TIME, 'id_ID');
                 allMarkers = [];
                 allKelurahanData = [];
                 
-                // Populate kecamatan filter
-                var kecamatans = new Set();
-                
                 if (response && response.data && response.data.length > 0) {
                     allKelurahanData = response.data;
                     
-                    // Add markers and collect kecamatans
+                    // Add markers
                     response.data.forEach(function(kelurahan) {
                         addMarker(kelurahan);
-                        if (kelurahan.nama_kecamatan) {
-                            kecamatans.add(kelurahan.nama_kecamatan);
-                        }
-                    });
-                    
-                    // Update kecamatan filter options
-                    var selectKecamatan = $('#filterKecamatan');
-                    selectKecamatan.find('option:not(:first)').remove();
-                    kecamatans.forEach(function(kecamatan) {
-                        selectKecamatan.append('<option value="' + kecamatan + '">' + kecamatan + '</option>');
                     });
                     
                     // Update stats
@@ -277,89 +379,16 @@ setlocale(LC_TIME, 'id_ID');
                     .bindPopup('Gagal memuat data Kelurahan Sadar Hukum')
                     .openPopup();
             }
-        });
-        
-        // Filter function
-        function filterMarkers() {
-            var searchValue = $('#searchKelurahan').val().toLowerCase();
-            var kecamatanValue = $('#filterKecamatan').val();
-            var statusValue = $('#filterStatus').val();
-            
-            var visibleCount = 0;
-            var aktifCount = 0;
-            var visibleMarkers = [];
-            
-            allMarkers.forEach(function(item) {
-                var kelurahan = item.data;
-                var visible = true;
-                
-                // Filter by search (kelurahan name)
-                if (searchValue && kelurahan.nama_kelurahan) {
-                    if (kelurahan.nama_kelurahan.toLowerCase().indexOf(searchValue) === -1) {
-                        visible = false;
-                    }
-                }
-                
-                // Filter by kecamatan
-                if (kecamatanValue && kelurahan.nama_kecamatan !== kecamatanValue) {
-                    visible = false;
-                }
-                
-                // Filter by status
-                if (statusValue !== '') {
-                    var isAktif = kelurahan.is_active ? 1 : 0;
-                    if (parseInt(statusValue) !== isAktif) {
-                        visible = false;
-                    }
-                }
-                
-                // Show/hide marker
-                if (visible) {
-                    if (!map.hasLayer(item.marker)) {
-                        item.marker.addTo(map);
-                    }
-                    visibleCount++;
-                    if (kelurahan.is_active) {
-                        aktifCount++;
-                    }
-                    visibleMarkers.push(item.marker);
-                } else {
-                    if (map.hasLayer(item.marker)) {
-                        map.removeLayer(item.marker);
-                    }
-                }
             });
-            
-            // Update stats
-            $('#totalKelurahan').text(visibleCount);
-            $('#aktifKelurahan').text(aktifCount);
-            
-            // Fit bounds if there are visible markers
-            if (visibleMarkers.length > 0) {
-                var group = new L.featureGroup(visibleMarkers);
-                map.fitBounds(group.getBounds(), { padding: [50, 50] });
-            }
-            
-            // Show search result notification
-            if (searchValue || kecamatanValue || statusValue) {
-                var notification = $('<div>', {
-                    'class': 'alert alert-info alert-dismissible fade show',
-                    'css': {
-                        'position': 'fixed',
-                        'top': '20px',
-                        'right': '20px',
-                        'z-index': '9999'
-                    },
-                    'html': '<i class="mdi mdi-information mr-2"></i> Ditemukan ' + visibleCount + ' kelurahan<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
-                });
-                $('body').append(notification);
-                
-                setTimeout(function() {
-                    if (notification.parent().length) {
-                        notification.remove();
-                    }
-                }, 3000);
-            }
+        }
+        
+        // Initial data load
+        loadKelurahanData();
+        loadKecamatanFilter();
+        
+        // Filter function - reload data from API with filters
+        function filterMarkers() {
+            loadKelurahanData();
         }
         
         // Debounce search
