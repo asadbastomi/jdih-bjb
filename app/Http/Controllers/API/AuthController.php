@@ -163,7 +163,7 @@ class AuthController extends BaseController
             // 'secure' => true, // for production
             'secure' => null, // for localhost
             'httponly' => true,
-            'samesite' => true,
+            'samesite' => 'lax',
         ];
     }
 
