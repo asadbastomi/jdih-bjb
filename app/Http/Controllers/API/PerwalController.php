@@ -183,7 +183,7 @@ class PerwalController extends BaseController
             'sumber' => ['required'],
             'subjek' => ['required'],
             'bidang_hukum' => ['required'],
-            'file' => ['required'],
+            'file' => ['nullable'],
         ]);
 
         if ($validator->fails()) {
@@ -367,7 +367,7 @@ class PerwalController extends BaseController
             'sumber' => ['required'],
             'subjek' => ['required'],
             'bidang_hukum' => ['required'],
-            'file' => ['required'],
+            'file' => ['nullable'],
         ]);
 
         if ($validator->fails()) {
