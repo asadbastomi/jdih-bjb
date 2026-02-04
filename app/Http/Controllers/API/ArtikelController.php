@@ -98,17 +98,23 @@ class ArtikelController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'tipe_dokumen' => ['nullable'],
             'tahun' => ['required'],
             'tempat' => ['required'],
             'judul' => ['required'],
             'teu_badan' => ['required'],
+            'nomor' => ['nullable'],
+            'jenis_peraturan' => ['nullable'],
+            'singkatan_jenis' => ['nullable'],
             'sumber' => ['required'],
             'bahasa' => ['required'],
             'subjek' => ['required'],
-            'lokasi' => ['required'],
+            'status_peraturan' => ['nullable'],
             'bidang_hukum' => ['required'],
             'file' => ['nullable'],
             'file.*' => ['mimetypes:application/pdf'],
+            'lampiran' => ['nullable'],
+            'lampiran.*' => ['mimetypes:application/pdf'],
             'abstrak' => ['nullable'],
             'abstrak.*' => ['mimetypes:application/pdf'],
             'keterangan' => ['nullable'],
@@ -120,7 +126,11 @@ class ArtikelController extends BaseController
         }
 
         $table = new Regulasi;
-        $table->fill($request->only([ 'kategori_id', 'tahun', 'tempat', 'judul', 'teu_badan', 'sumber', 'bahasa', 'subjek', 'lokasi', 'bidang_hukum', 'keterangan' ]));
+        $table->fill($request->only([ 
+            'kategori_id', 'tipe_dokumen', 'tahun', 'tempat', 'judul', 'teu_badan', 
+            'nomor', 'jenis_peraturan', 'singkatan_jenis', 'sumber', 'bahasa', 
+            'subjek', 'status_peraturan', 'bidang_hukum', 'keterangan' 
+        ]));
 
         if ($request->has('file')) {
             $table->file = collect($request->file('file'))
@@ -128,6 +138,17 @@ class ArtikelController extends BaseController
                 ->map(function ($file) {
                     $filePath = $file->getClientOriginalName();
                     $file->move(public_path('upload/artikel/'), $filePath);
+                    return $filePath;
+                })
+                ->implode(';');
+        }
+
+        if ($request->has('lampiran')) {
+            $table->lampiran = collect($request->file('lampiran'))
+                ->filter(fn($file) => is_file($file))
+                ->map(function ($file) {
+                    $filePath = $file->getClientOriginalName();
+                    $file->move(public_path('upload/lampiran/artikel/'), $filePath);
                     return $filePath;
                 })
                 ->implode(';');
@@ -168,17 +189,23 @@ class ArtikelController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            'tipe_dokumen' => ['nullable'],
             'tahun' => ['required'],
             'tempat' => ['required'],
             'judul' => ['required'],
             'teu_badan' => ['required'],
+            'nomor' => ['nullable'],
+            'jenis_peraturan' => ['nullable'],
+            'singkatan_jenis' => ['nullable'],
             'sumber' => ['required'],
             'bahasa' => ['required'],
             'subjek' => ['required'],
-            'lokasi' => ['required'],
+            'status_peraturan' => ['nullable'],
             'bidang_hukum' => ['required'],
             'file' => ['nullable'],
             'file.*' => ['mimetypes:application/pdf'],
+            'lampiran' => ['nullable'],
+            'lampiran.*' => ['mimetypes:application/pdf'],
             'abstrak' => ['nullable'],
             'abstrak.*' => ['mimetypes:application/pdf'],
             'keterangan' => ['nullable'],
@@ -195,9 +222,9 @@ class ArtikelController extends BaseController
         }
 
         $table->fill($request->only([
-            'kategori_id', 'tahun', 'tempat', 'judul', 'teu_badan', 
-            'sumber', 'bahasa', 'subjek', 'lokasi', 'bidang_hukum', 
-            'keterangan'
+            'kategori_id', 'tipe_dokumen', 'tahun', 'tempat', 'judul', 'teu_badan', 
+            'nomor', 'jenis_peraturan', 'singkatan_jenis', 'sumber', 'bahasa', 
+            'subjek', 'status_peraturan', 'bidang_hukum', 'keterangan'
         ]));
 
         if ($request->has('file') && $request->file != 'nochange') {
@@ -206,6 +233,17 @@ class ArtikelController extends BaseController
                 ->map(function ($file) use ($request) {
                     $filePath = $file->getClientOriginalName();
                     $file->move(public_path('upload/artikel/'), $filePath);
+                    return $filePath;
+                })
+                ->implode(';');
+        }
+
+        if ($request->has('lampiran') && $request->lampiran != 'nochange') {
+            $table->lampiran = collect($request->file('lampiran'))
+                ->filter(fn($file) => is_file($file))
+                ->map(function ($file) use ($request) {
+                    $filePath = $file->getClientOriginalName();
+                    $file->move(public_path('upload/lampiran/artikel/'), $filePath);
                     return $filePath;
                 })
                 ->implode(';');

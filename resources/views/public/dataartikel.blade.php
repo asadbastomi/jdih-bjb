@@ -7,14 +7,14 @@
                 <th> Judul </th>
                 <th> Tahun </th>
                 <th> Tempat </th>
-                <th> T.E.U Badan </th>
+                <th> T.E.U. Badan </th>
                 <th> Sumber </th>
                 <th> Bahasa </th>
                 <th data-hide="all"> Subjek </th>
-                <th data-hide="all"> Lokasi </th>
                 <th data-hide="all"> Bidang Hukum </th>
                 <th data-hide="all"> Abstrak </th>
                 <th data-hide="all"> File </th>
+                <th data-hide="all"> Lampiran </th>
                 <th data-hide="all"> Keterangan </th>
                 <th class="fix" data-sort-ignore="true"></th>
             </tr>
@@ -32,7 +32,6 @@
                         <td>{{ $row->sumber }}</td>
                         <td>{{ $row->bahasa }}</td>
                         <td>{{ $row->subjek }}</td>
-                        <td>{{ $row->lokasi }}</td>
                         <td>{{ $row->bidang_hukum }}</td>
                         <td>
                             @if ($row->abstrak)
@@ -62,19 +61,33 @@
                                 @endforeach
                             @endif
                         </td>
+                        <td>
+                            @if ($row->lampiran)
+                                @php
+                                    $lampiranurl = explode(';', $row->lampiran);
+                                @endphp
+                                @foreach ($lampiranurl as $key => $value)
+                                    <a type="button" class="btn btn-warning btn-sm waves-effect waves-light mb-1"
+                                        href="{{ '/upload/lampiran/artikel/' . $value }}" target="_blank">
+                                        <span class="btn-label"><i class="mdi mdi-cloud-download-outline"></i></span>
+                                        {{ str_replace('_', ' ', $value) }}
+                                    </a>
+                                @endforeach
+                            @endif
+                        </td>
                         <td>{{ $row->keterangan }}</td>
                     </tr>
                 @endforeach
             @else
                 <tr class="empty">
                     <td></td>
-                    <td colspan="14">Data is empty</td>
+                    <td colspan="15">Data is empty</td>
                 </tr>
             @endif
         </tbody>
         <tfoot>
             <tr class="active">
-                <td colspan="15">
+                <td colspan="16">
                     <div class="text-right">
                         @include('layouts.shared.paginate', ['paginator' => $data])
                     </div>
