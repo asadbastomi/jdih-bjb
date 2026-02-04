@@ -91,6 +91,11 @@
                                     </tr>
                                     
                                     <tr>
+                                        <th>Singkatan Jenis Peradilan</th>
+                                        <td>{{ $data->singkatan_jenis_peradilan ?? '-' }}</td>
+                                    </tr>
+                                    
+                                    <tr>
                                         <th>Tipe Dokumen</th>
                                         <td>{{ $data->tipe_dokumen ?? '-' }}</td>
                                     </tr>
@@ -115,10 +120,6 @@
                                         <td>{{ $data->subjek ?? '-' }}</td>
                                     </tr>
                                     
-                                    <tr>
-                                        <th>Status Putusan</th>
-                                        <td>{{ $data->status_hukum ?? '-' }}</td>
-                                    </tr>
                                     
                                     <tr>
                                         <th>Bahasa</th>
@@ -130,10 +131,6 @@
                                         <td>{{ $data->bidang_hukum ?? '-' }}</td>
                                     </tr>
                                     
-                                    <tr>
-                                        <th>Lokasi</th>
-                                        <td>{{ $data->wilayah_yurisdiksi ?? '-' }}</td>
-                                    </tr>
                                     
                                     @if($data->para_pihak)
                                         <tr>
@@ -201,6 +198,15 @@
                                        target="_blank"
                                        onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id }})">
                                         <i class="mdi mdi-download mr-2"></i>Unduh PDF
+                                    </a>
+                                @endif
+                                
+                                @if($data->lampiran)
+                                    <a href="{{ url($data->lampiran) }}" 
+                                       class="btn btn-warning waves-effect waves-light" 
+                                       target="_blank"
+                                       onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id }})">
+                                        <i class="mdi mdi-download mr-2"></i>Unduh Lampiran
                                     </a>
                                 @endif
                                 

@@ -15,6 +15,7 @@ class Putusan extends Model
         'tipe_dokumen',
         'pengadilan',
         'tingkat_peradilan',
+        'singkatan_jenis_peradilan',
         'tempat_sidang',
         'tanggal_putusan',
         'tanggal_registrasi_perkara',
@@ -41,6 +42,7 @@ class Putusan extends Model
         'ukuran_file',
         'checksum_file',
         'url_dokumen',
+        'lampiran',
         'file'
     ];
 
