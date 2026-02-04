@@ -438,6 +438,28 @@ function sentData(url, option = null) {
             }
         },
         error: function (response, code) {
+            console.error('AJAX Error:', response);
+            console.error('Status:', response.status);
+            console.error('ResponseText:', response.responseText);
+            
+            // Handle 500 errors specially
+            if (response.status === 500) {
+                notifyMe('Server Error', 'An error occurred on the server. Please try again.', 'error');
+                if (module) {
+                    btnLoadingStop(buttonname);
+                }
+                return;
+            }
+            
+            // Check if responseJSON exists
+            if (!response.responseJSON) {
+                notifyMe('Error', 'An unexpected error occurred. Please try again.', 'error');
+                if (module) {
+                    btnLoadingStop(buttonname);
+                }
+                return;
+            }
+            
             if (response.responseJSON.message == 'Validation Error') {
                 $.each(response.responseJSON.data, function (key, data) {
                     notifyMe(key, data, 'error');

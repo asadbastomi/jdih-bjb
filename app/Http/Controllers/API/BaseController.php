@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Cookie;
 
 class BaseController extends Controller
 {
@@ -18,10 +19,9 @@ class BaseController extends Controller
         if (!$more) {
             return response()->json($response, 200);
         } elseif ($more['auth'] == 'login') {
-            $cookie = $more['cookie'];
-            return response()
-                ->json($response, 200)
-                ->withCookie($cookie['name'], $cookie['value'], $cookie['minutes'], $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly'], $cookie['samesite']);
+            // Just return JSON response without cookie
+            // Session is already set by auth()->attempt()
+            return response()->json($response, 200);
         } elseif ($more['auth'] == 'logout') {
             $cookie = $more['cookie'];
             return response()

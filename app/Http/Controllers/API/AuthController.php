@@ -25,53 +25,68 @@ class AuthController extends BaseController
 
     public function login(Request $request)
     {
-        $ipKey = 'login-attempt:' . $request->ip(); // tracking based on IP
+        try {
+            $ipKey = 'login-attempt:' . $request->ip(); // tracking based on IP
 
-        // Validasi awal
-        $rules = [
-            'username' => 'required|string',
-            'password' => 'required|string|min:6',
-        ];
-    
-        // Jika melebihi batas, wajib isi CAPTCHA
-        if (RateLimiter::tooManyAttempts($ipKey, 5)) {
-            $rules['captcha'] = 'required|captcha';
-        }
-    
-        $validator = Validator::make($request->all(), $rules);
-    
-        if ($validator->fails()) {
-            return $this->sendError($validator->errors(), 'Validation Error');
-        }
-    
-        // Tentukan login via username/email
-        $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-        $credentials = [
-            $fieldType => $request->username,
-            'password' => $request->password
-        ];
-    
-        // Coba login
-        if (auth()->attempt($credentials)) {
-            RateLimiter::clear($ipKey); // reset limiter jika berhasil
-    
-            $user = Auth::user();
-            if ($request->remember_me) {
-                Passport::personalAccessTokensExpireIn(Carbon::now()->addDays(3));
+            // Validasi awal
+            $rules = [
+                'username' => 'required|string',
+                'password' => 'required|string|min:6',
+            ];
+        
+            // Jika melebihi batas, wajib isi CAPTCHA
+            if (RateLimiter::tooManyAttempts($ipKey, 5)) {
+                $rules['captcha'] = 'required|captcha';
             }
-    
-            $theToken = $user->createToken(env('APP_NAME', 'doFapps'));
-            $success['expired'] = Carbon::parse($theToken->token->expires_at)->toDateTimeString();
-            $success['token'] = $theToken->accessToken;
-            $success['name'] = $user->name;
-            $more['auth'] = 'login';
-            $more['cookie'] = $this->getCookieDetails($success['token']);
-    
-            return $this->sendResponse($success, 'User login successfully.', $more);
-        } else {
-            RateLimiter::hit($ipKey, 60); // tambah hit selama 1 menit
-    
-            return $this->sendError(null, 'User and/or Password wrong', 401);
+        
+            $validator = Validator::make($request->all(), $rules);
+        
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors(), 'Validation Error');
+            }
+        
+            // Tentukan login via username/email
+            $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+            $credentials = [
+                $fieldType => $request->username,
+                'password' => $request->password
+            ];
+        
+            // Coba login
+            if (auth()->attempt($credentials)) {
+                RateLimiter::clear($ipKey); // reset limiter jika berhasil
+        
+                $user = Auth::user();
+                $success['name'] = $user->name;
+                
+                try {
+                    if ($request->remember_me) {
+                        Passport::personalAccessTokensExpireIn(Carbon::now()->addDays(3));
+                    }
+            
+                    $theToken = $user->createToken(env('APP_NAME', 'doFapps'));
+                    $success['expired'] = Carbon::parse($theToken->token->expires_at)->toDateTimeString();
+                    $success['token'] = $theToken->accessToken;
+                } catch (\Exception $e) {
+                    // Token creation failed, but login was successful
+                    Log::error('Token creation failed: ' . $e->getMessage());
+                    $success['token'] = null;
+                    $success['expired'] = null;
+                }
+                
+                $more['auth'] = 'login';
+                $more['cookie'] = $this->getCookieDetails($success['token'] ?? 'session_token');
+        
+                return $this->sendResponse($success, 'User login successfully.', $more);
+            } else {
+                RateLimiter::hit($ipKey, 60); // tambah hit selama 1 menit
+        
+                return $this->sendError(null, 'User and/or Password wrong', 401);
+            }
+        } catch (\Exception $e) {
+            Log::error('Login process failed: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return $this->sendError(null, 'Login failed due to server error. Please try again.', 500);
         }
     }
 
