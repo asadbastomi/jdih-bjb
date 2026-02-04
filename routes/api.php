@@ -53,6 +53,7 @@ Route::get('chat/examples', 'API\ChatController@getExamples')->name('api.chat.ex
 
 // Tema Dokumen Routes
 Route::get('tema-dokumen', 'API\TemaDokumenController@index')->name('api.tema-dokumen.index');
+Route::get('tema-dokumen/active', 'API\TemaDokumenController@getActive')->name('api.tema-dokumen.active');
 Route::get('tema-dokumen/{id}', 'API\TemaDokumenController@show')->name('api.tema-dokumen.show');
 Route::get('tema-dokumen/slug/{slug}', 'API\TemaDokumenController@temaWithRegulasiBySlug');
 Route::get('tema-dokumen/{id}/regulasi', 'API\TemaDokumenController@getRegulasiByTema')->name('api.tema-dokumen.regulasi');

@@ -99,17 +99,22 @@ class ArtikelController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'tipe_dokumen' => ['nullable'],
-            'tahun' => ['required'],
-            'tempat' => ['required'],
             'judul' => ['required'],
-            'teu_badan' => ['required'],
+            'teu_badan' => ['nullable'],
             'nomor' => ['nullable'],
+            'nomor_peraturan' => ['nullable'],
             'jenis_peraturan' => ['nullable'],
-            'singkatan_jenis' => ['nullable'],
+            'singkatan_jenis_peraturan' => ['nullable'],
+            'tempat_penetapan' => ['nullable'],
+            'tempat' => ['nullable'],
+            'tahun' => ['required'],
+            'tanggal_penetapan' => ['nullable'],
+            'tanggal_diundangkan' => ['nullable'],
             'sumber' => ['required'],
-            'bahasa' => ['required'],
             'subjek' => ['required'],
             'status_peraturan' => ['nullable'],
+            'bahasa' => ['required'],
+            'lokasi' => ['nullable'],
             'bidang_hukum' => ['required'],
             'file' => ['nullable'],
             'file.*' => ['mimetypes:application/pdf'],
@@ -126,11 +131,23 @@ class ArtikelController extends BaseController
         }
 
         $table = new Regulasi;
-        $table->fill($request->only([ 
-            'kategori_id', 'tipe_dokumen', 'tahun', 'tempat', 'judul', 'teu_badan', 
-            'nomor', 'jenis_peraturan', 'singkatan_jenis', 'sumber', 'bahasa', 
-            'subjek', 'status_peraturan', 'bidang_hukum', 'keterangan' 
-        ]));
+        
+        // Map tempat to tempat_penetapan for consistency
+        $requestData = $request->only([ 
+            'kategori_id', 'tipe_dokumen', 'judul', 'teu_badan', 
+            'nomor', 'nomor_peraturan', 'jenis_peraturan', 'singkatan_jenis_peraturan', 
+            'sumber', 'subjek', 'status_peraturan', 'bahasa', 'lokasi', 
+            'bidang_hukum', 'keterangan', 'tanggal_penetapan', 'tanggal_diundangkan' 
+        ]);
+        
+        if ($request->has('tempat') && !$request->has('tempat_penetapan')) {
+            $requestData['tempat_penetapan'] = $request->tempat;
+        }
+        
+        $table->fill($requestData);
+        
+        // Use tahun directly
+        $table->tahun = $request->tahun;
 
         if ($request->has('file')) {
             $table->file = collect($request->file('file'))
@@ -190,17 +207,22 @@ class ArtikelController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'tipe_dokumen' => ['nullable'],
-            'tahun' => ['required'],
-            'tempat' => ['required'],
             'judul' => ['required'],
-            'teu_badan' => ['required'],
+            'teu_badan' => ['nullable'],
             'nomor' => ['nullable'],
+            'nomor_peraturan' => ['nullable'],
             'jenis_peraturan' => ['nullable'],
-            'singkatan_jenis' => ['nullable'],
+            'singkatan_jenis_peraturan' => ['nullable'],
+            'tempat_penetapan' => ['nullable'],
+            'tempat' => ['nullable'],
+            'tahun' => ['required'],
+            'tanggal_penetapan' => ['nullable'],
+            'tanggal_diundangkan' => ['nullable'],
             'sumber' => ['required'],
-            'bahasa' => ['required'],
             'subjek' => ['required'],
             'status_peraturan' => ['nullable'],
+            'bahasa' => ['required'],
+            'lokasi' => ['nullable'],
             'bidang_hukum' => ['required'],
             'file' => ['nullable'],
             'file.*' => ['mimetypes:application/pdf'],
@@ -221,16 +243,28 @@ class ArtikelController extends BaseController
             return $this->sendError(null, 'Data not found', 404);
         }
 
-        $table->fill($request->only([
-            'kategori_id', 'tipe_dokumen', 'tahun', 'tempat', 'judul', 'teu_badan', 
-            'nomor', 'jenis_peraturan', 'singkatan_jenis', 'sumber', 'bahasa', 
-            'subjek', 'status_peraturan', 'bidang_hukum', 'keterangan'
-        ]));
+        // Map tempat to tempat_penetapan for consistency
+        $requestData = $request->only([
+            'kategori_id', 'tipe_dokumen', 'judul', 'teu_badan', 
+            'nomor', 'nomor_peraturan', 'jenis_peraturan', 'singkatan_jenis_peraturan', 
+            'tempat_penetapan', 'sumber', 'subjek', 'status_peraturan', 'bahasa', 'lokasi', 
+            'bidang_hukum', 'keterangan', 'tanggal_penetapan', 'tanggal_diundangkan'
+        ]);
+        
+        if ($request->has('tempat') && !$request->has('tempat_penetapan')) {
+            $requestData['tempat_penetapan'] = $request->tempat;
+        }
+        
+        $table->fill($requestData);
+        
+        // Use tahun directly
+        $table->tahun = $request->tahun;
 
-        if ($request->has('file') && $request->file != 'nochange') {
+        // Handle file upload
+        if ($request->hasFile('file')) {
             $table->file = collect($request->file('file'))
                 ->filter(fn($file) => is_file($file))
-                ->map(function ($file) use ($request) {
+                ->map(function ($file) {
                     $filePath = $file->getClientOriginalName();
                     $file->move(public_path('upload/artikel/'), $filePath);
                     return $filePath;
@@ -238,10 +272,11 @@ class ArtikelController extends BaseController
                 ->implode(';');
         }
 
-        if ($request->has('lampiran') && $request->lampiran != 'nochange') {
+        // Handle lampiran upload
+        if ($request->hasFile('lampiran')) {
             $table->lampiran = collect($request->file('lampiran'))
                 ->filter(fn($file) => is_file($file))
-                ->map(function ($file) use ($request) {
+                ->map(function ($file) {
                     $filePath = $file->getClientOriginalName();
                     $file->move(public_path('upload/lampiran/artikel/'), $filePath);
                     return $filePath;
@@ -249,10 +284,11 @@ class ArtikelController extends BaseController
                 ->implode(';');
         }
 
-        if ($request->has('abstrak') && $request->abstrak != 'nochange') {
+        // Handle abstrak upload
+        if ($request->hasFile('abstrak')) {
             $table->abstrak = collect($request->file('abstrak'))
                 ->filter(fn($file) => is_file($file))
-                ->map(function ($file) use ($request) {
+                ->map(function ($file) {
                     $filePath = $file->getClientOriginalName();
                     $file->move(public_path('upload/abstrak/artikel/'), $filePath);
                     return $filePath;
