@@ -112,6 +112,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.tema-dokumen.index') }}">
+                        <i class="mdi mdi-tag-multiple"></i>
+                        <span> Tema Dokumen </span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.perda.index') }}">
                         <i class="mdi mdi-book-open-page-variant"></i>
                         <span> Perda </span>
