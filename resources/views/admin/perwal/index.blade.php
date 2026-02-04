@@ -75,19 +75,67 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">Tipe Dokumen</label>
-                                    <input type="text" class="form-control send" id="tipe_dokumen" placeholder="Contoh: Peraturan Walikota" required>
+                                    <input type="text" class="form-control send" id="tipe_dokumen" placeholder="Contoh: Peraturan Wali Kota" required>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label class="control-label">Judul</label>
+                                    <input type="text" class="form-control send" id="judul" placeholder="Judul Peraturan" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">T.E.U. Badan/Pengarang</label>
+                                    <input type="text" class="form-control send" id="teu_badan" placeholder="Contoh: Wali Kota Banjarbaru">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Nomor Peraturan</label>
                                     <input type="text" class="form-control send" id="nomor_peraturan" placeholder="contoh: 5" required>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Tahun</label>
+                                    <label class="control-label">Jenis/Bentuk Peraturan</label>
+                                    <input type="text" class="form-control send" id="jenis_peraturan" placeholder="Contoh: Peraturan Wali Kota" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Singkatan Jenis/Bentuk</label>
+                                    <input type="text" class="form-control send" id="singkatan_jenis_peraturan" placeholder="Contoh: Perwal">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Tempat Penetapan</label>
+                                    <input type="text" class="form-control send" id="tempat_penetapan" placeholder="Contoh: Banjarbaru">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Tahun Penetapan/Pengundangan</label>
                                     <input type="text" class="form-control send" id="tahun" placeholder="contoh: 2023" autocomplete="off" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Tanggal Penetapan</label>
+                                    <input type="text" class="form-control send" id="tanggal_penetapan" placeholder="Tanggal" autocomplete="off" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label">Tanggal diundangkan</label>
+                                    <input type="text" class="form-control send" id="tanggal_diundangkan" placeholder="Tanggal" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -103,70 +151,36 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Judul</label>
-                                    <input type="text" class="form-control send" id="judul" placeholder="Judul Peraturan / tentang peraturan" required>
+                                    <label class="control-label">Bahasa</label>
+                                    <input type="text" class="form-control send" id="bahasa" placeholder="Contoh: Indonesia" value="Indonesia">
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Judul Lengkap <small>(optional)</small></label>
-                                    <input type="text" class="form-control send" id="judul_lengkap" placeholder="Judul lengkap peraturan">
+                                    <label class="control-label">Lokasi</label>
+                                    <input type="text" class="form-control send" id="lokasi" placeholder="Contoh: Kota Banjarbaru">
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Tanggal Penetapan</label>
-                                    <input type="text" class="form-control send" id="tanggal_penetapan" placeholder="Tanggal" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Tanggal diundangkan</label>
-                                    <input type="text" class="form-control send" id="tanggal_diundangkan" placeholder="Tanggal" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Instansi Pemrakarsa <small>(optional)</small></label>
-                                    <input type="text" class="form-control send" id="instansi_pemrakarsa" placeholder="">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Penandatangan</label>
-                                    <input type="text" class="form-control send" id="penandatangan" placeholder="" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Sumber</label>
-                                    <input type="text" class="form-control send" id="sumber" placeholder="Sumber / LD TLD" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Subjek</label>
-                                    <input type="text" class="form-control send" id="subjek" placeholder="" required>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Bidang Hukum</label>
-                                    <input type="text" class="form-control send" id="bidang_hukum" placeholder="" required>
+                                    <input type="text" class="form-control send" id="bidang_hukum" placeholder="Contoh: Hukum Tata Negara" required>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Urusan Pemerintahan <small>(optional)</small></label>
-                                    <input type="text" class="form-control send" id="urusan_pemerintahan" placeholder="">
+                                    <label class="control-label">Sumber</label>
+                                    <input type="text" class="form-control send" id="sumber" placeholder="Contoh: Berita Daerah Kota Banjarbaru" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Subjek</label>
+                                    <input type="text" class="form-control send" id="subjek" placeholder="Contoh: Perizinan" required>
                                 </div>
                             </div>
                         </div>
@@ -196,7 +210,13 @@
                                     <input type="file" data-plugins="dropify" accept="application/pdf" class="send" id="file"/>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
+                                <div class="form-group dropifyheightforce119">
+                                    <label class="control-label">Lampiran <small>(optional)</small></label>
+                                    <input type="file" data-plugins="dropify" accept="application/pdf" class="send" id="lampiran"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">Keterangan <small>(optional)</small></label>
                                     <textarea class="form-control send" id="keterangan" rows="5"></textarea>

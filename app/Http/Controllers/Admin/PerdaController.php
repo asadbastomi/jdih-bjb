@@ -30,7 +30,7 @@ class PerdaController extends Controller
         $this->data['button'] = 'btn'.$this->data['module'];
         $this->data['fetch'] = 'api.'.$this->data['module'].'.fetch';
         $this->data['store'] = 'api.'.$this->data['module'].'.store';
-        $this->data['field'] = "['tipe_dokumen', 'nomor_peraturan', 'tahun', 'jenis_peraturan', 'judul', 'judul_lengkap', 'tanggal_penetapan', 'tanggal_diundangkan', 'sumber', 'subjek', 'bidang_hukum', 'urusan_pemerintahan', 'instansi_pemrakarsa', 'penandatangan', 'status_peraturan', 'abstrak', 'file', 'keterangan']";
+        $this->data['field'] = "['tipe_dokumen', 'judul', 'teu_badan', 'nomor_peraturan', 'jenis_peraturan', 'singkatan_jenis_peraturan', 'tempat_penetapan', 'tahun', 'tanggal_penetapan', 'tanggal_diundangkan', 'sumber', 'subjek', 'status_peraturan', 'bahasa', 'lokasi', 'bidang_hukum', 'lampiran', 'file', 'keterangan']";
         $this->data['yearstart'] = 2015;
         return view('admin.perda.index', $this->data);
     }

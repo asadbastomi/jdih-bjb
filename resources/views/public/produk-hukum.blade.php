@@ -171,14 +171,19 @@ setlocale(LC_TIME, 'id_ID');
                         <table class="table table-hover mb-0">
                             <tbody>
                                 <tr>
-                                    <th scope="row" class="field" style="border-top: 0px">Jenis</th>
+                                    <th scope="row" class="field" style="border-top: 0px">Jenis/Bentuk Peraturan</th>
                                     <td class="spacer" style="border-top: 0px">:</td>
-                                    <td style="border-top: 0px">{{ $data->nama ?? '-' }}</td>
+                                    <td style="border-top: 0px">{{ $data->jenis_peraturan ?? $data->nama ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="field">Nomor</th>
+                                    <th scope="row" class="field">Singkatan Jenis/Bentuk</th>
                                     <td class="spacer">:</td>
-                                    <td>{{ $data->nomor ?? '-' }}</td>
+                                    <td>{{ $data->singkatan_jenis_peraturan ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="field">Nomor Peraturan</th>
+                                    <td class="spacer">:</td>
+                                    <td>{{ $data->nomor_peraturan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="field">Tahun</th>
@@ -206,9 +211,9 @@ setlocale(LC_TIME, 'id_ID');
                                     <td>{{ $data->tanggal_penetapan ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="field">Tempat Penetapan/Terbit</th>
+                                    <th scope="row" class="field">Tempat Penetapan</th>
                                     <td class="spacer">:</td>
-                                    <td>{{ $data->tempat ?? '-' }}</td>
+                                    <td>{{ $data->tempat_penetapan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="field">Tanggal Pengundangan</th>
@@ -239,6 +244,11 @@ setlocale(LC_TIME, 'id_ID');
                                     <th scope="row" class="field">Bidang Hukum</th>
                                     <td class="spacer">:</td>
                                     <td>{{ $data->bidang_hukum ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="field">Status Peraturan</th>
+                                    <td class="spacer">:</td>
+                                    <td>{{ $data->status_peraturan ?? '-' }}</td>
                                 </tr>
                                 @if ($data->kategori->tipeDokumen->id == 2)
                                 <!-- Informasi khusus untuk monografi hukum -->
@@ -302,6 +312,15 @@ setlocale(LC_TIME, 'id_ID');
                                                 <span class="btn-label"><i
                                                         class="mdi mdi-cloud-download-outline"></i></span> Download Abstrak
                                             </a>
+                                        @endif
+                                        @if ($data->lampiran)
+                                        <a type="button"
+                                            class="btn btn-warning btn-sm waves-effect waves-light mb-1"
+                                            href="/upload/lampiran/{{ $data->nama_singkat }}/{{ $data->tahun }}/{{ $data->lampiran }}"
+                                            target="_blank">
+                                            <span class="btn-label"><i
+                                                    class="mdi mdi-cloud-download-outline"></i></span> Download Lampiran
+                                        </a>
                                         @endif
                                     </td>
                                 </tr>

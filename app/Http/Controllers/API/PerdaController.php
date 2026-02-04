@@ -212,6 +212,21 @@ class PerdaController extends BaseController
         if ($request->tipe_dokumen) {
             $table->tipe_dokumen = $request->tipe_dokumen;
         }
+        if ($request->teu_badan) {
+            $table->teu_badan = $request->teu_badan;
+        }
+        if ($request->singkatan_jenis_peraturan) {
+            $table->singkatan_jenis_peraturan = $request->singkatan_jenis_peraturan;
+        }
+        if ($request->tempat_penetapan) {
+            $table->tempat_penetapan = $request->tempat_penetapan;
+        }
+        if ($request->bahasa) {
+            $table->bahasa = $request->bahasa;
+        }
+        if ($request->lokasi) {
+            $table->lokasi = $request->lokasi;
+        }
         if ($request->urusan_pemerintahan) {
             $table->urusan_pemerintahan = $request->urusan_pemerintahan;
         }
@@ -254,6 +269,23 @@ class PerdaController extends BaseController
                     $table->abstrak .= $filepath;
                     if ($filecount != ($key + 1)) {
                         $table->abstrak .= ';';
+                    }
+                }
+            }
+        }
+        if ($request->lampiran) {
+            $table->lampiran = '';
+            $lampirans = is_array($request->lampiran) ? $request->lampiran : [$request->lampiran];
+            $filecount = count($lampirans);
+            foreach ($lampirans as $key => $value) {
+                if (is_file($value)) {
+                    $extension = $value->extension();
+                    $filename = $value->getClientOriginalName();
+                    $filepath = $filename;
+                    $value->move(public_path('upload/lampiran/perda/' . $request->tahun), $filepath);
+                    $table->lampiran .= $filepath;
+                    if ($filecount != ($key + 1)) {
+                        $table->lampiran .= ';';
                     }
                 }
             }
@@ -364,6 +396,21 @@ class PerdaController extends BaseController
         if ($request->tipe_dokumen) {
             $table->tipe_dokumen = $request->tipe_dokumen;
         }
+        if ($request->teu_badan) {
+            $table->teu_badan = $request->teu_badan;
+        }
+        if ($request->singkatan_jenis_peraturan) {
+            $table->singkatan_jenis_peraturan = $request->singkatan_jenis_peraturan;
+        }
+        if ($request->tempat_penetapan) {
+            $table->tempat_penetapan = $request->tempat_penetapan;
+        }
+        if ($request->bahasa) {
+            $table->bahasa = $request->bahasa;
+        }
+        if ($request->lokasi) {
+            $table->lokasi = $request->lokasi;
+        }
         if ($request->urusan_pemerintahan) {
             $table->urusan_pemerintahan = $request->urusan_pemerintahan;
         }
@@ -405,6 +452,25 @@ class PerdaController extends BaseController
                         $table->abstrak .= $filepath;
                         if ($filecount != ($key + 1)) {
                             $table->abstrak .= ';';
+                        }
+                    }
+                }
+            }
+        }
+        if ($request->lampiran) {
+            if ($request->lampiran != 'nochange') {
+                $table->lampiran = '';
+                $lampirans = is_array($request->lampiran) ? $request->lampiran : [$request->lampiran];
+                $filecount = count($lampirans);
+                foreach ($lampirans as $key => $value) {
+                    if (is_file($value)) {
+                        $extension = $value->extension();
+                        $filename = $value->getClientOriginalName();
+                        $filepath = $filename;
+                        $value->move(public_path('upload/lampiran/perda/' . $request->tahun), $filepath);
+                        $table->lampiran .= $filepath;
+                        if ($filecount != ($key + 1)) {
+                            $table->lampiran .= ';';
                         }
                     }
                 }
