@@ -58,7 +58,7 @@ class PenghargaanV2Controller extends BaseController
                     $extension = $value->extension();
                     $folder = "upload/penghargaanV2";
                     $filename = time() . "_" . $index . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
+                    $filepath = $folder . "/" . $filename;
                     $value->move(public_path("storage/" . $folder . "/"), $filename);
                     array_push($list_foto, $filepath);
                 }
@@ -120,7 +120,7 @@ class PenghargaanV2Controller extends BaseController
                     $extension = $value->extension();
                     $folder = "upload/penghargaanV2";
                     $filename = time() . "_" . $index . "_" . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
+                    $filepath = $folder . "/" . $filename;
                     $value->move(public_path("storage/" . $folder . "/"), $filename);
                     array_push($list_foto, $filepath);
                 }

@@ -55,6 +55,7 @@ Route::get('/perwal/{id}/{slug}', 'PublicController@perwal')->name('perwal.detai
 Route::get('/keputusan-wali-kota', 'PublicController@kepWalikota')->name('keputusan-wali-kota');
 Route::get('/kelurahan-sadar-hukum', 'PublicController@kelurahanSadarHukum')->name('kelurahan-sadar-hukum');
 Route::get('/kelurahan-sadar-hukum/{id}', 'PublicController@kelurahanSadarHukumDetail')->name('kelurahan-sadar-hukum.detail');
+Route::get('/dokumen', 'PublicController@dokumen')->name('dokumen');
 Route::view('/404', 'pages.404-two')->name('404');
 Route::post('/bye', 'Auth\LogoutController@bye')->name('logout.bye');
 Route::get('lang/{language}', 'LocalizationController@switch')->name('localization.switch');

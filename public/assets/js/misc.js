@@ -82,6 +82,7 @@ function makeForm(formname, method) {
             ($(this).attr('type') == 'password') ||
             ($(this).attr('type') == 'number') ||
             ($(this).attr('type') == 'hidden') ||
+            ($(this).attr('type') == 'color') ||
             ($(this).prop("tagName").toLowerCase() == 'textarea')
         ) {
             var valdata = $(this).val();
@@ -120,7 +121,9 @@ function makeForm(formname, method) {
     return formData;
 }
 function btnLoadingStart(buttonname) {
-    window[buttonname].start();
+    if (window[buttonname]) {
+        window[buttonname].start();
+    }
 }
 function btnLoadingStop(buttonname) {
     if (buttonname && window[buttonname]) {
@@ -171,7 +174,8 @@ function getData(url, option = null) {
                                 (tipe == 'text') ||
                                 (tipe == 'email') ||
                                 (tipe == 'hidden') ||
-                                (tipe == 'number')
+                                (tipe == 'number') ||
+                                (tipe == 'color')
                             ) {
                                 data = eval('response.data.' + val);
                                 el.val(data);
@@ -189,7 +193,7 @@ function getData(url, option = null) {
                                         data = data.split(';');
                                     }
                                 }
-                                el.val(data).change();
+                                el.val(data).trigger('change');
                             } else {
                                 $('.select2-search__field').css('width', '406px');
                             }
@@ -540,9 +544,14 @@ function fieldClear(formname) {
             ($(this).attr('type') == 'email') ||
             ($(this).attr('type') == 'password') ||
             ($(this).attr('type') == 'number') ||
+            ($(this).attr('type') == 'color') ||
             ($(this).prop("tagName").toLowerCase() == 'textarea')
         ) {
-            $(this).val('');
+            if ($(this).attr('type') == 'color' && $(this).attr('id') == 'warna') {
+                $(this).val('#0acf97'); // Default color for warna field
+            } else {
+                $(this).val('');
+            }
         }
         if (($(this).attr('type') == 'checkbox')) {
             $(this).prop('checked', false);

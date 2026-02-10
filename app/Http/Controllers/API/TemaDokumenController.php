@@ -138,7 +138,7 @@ class TemaDokumenController extends BaseController
      */
     public function getActive()
     {
-        $tema = TemaDokumen::where('status', 'aktif')
+        $tema = TemaDokumen::where('status', true)
             ->orderBy('nama', 'asc')
             ->get(['id', 'nama', 'icon', 'warna']);
 

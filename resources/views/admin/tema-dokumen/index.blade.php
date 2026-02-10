@@ -182,6 +182,7 @@
                     backdrop: 'static',
                     keyboard: false
                 });
+                makeButtonLoading();
             });
 
             $(document).on('click', '.btneditdata', function (event) {
@@ -197,6 +198,7 @@
                     }
                 }
                 getData('{{ url('api') }}/{{$module}}/' + rowid + '/edit', option);
+                makeButtonLoading();
             });
 
             $(document).on('click', '.btndeletedata', function (event) {

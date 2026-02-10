@@ -40,11 +40,9 @@ setlocale(LC_TIME, 'id_ID');
     <section class="section pt-3 pb-3 " style="background-color: #def0fb;">
         <div class="container-fluid">
             <div class="d-flex align-items-center">
-                <img src="{{ isset($tema) && $tema->icon ? asset($tema->icon) : asset('assets/images/default-tema.png') }}"
-                    onerror="this.src='{{ asset('assets/images/default-tema.png') }}'"
-                    alt="{{ isset($tema) ? $tema->nama : 'Tema Dokumen' }}"
-                    width="80"
-                    class="mr-3">
+                <img src="{{ isset($tema) && $tema->icon ? asset('storage/' . $tema->icon) : asset('assets/images/default-icon.png') }}"
+                     alt="{{ isset($tema) ? $tema->nama : 'Tema Dokumen' }}"
+                     style="width: 80px; height: 80px; object-fit: contain; margin-right: 1rem;">
                 <div>
                     <h2 class="mb-0">{{ isset($tema) ? $tema->nama : 'Tema Dokumen' }}</h2>
                     <p class="text-muted mb-0">{{ isset($tema) ? $tema->deskripsi : 'Dokumen hukum berdasarkan tema' }}</p>

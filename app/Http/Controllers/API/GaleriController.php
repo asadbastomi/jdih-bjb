@@ -27,16 +27,12 @@ class GaleriController extends BaseController
         
         $galeriData = $dataset->orderBy('created_at', 'desc')->paginate($item);
         
-        // Transform image paths to include /storage/ prefix
+        // Transform image paths to ensure proper format
         $galeriData->getCollection()->transform(function ($galeri) {
             if ($galeri->foto_kegiatan) {
                 $photos = is_string($galeri->foto_kegiatan) ? json_decode($galeri->foto_kegiatan, true) : $galeri->foto_kegiatan;
                 if (is_array($photos)) {
-                    $galeri->foto_kegiatan = array_map(function($photo) {
-                        // Add /storage/ prefix if not already present
-                        $path = ltrim($photo, '/');
-                        return '/storage/' . $path;
-                    }, $photos);
+                    $galeri->foto_kegiatan = $photos;
                 }
             }
             return $galeri;
@@ -57,10 +53,6 @@ class GaleriController extends BaseController
         }
         $data['data'] = $dataset->orderBy('id', 'asc')->paginate($item);
 
-        Log::build([
-            'driver' => 'single',
-            'path' => storage_path('logs/long.log'),
-        ])->info(date("Y-m-d h:i:s", time()) . ' : ' . Auth::user()->username . ' Access List Galeri' . request()->getClientIp() . " -- " . $request->host() . " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
         // Return JSON for API requests, HTML view for AJAX requests
         if ($request->expectsJson()) {
             return $this->sendResponse($data['data'], 'Data retrieved successfully');
@@ -72,28 +64,45 @@ class GaleriController extends BaseController
 
     public function store(Request $request)
     {
+        // Validate nama_kegiatan
         $validator = Validator::make($request->all(), [
             'nama_kegiatan' => ['required'],
-            'foto_kegiatan' => ['required', 'array'],
-            'foto_kegiatan.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:2048']
         ]);
-
+        
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), 'Validation Error');
         }
+        
+        // Validate foto_kegiatan separately to handle array check properly
+        if (!$request->hasFile('foto_kegiatan') || empty($request->file('foto_kegiatan'))) {
+            return $this->sendError(['foto_kegiatan' => ['Foto kegiatan harus diisi minimal 1 gambar']], 'Validation Error');
+        }
+        
+        $files = $request->file('foto_kegiatan');
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+        
+        // Validate each file
+        foreach ($files as $index => $file) {
+            if (!$file->isValid()) {
+                return $this->sendError(['foto_kegiatan.' . $index => ['File tidak valid']], 'Validation Error');
+            }
+            if (!$file->isValid() || !$file->getClientOriginalName() || !$file->isFile()) {
+                return $this->sendError(['foto_kegiatan.' . $index => ['File harus berupa gambar yang valid']], 'Validation Error');
+            }
+        }
 
         $list_foto_kegiatan = [];
-        if ($request->foto_kegiatan) {
-            $jumlah_foto_kegiatan = count((array)$request->foto_kegiatan);
-            foreach ($request->foto_kegiatan as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
-                    $folder = "upload/galeri";
-                    $filename = time() . "_" . $index . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
-                    array_push($list_foto_kegiatan, $filepath);
-                }
+        
+        foreach ($files as $index => $file) {
+            if ($file && $file->isValid()) {
+                $extension = $file->extension();
+                $folder = "upload/galeri";
+                $filename = time() . "_" . $index . "." . $extension;
+                $filepath = "/storage/" . $folder . "/" . $filename;
+                $file->move(public_path("storage/" . $folder . "/"), $filename);
+                array_push($list_foto_kegiatan, $filepath);
             }
         }
 
@@ -101,13 +110,7 @@ class GaleriController extends BaseController
         $table->nama_kegiatan = $request->nama_kegiatan;
         $table->foto_kegiatan = $list_foto_kegiatan;
 
-        Log::build([
-            'driver' => 'single',
-            'path' => storage_path('logs/long.log'),
-        ])->info(date("Y-m-d h:i:s", time()) . ' : ' . Auth::user()->username . ' Access Store Galeri' . request()->getClientIp() . " -- " . $request->host() . " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
-
         if ($table->save()) {
-            // return $this->sendResponse($table, 'Data saved successfully');
             return $this->sendResponse($table, 'Data saved successfully');
         } else {
             return $this->sendError(null, 'Data failed to save', 500);
@@ -119,10 +122,6 @@ class GaleriController extends BaseController
         $table = Galeri::where('id', $id)->first();
         unset($table['foto_kegiatan']);
 
-        Log::build([
-            'driver' => 'single',
-            'path' => storage_path('logs/long.log'),
-        ])->info(date("Y-m-d h:i:s", time()) . ' : ' . Auth::user()->username . ' Access Edit Galeri' . request()->getClientIp() . " -- " . $request->host() . " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
         if ($table) {
             return $this->sendResponse($table, 'Data retrieved');
         } else {
@@ -132,26 +131,30 @@ class GaleriController extends BaseController
 
     public function update(Request $request, $id)
     {
+        // Validate nama_kegiatan
         $validator = Validator::make($request->all(), [
             'nama_kegiatan' => ['required'],
-            'foto_kegiatan' => ['nullable', 'array'],
-            'foto_kegiatan.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:2048']
         ]);
-
+        
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), 'Validation Error');
         }
 
         $list_foto_kegiatan = [];
-        if ($request->foto_kegiatan) {
-            $jumlah_foto_kegiatan = count((array)$request->foto_kegiatan);
-            foreach ($request->foto_kegiatan as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
+        
+        if ($request->hasFile('foto_kegiatan')) {
+            $files = $request->file('foto_kegiatan');
+            if (!is_array($files)) {
+                $files = [$files];
+            }
+            
+            foreach ($files as $index => $file) {
+                if ($file && $file->isValid()) {
+                    $extension = $file->extension();
                     $folder = "upload/galeri";
                     $filename = time() . "_" . $index . "_" . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
+                    $filepath = "/storage/" . $folder . "/" . $filename;
+                    $file->move(public_path("storage/" . $folder . "/"), $filename);
                     array_push($list_foto_kegiatan, $filepath);
                 }
             }
@@ -163,10 +166,6 @@ class GaleriController extends BaseController
             $table->foto_kegiatan = $list_foto_kegiatan;
         }
 
-        Log::build([
-            'driver' => 'single',
-            'path' => storage_path('logs/long.log'),
-        ])->info(date("Y-m-d h:i:s", time()) . ' : ' . Auth::user()->username . ' Access Update Galeri' . request()->getClientIp() . " -- " . $request->host() . " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
         if ($table->save()) {
             return $this->sendResponse($table, 'Data updated successfully');
         } else {
@@ -178,10 +177,6 @@ class GaleriController extends BaseController
     {
         $table = Galeri::where('id', $id)->first();
 
-        Log::build([
-            'driver' => 'single',
-            'path' => storage_path('logs/long.log'),
-        ])->info(date("Y-m-d h:i:s", time()) . ' : ' . Auth::user()->username . ' Access Delete Galeri' . request()->getClientIp() . " -- " . $request->host() . " -- " . request()->server('SERVER_NAME') . ' - ' . request()->userAgent());
         if ($table->delete()) {
             return $this->sendResponse($table, 'Data deleted successfully');
         } else {

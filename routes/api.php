@@ -30,6 +30,7 @@ Route::post('keputusan-wali-kota/publicfetch', 'API\KepWalikotaController@public
 Route::post('putusanpengadilan-negeri/publicfetch', 'API\PutusanController@publicfetch')->name('api.putusan.publicfetch');
 Route::post('putusanpengadilan-tu-negara/publicfetch', 'API\PutusanController@publicfetchtu')->name('api.putusan.publicfetchtu');
 Route::post('artikel/publicfetch', 'API\ArtikelController@publicfetch')->name('api.artikel.publicfetch');
+Route::post('dokumen/search', 'API\DokumenController@search')->name('api.dokumen.search');
 Route::get('skm', 'API\SkmController@publicfetch')->name('api.skm.publicfetch');
 Route::post('skm', 'API\SkmController@store')->name('api.skm');
 Route::get('galeri', 'API\GaleriController@publicfetch')->name('api.galeri.publicfetch');
@@ -140,7 +141,7 @@ Route::middleware('auth.api.or.web')->group(function () {
         Route::post('tema-dokumen/fetch', 'API\TemaDokumenController@fetch')->name('tema-dokumen.fetch');
         Route::post('tema-dokumen/link-regulasi', 'API\TemaDokumenController@linkRegulasiToTema')->name('tema-dokumen.link-regulasi');
         Route::post('tema-dokumen/unlink-regulasi', 'API\TemaDokumenController@unlinkRegulasiFromTema')->name('tema-dokumen.unlink-regulasi');
-        Route::resource('tema-dokumen', 'API\TemaDokumenController')->only(['store', 'update', 'destroy']);
+        Route::resource('tema-dokumen', 'API\TemaDokumenController')->only(['store', 'edit', 'update', 'destroy']);
 
         // Faq
         Route::post('faq/fetch', 'API\FaqController@fetch')->name('faq.fetch');

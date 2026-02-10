@@ -932,4 +932,46 @@ class PublicController extends Controller
 
         return view('public.kelurahan-sadar-hukum-detail', $this->data);
     }
+
+    /**
+     * Menampilkan halaman pencarian dokumen lengkap dengan filter.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function dokumen(Request $request)
+    {
+        $this->data['type'] = 'rowcol';
+        $this->data['fetch'] = 'api.dokumen.search';
+        $this->data['judul'] = 'Dokumen/Peraturan';
+        
+        // Filter parameters
+        if ($request->input('jenis')) {
+            $this->data['jenis'] = $request->input('jenis');
+        }
+        if ($request->input('status')) {
+            $this->data['status'] = $request->input('status');
+        }
+        if ($request->input('tahun')) {
+            $this->data['tahun'] = $request->input('tahun');
+        }
+        if ($request->input('s')) {
+            $this->data['s'] = $request->input('s');
+        }
+        if ($request->input('tema')) {
+            $this->data['tema'] = $request->input('tema');
+        }
+
+        // Get year list from all document types
+        $this->data['tahunlist'] = collect([
+            // From Regulasi (Perda, Perwal, Kepwal, Artikel Hukum)
+            ...Regulasi::select('tahun')->distinct()->pluck('tahun')->toArray(),
+            // From Buku (Monografi Hukum)
+            ...Buku::select('tahun_terbit as tahun')->distinct()->pluck('tahun')->toArray(),
+            // From Putusan
+            ...Putusan::selectRaw('YEAR(tanggal_putusan) as tahun')->distinct()->pluck('tahun')->toArray()
+        ])->unique()->sortDesc()->values();
+
+        return view('public.dokumen', $this->data);
+    }
 }

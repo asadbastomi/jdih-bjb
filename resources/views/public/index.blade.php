@@ -4830,24 +4830,39 @@ setlocale(LC_TIME, 'id_ID');
             }
 
             function loadTemaDokumenHomepage() {
+                console.log('Loading tema dokumen...');
                 $.ajax({
                     url: '/api/tema-dokumen',
                     method: 'GET',
                     dataType: 'json',
                     success: function(response) {
+                        console.log('Tema dokumen response:', response);
                         var temaContainer = $('#tema-dokumen-container');
                         temaContainer.empty();
 
-                        if (response.data && response.data.length > 0) {
-                            $.each(response.data, function(index, tema) {
-                                if (tema.status) {
-                                    var jumlahPeraturan = tema.jumlah_peraturan || 0;
-                                    var iconSrc = tema.icon ? tema.icon : '/assets/images/' +
-                                        tema.slug + '.png';
+                        // Access actual data array from paginated response
+                        var temaList = response.data ? (response.data.data || response.data) : [];
+                        console.log('Tema list:', temaList);
+
+                        if (temaList && temaList.length > 0) {
+                            $.each(temaList, function(index, tema) {
+                                console.log('Processing tema:', tema);
+                                // Check if status is active (true or 'aktif')
+                                var isStatusActive = tema.status === true || tema.status === 'aktif' || tema.status === 1;
+                                
+                                if (isStatusActive) {
+                                    // Use regulasi_count from withCount relationship
+                                    var jumlahPeraturan = tema.regulasi_count || 0;
+                                    
+                                    // Use icon image from database
+                                    var iconUrl = tema.icon ? asset('storage/' + tema.icon) : asset('assets/images/default-icon.png');
+                                    
+                                    console.log('Icon URL:', iconUrl);
+                                    
                                     var temaHtml = `
-                                        <div class="theme-item">
-                                            <a href="/tema-dokumen/${tema.id}/${tema.slug}" class="text-decoration-none">
-                                                <img src="${iconSrc}" width="80" onerror="this.src='/assets/images/default-tema.png'" />
+                                        <div class="theme-item animate-on-scroll scale-in delay-${(index % 6) + 1}">
+                                            <a href="/dokumen?tema=${tema.id}" class="text-decoration-none">
+                                                <img src="${iconUrl}" alt="${tema.nama}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
                                                 <span>${tema.nama}</span>
                                                 <small>${jumlahPeraturan} Peraturan</small>
                                             </a>
@@ -4857,13 +4872,16 @@ setlocale(LC_TIME, 'id_ID');
                             });
                         } else {
                             temaContainer.html(
-                                '<p class="text-center">Belum ada tema dokumen yang tersedia</p>');
+                                '<p class="text-center text-muted">Belum ada tema dokumen yang tersedia</p>');
                         }
                     },
-                    error: function(error) {
+                    error: function(xhr, status, error) {
                         console.error('Error loading tema dokumen:', error);
+                        console.error('Status:', status);
+                        console.error('XHR:', xhr);
+                        console.error('Response:', xhr.responseText);
                         $('#tema-dokumen-container').html(
-                            '<p class="text-center">Gagal memuat data tema dokumen</p>');
+                            '<p class="text-center text-danger">Gagal memuat data tema dokumen</p>');
                     }
                 });
             }

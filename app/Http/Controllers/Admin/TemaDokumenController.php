@@ -24,11 +24,11 @@ class TemaDokumenController extends Controller
     public function index()
     {
         $this->data['title'] = 'Tema Dokumen';
-        $this->data['form'] = 'formtemadokumen';
+        $this->data['form'] = 'formtema-dokumen';
         $this->data['module'] = 'tema-dokumen';
-        $this->data['button'] = 'btntemadokumen';
-        $this->data['fetch'] = route('api.tema-dokumen.fetch');
-        $this->data['store'] = route('api.tema-dokumen.store');
+        $this->data['button'] = 'btntema-dokumen';
+        $this->data['fetch'] = 'api.' . $this->data['module'] . '.fetch';
+        $this->data['store'] = 'api.' . $this->data['module'] . '.store';
         $this->data['field'] = json_encode(['nama', 'deskripsi', 'icon', 'warna', 'status']);
 
         return view('admin.tema-dokumen.index', $this->data);
