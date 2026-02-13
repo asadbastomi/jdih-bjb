@@ -43,7 +43,13 @@ class Putusan extends Model
         'checksum_file',
         'url_dokumen',
         'lampiran',
-        'file'
+        'file',
+        'kategori_id',
+        'nama_hakim'
     ];
 
+    public function popularItem()
+    {
+        return $this->hasOne(PopularItem::class, 'id_item', 'id')->where('id_kategori', $this->kategori_id ?? null);
+    }
 }

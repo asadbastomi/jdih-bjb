@@ -124,10 +124,13 @@ class DokumenController extends BaseController
                     'regulasi.file',
                     'regulasi.kategori_id',
                     'regulasi.tipe_dokumen',
+                    'regulasi.penandatangan',
                     'kategori.nama_singkat',
                     'kategori.nama as nama_kategori'
                 )
-                ->with('temaDokumen')
+                ->with(['temaDokumen', 'popularItem' => function($q) {
+                    $q->select('id_item', 'id_kategori', 'hit', 'downloaded');
+                }])
                 ->leftJoin('kategori', 'regulasi.kategori_id', '=', 'kategori.id');
 
                 // Apply document type filter for regulasi
@@ -220,6 +223,9 @@ class DokumenController extends BaseController
                         'type' => $this->getDocumentType($regulasi->kategori_id),
                         'type_label' => $regulasi->nama_kategori,
                         'status_hukum' => $status_hukum,
+                        'pemrakarsa' => $regulasi->penandatangan ?? '-',
+                        'dilihat' => $regulasi->popularItem->hit ?? 0,
+                        'diunduh' => $regulasi->popularItem->downloaded ?? 0,
                         'url' => url('/produk-hukum/' . $regulasi->nama_singkat . '/' . $regulasi->id . '/' . Str::slug($regulasi->judul)),
                         'temaDokumen' => $regulasi->temaDokumen
                     ]);
@@ -237,7 +243,9 @@ class DokumenController extends BaseController
                     'buku.file',
                     'buku.kategori_id',
                     'buku.cover'
-                )->with(['kategori', 'temaDokumen']);
+                )->with(['kategori', 'temaDokumen', 'popularItem' => function($q) {
+                    $q->select('id_item', 'id_kategori', 'hit', 'downloaded');
+                }]);
 
                 // Apply year filter
                 if ($tahun && !$jenis) {
@@ -274,6 +282,9 @@ class DokumenController extends BaseController
                         'type' => 'buku',
                         'type_label' => 'Monografi Hukum',
                         'status_hukum' => 'berlaku',
+                        'pemrakarsa' => $buku->penerbit ?? '-',
+                        'dilihat' => $buku->popularItem->hit ?? 0,
+                        'diunduh' => $buku->popularItem->downloaded ?? 0,
                         'url' => url('/monograf-hukum/' . $buku->id . '/' . Str::slug($buku->judul)),
                         'temaDokumen' => $buku->temaDokumen
                     ]);
@@ -290,8 +301,9 @@ class DokumenController extends BaseController
                     'putusan.tanggal_putusan',
                     'putusan.file',
                     'putusan.kategori_id',
-                    'putusan.jenis_putusan'
-                );
+                    'putusan.jenis_putusan',
+                    'putusan.nama_hakim'
+                )->with('popularItem');
 
                 // Apply document type filter for putusan
                 if ($jenis) {
@@ -345,6 +357,9 @@ class DokumenController extends BaseController
                         'type' => $type,
                         'type_label' => $typeLabel,
                         'status_hukum' => $putusan->status_hukum ?? 'berlaku',
+                        'pemrakarsa' => $putusan->nama_hakim ?? '-',
+                        'dilihat' => $putusan->popularItem->hit ?? 0,
+                        'diunduh' => $putusan->popularItem->downloaded ?? 0,
                         'url' => url('/putusanpengadilan-' . $slug . '/' . $putusan->id . '/' . Str::slug($putusan->judul)),
                         'temaDokumen' => null
                     ]);

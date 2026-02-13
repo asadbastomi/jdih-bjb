@@ -31,7 +31,7 @@ function initSurvey() {
     const btnId = "btnskm";
     const surveySubmit = document.getElementById(btnId);
 
-    if (surveySubmit) {
+    if (surveySubmit && typeof Ladda !== 'undefined') {
         window.window[btnId] = Ladda.create(
             document.querySelector("#" + btnId)
         );

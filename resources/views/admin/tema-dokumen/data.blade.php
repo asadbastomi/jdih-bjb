@@ -21,7 +21,11 @@
                         <td class="fix">{{ $data->firstItem() + $key }}</td>
                         <td>
                             @if ($row->icon)
-                                <i class="mdi {{ $row->icon }} fs-2" style="color: {{ $row->warna ?? '#0acf97' }}"></i>
+                                @if (strpos($row->icon, '.') !== false)
+                                    <img src="{{ asset('storage/' . $row->icon) }}" alt="{{ $row->nama }}" style="width: 32px; height: 32px; object-fit: contain;">
+                                @else
+                                    <i class="mdi {{ $row->icon }} fs-2" style="color: {{ $row->warna ?? '#0acf97' }}"></i>
+                                @endif
                             @else
                                 <i class="mdi mdi-tag-outline fs-2" style="color: #ccc"></i>
                             @endif

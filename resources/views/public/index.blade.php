@@ -716,6 +716,9 @@ setlocale(LC_TIME, 'id_ID');
         /* Theme Section Styles */
         .theme-section {
             padding: 60px 0;
+            position: relative;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            z-index: 1;
         }
 
         .theme-title {
@@ -745,11 +748,13 @@ setlocale(LC_TIME, 'id_ID');
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
+            border: 1px solid rgba(99, 102, 241, 0.1);
         }
 
         .theme-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
         }
 
         .theme-item img {
@@ -763,10 +768,12 @@ setlocale(LC_TIME, 'id_ID');
             font-weight: 600;
             color: var(--dark-color);
             margin-bottom: 5px;
+            display: block;
         }
 
         .theme-item small {
             color: #6c757d;
+            display: block;
         }
 
         /* Card Styles */
@@ -3384,10 +3391,6 @@ setlocale(LC_TIME, 'id_ID');
         }
 
         // Ensure panel is properly initialized
-        console.log('Accessibility widget initializing...');
-        console.log('Toggle button found:', !!accessibilityToggle);
-        console.log('Panel found:', !!accessibilityPanel);
-        console.log('Panel classes:', accessibilityPanel.className);
 
         // State
         var state = {
@@ -3456,7 +3459,6 @@ setlocale(LC_TIME, 'id_ID');
         if (synthesis.onvoiceschanged !== undefined) {
             synthesis.onvoiceschanged = function() {
                 var voices = synthesis.getVoices();
-                console.log('Available voices:', voices.length);
             };
         }
 
@@ -3753,20 +3755,11 @@ setlocale(LC_TIME, 'id_ID');
         }
         updateFontSizeDisplay();
         
-        console.log('Accessibility widget initialized successfully');
-        
         // Ensure panel starts hidden
         accessibilityPanel.classList.remove('active');
         
         // Force reflow to ensure CSS is applied
         void accessibilityPanel.offsetWidth;
-        
-        console.log('Panel initial state:', {
-            opacity: getComputedStyle(accessibilityPanel).opacity,
-            visibility: getComputedStyle(accessibilityPanel).visibility,
-            transform: getComputedStyle(accessibilityPanel).transform,
-            hasActiveClass: accessibilityPanel.classList.contains('active')
-        });
         
         // Force visibility after page load
         setTimeout(function() {
@@ -3774,7 +3767,6 @@ setlocale(LC_TIME, 'id_ID');
             accessibilityToggle.style.display = 'flex';
             accessibilityToggle.style.opacity = '1';
             accessibilityToggle.style.visibility = 'visible';
-            console.log('Accessibility widget forced to be visible');
         }, 100);
     });
     </script>
@@ -4830,46 +4822,59 @@ setlocale(LC_TIME, 'id_ID');
             }
 
             function loadTemaDokumenHomepage() {
-                console.log('Loading tema dokumen...');
                 $.ajax({
-                    url: '/api/tema-dokumen',
+                    url: '/api/tema-dokumen/active',
                     method: 'GET',
                     dataType: 'json',
                     success: function(response) {
-                        console.log('Tema dokumen response:', response);
                         var temaContainer = $('#tema-dokumen-container');
                         temaContainer.empty();
 
-                        // Access actual data array from paginated response
-                        var temaList = response.data ? (response.data.data || response.data) : [];
-                        console.log('Tema list:', temaList);
+                        // Access actual data array from API response
+                        var temaList = response.data || [];
 
                         if (temaList && temaList.length > 0) {
                             $.each(temaList, function(index, tema) {
-                                console.log('Processing tema:', tema);
-                                // Check if status is active (true or 'aktif')
-                                var isStatusActive = tema.status === true || tema.status === 'aktif' || tema.status === 1;
+                                // Use regulasi_count from withCount relationship
+                                var jumlahPeraturan = tema.regulasi_count || 0;
                                 
-                                if (isStatusActive) {
-                                    // Use regulasi_count from withCount relationship
-                                    var jumlahPeraturan = tema.regulasi_count || 0;
-                                    
-                                    // Use icon image from database
-                                    var iconUrl = tema.icon ? asset('storage/' + tema.icon) : asset('assets/images/default-icon.png');
-                                    
-                                    console.log('Icon URL:', iconUrl);
-                                    
-                                    var temaHtml = `
-                                        <div class="theme-item animate-on-scroll scale-in delay-${(index % 6) + 1}">
-                                            <a href="/dokumen?tema=${tema.id}" class="text-decoration-none">
-                                                <img src="${iconUrl}" alt="${tema.nama}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">
-                                                <span>${tema.nama}</span>
-                                                <small>${jumlahPeraturan} Peraturan</small>
-                                            </a>
-                                        </div>`;
-                                    temaContainer.append(temaHtml);
+                                // Check if icon is a file path (contains '.') or MDI class
+                                var iconHtml = '';
+                                if (tema.icon) {
+                                    if (tema.icon.indexOf('.') !== -1) {
+                                        // It's a file path - use image tag
+                                        var iconUrl = '/storage/' + tema.icon;
+                                        iconHtml = `<img src="${iconUrl}" alt="${tema.nama}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;" onerror="this.src='/assets/images/default-icon.png'">`;
+                                    } else {
+                                        // It's an MDI icon - use icon tag
+                                        iconHtml = `<i class="mdi ${tema.icon} fs-2" style="font-size: 48px; color: #6366f1; margin-bottom: 10px;"></i>`;
+                                    }
+                                } else {
+                                    // Default icon
+                                    iconHtml = `<img src="/assets/images/default-icon.png" alt="${tema.nama}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px;">`;
                                 }
+                                
+                                var temaHtml = `
+                                    <div class="theme-item animate-on-scroll scale-in delay-${(index % 6) + 1}">
+                                        <a href="/tema-dokumen/${tema.id}" class="text-decoration-none">
+                                            ${iconHtml}
+                                            <span>${tema.nama}</span>
+                                            <small>${jumlahPeraturan} Peraturan</small>
+                                        </a>
+                                    </div>`;
+                                temaContainer.append(temaHtml);
                             });
+                            
+                            // Force reflow to ensure DOM is updated
+                            void temaContainer[0].offsetWidth;
+                            
+                            // Manually add is-visible class to all theme items
+                            // This is needed because elements are loaded via AJAX after Intersection Observer initialization
+                            setTimeout(function() {
+                                $('.theme-item').each(function() {
+                                    $(this).addClass('is-visible');
+                                });
+                            }, 100);
                         } else {
                             temaContainer.html(
                                 '<p class="text-center text-muted">Belum ada tema dokumen yang tersedia</p>');

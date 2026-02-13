@@ -90,4 +90,12 @@ class Regulasi extends Model
         return $this->belongsToMany(TemaDokumen::class, 'regulasi_tema', 'regulasi_id', 'tema_id')
                     ->withTimestamps();
     }
+
+    /**
+     * Relasi dengan PopularItem untuk tracking views dan downloads.
+     */
+    public function popularItem()
+    {
+        return $this->hasOne(PopularItem::class, 'id_item', 'id');
+    }
 }

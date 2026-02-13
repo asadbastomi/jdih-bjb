@@ -54,8 +54,9 @@ Route::get('chat/examples', 'API\ChatController@getExamples')->name('api.chat.ex
 
 // Tema Dokumen Routes
 Route::get('tema-dokumen', 'API\TemaDokumenController@index')->name('api.tema-dokumen.index');
-Route::get('tema-dokumen/active', 'API\TemaDokumenController@getActive')->name('api.tema-dokumen.active');
+Route::get('tema-dokumen/active', 'API\TemaDokumenController@active')->name('api.tema-dokumen.active');
 Route::get('tema-dokumen/{id}', 'API\TemaDokumenController@show')->name('api.tema-dokumen.show');
+Route::get('tema-dokumen/{id}/edit', 'API\TemaDokumenController@edit')->name('api.tema-dokumen.edit');
 Route::get('tema-dokumen/slug/{slug}', 'API\TemaDokumenController@temaWithRegulasiBySlug');
 Route::get('tema-dokumen/{id}/regulasi', 'API\TemaDokumenController@getRegulasiByTema')->name('api.tema-dokumen.regulasi');
 
@@ -138,10 +139,10 @@ Route::middleware('auth.api.or.web')->group(function () {
         Route::resource('jadwal', 'API\JadwalController')->only(['store', 'edit', 'update', 'destroy']);
 
         // Tema Dokumen - Admin routes
-        Route::post('tema-dokumen/fetch', 'API\TemaDokumenController@fetch')->name('tema-dokumen.fetch');
-        Route::post('tema-dokumen/link-regulasi', 'API\TemaDokumenController@linkRegulasiToTema')->name('tema-dokumen.link-regulasi');
-        Route::post('tema-dokumen/unlink-regulasi', 'API\TemaDokumenController@unlinkRegulasiFromTema')->name('tema-dokumen.unlink-regulasi');
-        Route::resource('tema-dokumen', 'API\TemaDokumenController')->only(['store', 'edit', 'update', 'destroy']);
+        Route::post('tema-dokumen/fetch', 'API\TemaDokumenController@fetch')->name('api.tema-dokumen.fetch');
+        Route::post('tema-dokumen/link-regulasi', 'API\TemaDokumenController@linkRegulasiToTema')->name('api.tema-dokumen.link-regulasi');
+        Route::post('tema-dokumen/unlink-regulasi', 'API\TemaDokumenController@unlinkRegulasiFromTema')->name('api.tema-dokumen.unlink-regulasi');
+        Route::resource('tema-dokumen', 'API\TemaDokumenController')->only(['store', 'update', 'destroy']);
 
         // Faq
         Route::post('faq/fetch', 'API\FaqController@fetch')->name('faq.fetch');

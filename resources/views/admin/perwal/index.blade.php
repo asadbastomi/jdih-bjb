@@ -357,7 +357,6 @@
                 tema_ids: selectedTemas
             },
             success: function(response) {
-                console.log('Tema dokumen berhasil diperbarui');
             },
             error: function(error) {
                 console.error('Error updating tema dokumen:', error);
@@ -452,8 +451,6 @@
 
                     // Dapatkan ID dari input hidden
                     var regulasiId = $('#{{$form}} input.id').val();
-                    console.log('ID Regulasi yang akan diupdate:', regulasiId);
-                    console.log('Tema dokumen yang dipilih:', selectedTemas);
 
                     if (!regulasiId) {
                         notifyMe('Error', 'ID regulasi tidak ditemukan', 'error');
@@ -538,8 +535,6 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
-                    console.log('Memuat tema dokumen untuk form baru');
-
                     // Kosongkan select2 terlebih dahulu
                     $('#tema_dokumen').empty();
 
@@ -581,8 +576,6 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(response) {
-                    console.log('Data regulasi berhasil diambil:', response.data.id);
-
                     // Isi form dengan data regulasi
                     option = {
                         'success' : {
@@ -597,11 +590,9 @@
                     // Ambil tema dokumen yang terkait
                     var selectedTemasFromResponse = [];
                     if (response.data.tema_dokumen && response.data.tema_dokumen.length > 0) {
-                        console.log('Tema dokumen yang terkait:', response.data.tema_dokumen);
                         $.each(response.data.tema_dokumen, function(index, tema) {
                             selectedTemasFromResponse.push(tema.id.toString());
                         });
-                        console.log('ID tema yang akan dipilih:', selectedTemasFromResponse);
                     }
 
                     // Muat tema dokumen dan terapkan pilihan
@@ -610,8 +601,6 @@
                         method: 'GET',
                         dataType: 'json',
                         success: function(temaResponse) {
-                            console.log('Tema dokumen berhasil dimuat, jumlah tema:', temaResponse.data.length);
-
                             // Kosongkan select2 terlebih dahulu
                             $('#tema_dokumen').empty();
 
@@ -634,18 +623,14 @@
 
                             // Terapkan pilihan tema setelah select2 diinisialisasi
                             if (selectedTemasFromResponse.length > 0) {
-                                console.log('Menerapkan pilihan tema:', selectedTemasFromResponse);
-
                                 // Pastikan select2 sudah diinisialisasi
                                 if ($('#tema_dokumen').data('select2')) {
                                     $('#tema_dokumen').val(selectedTemasFromResponse).trigger('change');
-                                    console.log('Pilihan tema diterapkan');
                                 } else {
                                     // Jika select2 belum siap, tunggu sebentar
                                     var checkSelect2 = setInterval(function() {
                                         if ($('#tema_dokumen').data('select2')) {
                                             $('#tema_dokumen').val(selectedTemasFromResponse).trigger('change');
-                                            console.log('Pilihan tema diterapkan setelah menunggu');
                                             clearInterval(checkSelect2);
                                         }
                                     }, 100);

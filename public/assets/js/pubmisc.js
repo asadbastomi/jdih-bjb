@@ -34,10 +34,10 @@ function downloading($id, $kategori) {
         processData: false,
         contentType: false,
         success: function (response) {
-            console.log('Success Download');
+            // Success handler
         },
         error: function (response, code) {
-            console.log('Failed Download');
+            // Error handler
         }
     });
 }

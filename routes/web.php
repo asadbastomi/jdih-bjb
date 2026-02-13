@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Tema Dokumen Frontend Route (harus di atas untuk prioritas)
-Route::get('/tema-dokumen/{id}/{slug}', 'PublicController@regulasiByTema')->name('tema-dokumen.show');
+Route::get('/tema-dokumen/{id}', 'PublicController@regulasiByTema')->name('tema-dokumen.show');
 
 // V2
 Route::get('/v2', 'V2\LandingController@index')->name('v2.landing-page');

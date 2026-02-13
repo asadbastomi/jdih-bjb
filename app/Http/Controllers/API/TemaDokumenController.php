@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\TemaDokumen;
 use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\API\BaseController as BaseController;
 
 class TemaDokumenController extends BaseController
@@ -75,7 +76,7 @@ class TemaDokumenController extends BaseController
         $validator = Validator::make($request->all(), [
             'nama' => ['required', 'unique:tema_dokumen,nama'],
             'deskripsi' => ['nullable'],
-            'icon' => ['nullable'],
+            'icon' => ['nullable', 'file', 'mimes:png', 'max:2048'],
             'warna' => ['nullable'],
             'status' => ['required', 'in:aktif,nonaktif'],
         ]);
@@ -87,10 +88,19 @@ class TemaDokumenController extends BaseController
         $tema = new TemaDokumen;
         $tema->nama = $request->nama;
         $tema->deskripsi = $request->deskripsi;
-        $tema->icon = $request->icon;
         $tema->warna = $request->warna;
         $tema->status = $request->status;
         $tema->slug = $this->createSlug($request->nama);
+
+        // Handle icon file upload
+        if ($request->hasFile('icon')) {
+            $icon = $request->file('icon');
+            $iconFilename = time() . '_' . $icon->getClientOriginalName();
+            $iconPath = $icon->storeAs('upload/tema-dokumen', $iconFilename, 'public');
+            $tema->icon = $iconPath;
+        } else {
+            $tema->icon = $request->icon ?? null;
+        }
 
         if ($tema->save()) {
             return $this->sendResponse($tema, 'Data saved successfully');
@@ -136,9 +146,9 @@ class TemaDokumenController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function getActive()
+    public function active()
     {
-        $tema = TemaDokumen::where('status', true)
+        $tema = TemaDokumen::withCount('regulasi')
             ->orderBy('nama', 'asc')
             ->get(['id', 'nama', 'icon', 'warna']);
 
@@ -157,7 +167,7 @@ class TemaDokumenController extends BaseController
         $validator = Validator::make($request->all(), [
             'nama' => ['required', 'unique:tema_dokumen,nama,' . $id],
             'deskripsi' => ['nullable'],
-            'icon' => ['nullable'],
+            'icon' => ['nullable', 'file', 'mimes:png', 'max:2048'],
             'warna' => ['nullable'],
             'status' => ['required', 'in:aktif,nonaktif'],
         ]);
@@ -173,10 +183,21 @@ class TemaDokumenController extends BaseController
 
         $tema->nama = $request->nama;
         $tema->deskripsi = $request->deskripsi;
-        $tema->icon = $request->icon;
         $tema->warna = $request->warna;
         $tema->status = $request->status;
         $tema->slug = $this->createSlug($request->nama);
+
+        // Handle icon file upload
+        if ($request->hasFile('icon')) {
+            // Delete old icon if exists
+            if ($tema->icon) {
+                Storage::disk('public')->delete($tema->icon);
+            }
+            $icon = $request->file('icon');
+            $iconFilename = time() . '_' . $icon->getClientOriginalName();
+            $iconPath = $icon->storeAs('upload/tema-dokumen', $iconFilename, 'public');
+            $tema->icon = $iconPath;
+        }
 
         if ($tema->save()) {
             return $this->sendResponse($tema, 'Data updated successfully');

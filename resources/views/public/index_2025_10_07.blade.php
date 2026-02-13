@@ -1554,7 +1554,7 @@ setlocale(LC_TIME, 'id_ID');
                                     var jumlahPeraturan = tema.jumlah_peraturan || 0;
                                     var iconSrc = tema.icon ? tema.icon : '/assets/images/' + tema.slug + '.png';
                                     var temaHtml = `
-                                        <a href="/tema-dokumen/${tema.id}/${tema.slug}"
+                                        <a href="/tema-dokumen/${tema.id}"
                                             style="display: flex; width: 120px; text-align: center; font-size: 15px; flex-direction: column; justify-content: center; margin-right: 10px;">
                                             <img src="${iconSrc}" width="110" onerror="this.src='/assets/images/default-tema.png'" />
                                             <span style="color: #292929; font-weight: bold; font-size: 13pt; margin-top: 10px;">${tema.nama}</span>

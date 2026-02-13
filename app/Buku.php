@@ -74,4 +74,9 @@ class Buku extends Model
     {
         return $this->belongsToMany(TemaDokumen::class, 'buku_tema_dokumen', 'buku_id', 'tema_dokumen_id');
     }
+
+    public function popularItem()
+    {
+        return $this->hasOne(PopularItem::class, 'id_item', 'id')->where('id_kategori', $this->kategori_id ?? 9);
+    }
 }

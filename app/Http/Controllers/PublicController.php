@@ -800,33 +800,68 @@ class PublicController extends Controller
      * Menampilkan regulasi berdasarkan tema dokumen.
      *
      * @param int $id ID tema dokumen
-     * @param string $slug Slug tema dokumen (untuk SEO)
      * @return \Illuminate\Http\Response
      */
-    public function regulasiByTema($id, $slug)
+    public function regulasiByTema($id)
     {
         try {
             // Ambil data tema dokumen
             $temaDokumen = \App\TemaDokumen::findOrFail($id);
 
-            // Pastikan slug cocok untuk SEO
-            if ($temaDokumen->slug != $slug) {
-                return redirect()->route('tema-dokumen.show', [$id, $temaDokumen->slug]);
-            }
+            // Tentukan kolom yang akan digunakan untuk sorting
+            $nomorColumn = \Schema::hasColumn('regulasi', 'nomor_peraturan') ? 'nomor_peraturan' : 'nomor';
+            $tahunColumn = \Schema::hasColumn('regulasi', 'tahun_peraturan') ? 'tahun_peraturan' : 'tahun';
+            // dd($temaDokumen);
 
-            // Ambil data regulasi berdasarkan tema
+            // Ambil data regulasi berdasarkan tema dengan relasi popularItem dan ubahCabut
             $regulasi = $temaDokumen->regulasi()
-                ->with('kategori')
-                ->orderBy('tahun', 'desc')
-                ->orderBy('nomor', 'desc')
+                ->with(['kategori', 'popularItem' => function($query) {
+                    $query->select('id', 'id_item', 'id_kategori', 'hit', 'downloaded');
+                }])
+                ->withUbahCabut()
+                ->orderBy($tahunColumn, 'desc')
+                ->orderBy($nomorColumn, 'desc')
                 ->paginate(20);
+            $regulasiList = $temaDokumen->regulasi()->get();
+            $kategoriList = [];
+            
+
+            // UBAH $regulasi MENJADI $item DI BAWAH INI
+            foreach ($regulasiList as $item) {
+                if ($item->kategori && !in_array($item->kategori->id, array_column($kategoriList, 'id'))) {
+                    $kategoriList[] = [
+                        'id' => $item->kategori->id,
+                        'nama' => $item->kategori->nama
+                    ];
+                }
+            }
+            // Sort by nama
+            usort($kategoriList, function($a, $b) {
+                return strcmp($a['nama'], $b['nama']);
+            });
+            // Convert to collection of objects for easier view access
+            $kategoriList = collect($kategoriList)->map(function($item) {
+                return (object) $item;
+            });
+            
+
+            // Ambil list tahun yang unik dari regulasi tema ini
+            $tahunList = $temaDokumen->regulasi()
+                ->select($tahunColumn . ' as tahun')
+                ->distinct()
+                ->orderBy($tahunColumn, 'desc')
+                ->pluck('tahun');
 
             // Data untuk view
             $data = [
                 'tema' => $temaDokumen,
                 'regulasi' => $regulasi,
+                'kategoriList' => $kategoriList,
+                'tahunList' => $tahunList,
                 'title' => 'Regulasi - ' . $temaDokumen->nama
             ];
+            
+            
 
             // Gabungkan dengan data umum
             $this->data = array_merge($this->data, $data);
@@ -836,8 +871,13 @@ class PublicController extends Controller
             // Log error
             \Log::error('Error pada halaman tema dokumen: ' . $e->getMessage());
 
-            // Data untuk view fallback
+            // Data untuk view fallback - penting untuk menghindari error
             $this->data['title'] = 'Tema Dokumen Tidak Ditemukan';
+            $this->data['tema'] = null;
+            // Set empty paginator untuk menghindari error firstItem()
+            $this->data['regulasi'] = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20);
+            $this->data['kategoriList'] = collect();
+            $this->data['tahunList'] = collect();
 
             // Tampilkan halaman error dengan pesan yang sesuai
             return view('public.tema-dokumen', $this->data);

@@ -141,7 +141,6 @@ function getData(url, option = null) {
         processData: false,
         contentType: false,
         success: function (response) {
-            console.log(url);
             if (actSuccess) {
                 if (actSuccess.request == 'appliedtoform') {
                     $('#' + actSuccess.modal + ' form#' + actSuccess.form).prepend('<input type="hidden" id="id" value="' + response.data.id + '" class="id additional send">');
@@ -158,8 +157,6 @@ function getData(url, option = null) {
                     }
                     $.each(actSuccess.field, function (key, val) {
                         el = $('#' + actSuccess.modal + ' form#' + actSuccess.form + ' #' + val);
-                        console.log('#' + actSuccess.modal + ' form#' + actSuccess.form + ' #' + val);
-                        console.log(el);
                         
                         // Check if element exists before accessing its tagName
                         if (el.length === 0) {
@@ -255,15 +252,20 @@ function getData(url, option = null) {
                             }
                         }
                     });
-                    if (actSuccess.hasOwnProperty('parentchildajax')) {
-                        $.each(actSuccess.parentchildajax, function (key, item) {
-                            $('#' + item[0]).data('ajaxchild', item[1])
-                            $('#' + item[0]).data('ajaxchildval', eval('response.data.' + item[1]))
-                            data = eval('response.data.' + item[0]);
-                            // console.log(item);
-                            $('#' + item[0]).val(data).change();
-                        });
-                    }
+                        if (actSuccess.hasOwnProperty('parentchildajax')) {
+                            $.each(actSuccess.parentchildajax, function (key, item) {
+                                $('#' + item[0]).data('ajaxchild', item[1])
+                                $('#' + item[0]).data('ajaxchildval', eval('response.data.' + item[1]))
+                                data = eval('response.data.' + item[0]);
+                                // console.log(item);
+                                $('#' + item[0]).val(data).change();
+                            });
+                        }
+                        if (actSuccess.hasOwnProperty('callback')) {
+                            if (typeof actSuccess.callback === 'function') {
+                                actSuccess.callback(response);
+                            }
+                        }
                     $('#' + actSuccess.modal).modal({
                         backdrop: 'static',
                         keyboard: false
@@ -442,10 +444,6 @@ function sentData(url, option = null) {
             }
         },
         error: function (response, code) {
-            console.error('AJAX Error:', response);
-            console.error('Status:', response.status);
-            console.error('ResponseText:', response.responseText);
-            
             // Handle 500 errors specially
             if (response.status === 500) {
                 notifyMe('Server Error', 'An error occurred on the server. Please try again.', 'error');

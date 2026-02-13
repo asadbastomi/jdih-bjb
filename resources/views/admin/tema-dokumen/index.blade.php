@@ -72,14 +72,14 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label class="control-label">Nama Tema <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control send" id="nama"
+                                    <input type="text" class="form-control send" id="nama" name="nama"
                                         placeholder="Nama Tema Dokumen" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Status <span class="text-danger">*</span></label>
-                                    <select class="form-control send" id="status" required>
+                                    <select class="form-control send" id="status" name="status" required>
                                         <option value="aktif">Aktif</option>
                                         <option value="nonaktif">Nonaktif</option>
                                     </select>
@@ -90,7 +90,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Deskripsi</label>
-                                    <textarea class="form-control send" id="deskripsi" rows="3"
+                                    <textarea class="form-control send" id="deskripsi" name="deskripsi" rows="3"
                                         placeholder="Deskripsi tema dokumen"></textarea>
                                 </div>
                             </div>
@@ -98,16 +98,25 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Icon</label>
-                                    <input type="text" class="form-control send" id="icon"
-                                        placeholder="Contoh: mdi-book">
-                                    <small class="form-text text-muted">Gunakan Material Design Icons (mdi-*)</small>
+                                    <label class="control-label">Icon (PNG)</label>
+                                    <input type="file" class="form-control send" id="icon" name="icon" accept="image/png">
+                                    <small class="form-text text-muted">Upload file PNG untuk icon tema (Maksimal 2MB)</small>
+                                    <div id="icon-preview" class="mt-2" style="display: none;">
+                                        <img src="" id="icon-preview-img" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd; border-radius: 4px;" alt="Icon Preview">
+                                        <button type="button" id="remove-icon" class="btn btn-sm btn-danger ml-2">
+                                            <i class="mdi mdi-delete"></i> Hapus
+                                        </button>
+                                    </div>
+                                    <div id="current-icon" class="mt-2" style="display: none;">
+                                        <small class="text-muted">Icon saat ini:</small><br>
+                                        <img src="" id="current-icon-img" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;" alt="Current Icon">
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Warna</label>
-                                    <input type="color" class="form-control send" id="warna"
+                                    <input type="color" class="form-control send" id="warna" name="warna"
                                         placeholder="#000000" value="#0acf97">
                                     <small class="form-text text-muted">Pilih warna untuk tema</small>
                                 </div>
@@ -133,38 +142,117 @@
         $(function ($) {
             loadTable('{{ route($fetch) }}', textserach);
 
-            $(document).on('submit', 'form.async', function () {
+            // Icon file preview
+            $('#icon').on('change', function() {
+                var input = this;
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#icon-preview-img').attr('src', e.target.result);
+                        $('#icon-preview').show();
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
+
+            // Remove icon preview
+            $('#remove-icon').on('click', function() {
+                $('#icon').val('');
+                $('#icon-preview').hide();
+                $('#icon-preview-img').attr('src', '');
+                // Show current icon again
+                if ($('#current-icon-img').attr('src') !== '') {
+                    $('#current-icon').show();
+                }
+            });
+
+            // Handle form submission with file upload
+            $(document).on('submit', 'form.async', function() {
                 event.preventDefault();
-                // Form Halaman
-                if ($(this).attr('id') == '{{$form}}') {
-                    isnew = isNew('{{$form}}');
+                var form = this;
+                var formId = $(form).attr('id');
+                
+                if (formId == '{{$form}}') {
+                    isnew = isNew(formId);
+                    
+                    // Create FormData to handle file upload
+                    var formData = new FormData(form);
+                    
                     if (isnew.status) {
-                        option = {
-                            'module': '{{$module}}',
-                            'success': {
-                                'request': 'addtotablefirst',
-                                'modal': 'modalform',
-                                'table': 'table-main',
-                                'textserach': textserach,
-                                'fetch': '{{ route($fetch) }}',
-                                'after': 300
+                        $.ajax({
+                            url: '{{ route($store) }}',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    loadTable('{{ route($fetch) }}', textserach);
+                                    $('#modalform').modal('hide');
+                                    fieldClear(formId);
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success',
+                                        text: response.message,
+                                        timer: 1500
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                var errors = xhr.responseJSON;
+                                var errorMessage = 'Terjadi kesalahan';
+                                if (errors && errors.message) {
+                                    errorMessage = errors.message;
+                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: errorMessage
+                                });
                             }
-                        }
-                        sentData('{{ route($store) }}', option);
+                        });
                     } else {
-                        option = {
-                            'module': '{{$module}}',
-                            'method': 'put',
-                            'success': {
-                                'request': 'updatetable',
-                                'modal': 'modalform',
-                                'table': 'table-main',
-                                'textserach': textserach,
-                                'fetch': '{{ route($fetch) }}',
-                                'after': 300
+                        var id = $(form).find('input.id').val();
+                        formData.append('_method', 'PUT');
+                        
+                        $.ajax({
+                            url: '{{ url('api') }}/{{$module}}/' + id,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    loadTable('{{ route($fetch) }}', textserach);
+                                    $('#modalform').modal('hide');
+                                    fieldClear(formId);
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success',
+                                        text: response.message,
+                                        timer: 1500
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                var errors = xhr.responseJSON;
+                                var errorMessage = 'Terjadi kesalahan';
+                                if (errors && errors.message) {
+                                    errorMessage = errors.message;
+                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: errorMessage
+                                });
                             }
-                        }
-                        sentData('{{ url('api') }}/{{$module}}/' + $('#{{$form}} input.id').val(), option);
+                        });
                     }
                 }
             });
@@ -195,6 +283,22 @@
                         'modal': 'modalform',
                         'form': '{{$form}}',
                         'field': {!! $field !!},
+                        'callback': function(response) {
+                            // Handle icon preview for edit
+                            if (response.data.icon) {
+                                var iconUrl = window.location.origin + '/storage/' + response.data.icon;
+                                if (response.data.icon.includes('.')) {
+                                    // File icon
+                                    $('#current-icon-img').attr('src', iconUrl);
+                                    $('#current-icon').show();
+                                } else {
+                                    // MDI icon class
+                                    $('#current-icon').hide();
+                                }
+                            } else {
+                                $('#current-icon').hide();
+                            }
+                        }
                     }
                 }
                 getData('{{ url('api') }}/{{$module}}/' + rowid + '/edit', option);
@@ -250,6 +354,11 @@
                 $(this).find('input.additional').remove();
                 fieldClear(formname);
                 fieldIndcator('clear', formname);
+                // Reset icon previews
+                $('#icon-preview').hide();
+                $('#icon-preview-img').attr('src', '');
+                $('#current-icon').hide();
+                $('#current-icon-img').attr('src', '');
             });
         });
     </script>
