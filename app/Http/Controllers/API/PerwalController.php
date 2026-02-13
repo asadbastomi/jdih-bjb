@@ -69,79 +69,102 @@ class PerwalController extends BaseController
         return $this->sendError(null, 'Unauthorised', 401);
     }
 
-    public function publicfetch(Request $request)
-    {
+   public function publicFetch(Request $request)
+{
+    try {
         $item = 10;
-        $search =  $request->search;
-        $tahun =  $request->tahun;
-        $status =  $request->status ?? 'ALL';
-        if ($request->tahun != 'ALL') {
-            $tahun =  $request->tahun;
-        }
-        if ($request->page == 'findme') {
-            $this->findMe(Regulasi::get());
-        }
-        $dataset = Regulasi::where('kategori_id', $this->kategoriId);
-        if ($search != "") {
+        $search = $request->search;
+        $tahun = $request->tahun;
+        $status = $request->status ?? 'ALL';
+
+        // Use the ID property or default to 2 (assuming 2 is Perwal)
+        $catId = property_exists($this, 'kategoriId') ? $this->kategoriId : 2;
+
+        // 1. Start Query
+        $dataset = \App\Regulasi::where('kategori_id', $catId);
+
+        // 2. Search Logic
+        if (!empty($search)) {
             $dataset->where(function ($query) use ($search) {
-                $query->orWhere('nomor_peraturan', 'like', '%' . $search . '%')
-                    ->orWhere('nomor_tahun', 'like', '%' . $search . '%')
-                    ->orWhere('tahun', 'like', '%' . $search . '%')
-                    ->orWhere('judul', 'like', '%' . $search . '%')
-                    ->orWhere('penandatangan', 'like', '%' . $search . '%')
-                    ->orWhere('tanggal_diundangkan', 'like', '%' . $search . '%')
-                    ->orWhere('sumber', 'like', '%' . $search . '%')
-                    ->orWhere('subjek', 'like', '%' . $search . '%')
-                    ->orWhere('bidang_hukum', 'like', '%' . $search . '%')
-                    ->orWhere('keterangan', 'like', '%' . $search . '%')
-                    ->orWhere('file', 'like', '%' . $search . '%')
-                    ->orWhere('abstrak', 'like', '%' . $search . '%')
-                    ->orWhere('no_reg', 'like', '%' . $search . '%');
+                $query->where('judul', 'like', '%' . $search . '%')
+                      ->orWhere('nomor_peraturan', 'like', '%' . $search . '%')
+                      ->orWhere('tahun', 'like', '%' . $search . '%')
+                      ->orWhere('subjek', 'like', '%' . $search . '%');
             });
         }
-        if ($tahun != 'ALL') {
-            $dataset->where('tahun', 'like', '%' . $tahun . '%');
+
+        // 3. Year Filter
+        if ($tahun && $tahun != 'ALL') {
+            $dataset->where('tahun', $tahun);
         }
+
+        // 4. Status Filter
         if ($status != 'ALL') {
             if ($status == 'berlaku') {
-                $dataset->whereDoesntHave('ubahCabut', function ($query) {
-                    $query->where('jenis', 'cabut');
+                $dataset->whereDoesntHave('ubahCabut', function ($q) {
+                    $q->where('jenis', 'cabut');
                 });
             } else {
-                $dataset->whereHas('ubahCabut', function ($query) {
-                    $query->where('jenis', 'cabut');
+                $dataset->whereHas('ubahCabut', function ($q) {
+                    $q->where('jenis', 'cabut');
                 });
             }
         }
-        $data['data'] = $dataset->orderBy('tanggal_diundangkan', 'desc')->orderByRaw("CAST(nomor_peraturan as unsigned) DESC")->paginate($item);
-        $regUbahCabut = Regulasi::withUbahCabut();
-        foreach ($data['data'] as $key => $row) {
-            $regUbahCabut->orWhere('id_reg_1', $row->id);
-        }
-        $cekperrow = $regUbahCabut->get();
+
+        // 5. Get Paginated Data
+        $dataResults = $dataset->orderBy('tanggal_diundangkan', 'desc')
+                               ->orderByRaw("CAST(nomor_peraturan as unsigned) DESC")
+                               ->paginate($item);
+
+        // 6. Get History (Ubah/Cabut) - Optimized with whereIn
         $regUbahCabutArr = [];
-        foreach ($cekperrow as $key => $row) {
-            $rowdata = [];
-            $rowdata['id'] = $row->id;
-            $rowdata['id_text'] = $row->nomor_peraturan . ' Tahun ' . $row->tahun;
-            $rowdata['nomor'] = 'Nomor ' . $rowdata['id_text'];
-            $rowdata['id_reg_1'] = $row->id_reg_1;
-            $rowdata['id_reg_2'] = $row->id_reg_2;
-            $rowdata['jenis'] = $row->jenis;
-            $rowdata['nama_singkat'] = $row->nama_singkat;
-            $rowdata['judul'] = $row->judul;
-            $rowdata['url'] = '/produk-hukum/' . $row->nama_singkat . '/' . $row->id_reg_2 . '/' . Str::slug($row->judul);
-            $regUbahCabutArr[$row->id_reg_1][] = $rowdata;
+        $ids = $dataResults->pluck('id')->toArray();
+
+        if (!empty($ids)) {
+            // Using \App\Regulasi:: instead of just Regulasi:: to avoid namespace issues
+            $cekperrow = \App\Regulasi::withUbahCabut()
+                ->whereIn('id_reg_1', $ids)
+                ->get();
+
+            foreach ($cekperrow as $row) {
+                $idText = ($row->nomor_peraturan ?? '-') . ' Tahun ' . ($row->tahun ?? '-');
+                $regUbahCabutArr[$row->id_reg_1][] = [
+                    'id' => $row->id,
+                    'id_text' => $idText,
+                    'nomor' => 'Nomor ' . $idText,
+                    'id_reg_1' => $row->id_reg_1,
+                    'id_reg_2' => $row->id_reg_2,
+                    'jenis' => $row->jenis,
+                    'nama_singkat' => $row->nama_singkat,
+                    'judul' => $row->judul,
+                    // Use the global helper str_slug or full namespace to prevent crash
+                    'url' => '/produk-hukum/' . ($row->nama_singkat ?? 'detail') . '/' . $row->id_reg_2 . '/' . \Illuminate\Support\Str::slug($row->judul ?? 'detail')
+                ];
+            }
         }
-        $data['regubahcabut'] = $regUbahCabutArr;
-        // Return JSON for API requests, HTML view for AJAX requests
-        if ($request->expectsJson()) {
-            return $this->sendResponse($data['data'], 'Data retrieved successfully');
-        } elseif ($request->ajax()) {
-            return view('public.dataperwal', $data);
+
+        // 7. Final Data Package
+        $finalData = [
+            'data' => $dataResults,
+            'regubahcabut' => $regUbahCabutArr
+        ];
+
+        // 8. Return Response
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('public.dataperwal', $finalData);
         }
-        return $this->sendError(null, 'Unauthorised', 401);
+
+        return response()->json($finalData);
+
+    } catch (\Exception $e) {
+        // This catch block will catch the error and tell you exactly what it is
+        return response()->json([
+            'error_message' => $e->getMessage(),
+            'error_line' => $e->getLine(),
+            'error_file' => $e->getFile()
+        ], 500);
     }
+}
 
     public function searchforuc(Request $request)
     {

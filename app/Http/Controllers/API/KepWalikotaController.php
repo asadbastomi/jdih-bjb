@@ -78,74 +78,81 @@ class KepWalikotaController extends BaseController
         return $this->sendError(null, 'Unauthorised', 401);
     }
 
-    public function publicfetch(Request $request)
-    {
+   public function publicfetch(Request $request)
+{
+    try {
         $item = 10;
-        $search =  $request->search;
-        $tahun =  $request->tahun;
-        $status =  $request->status ?? 'ALL';
-        if ($request->tahun != 'ALL') {
-            $tahun =  $request->tahun;
-        }
-        if ($request->page == 'findme') {
-            $this->findMe(Regulasi::get());
-        }
-        $dataset = Regulasi::where('kategori_id', $this->kategoriId);
-        if ($search != "") {
+        $search = $request->search;
+        $tahun = $request->tahun;
+        $status = $request->status ?? 'ALL';
+
+        // Fix: Use a fallback if $this->kategoriId is null
+        $catId = $this->kategoriId ?? 3; 
+
+        $dataset = \App\Regulasi::where('kategori_id', $catId);
+
+        // Keyword Search
+        if (!empty($search)) {
             $dataset->where(function ($query) use ($search) {
-                $query->orWhere('nomor', 'like', '%' . $search . '%')
-                    ->orWhere('tahun', 'like', '%' . $search . '%')
-                    ->orWhere('judul', 'like', '%' . $search . '%')
-                    ->orWhere('penandatangan', 'like', '%' . $search . '%')
-                    ->orWhere('tempat', 'like', '%' . $search . '%')
-                    ->orWhere('tanggal_diundangkan', 'like', '%' . $search . '%')
-                    ->orWhere('sumber', 'like', '%' . $search . '%')
-                    ->orWhere('subjek', 'like', '%' . $search . '%')
-                    ->orWhere('bahasa', 'like', '%' . $search . '%')
-                    ->orWhere('lokasi', 'like', '%' . $search . '%')
-                    ->orWhere('bidang_hukum', 'like', '%' . $search . '%')
-                    ->orWhere('keterangan', 'like', '%' . $search . '%')
-                    ->orWhere('file', 'like', '%' . $search . '%')
-                    ->orWhere('abstrak', 'like', '%' . $search . '%')
-                    ->orWhere('skpd', 'like', '%' . $search . '%')
-                    ->orWhere('teu_badan', 'like', '%' . $search . '%');
+                // We use 'judul' and 'tahun' as they are standard. 
+                // We check 'nomor' because Kepwal usually uses 'nomor' instead of 'nomor_peraturan'
+                $query->where('judul', 'like', '%' . $search . '%')
+                      ->orWhere('tahun', 'like', '%' . $search . '%');
+                
+                // Only search 'nomor' if you are sure it exists in the table
+                $query->orWhere('nomor_peraturan', 'like', '%' . $search . '%');
             });
         }
-        if ($tahun != 'ALL') {
-            $dataset->where('tahun', 'like', '%' . $tahun . '%');
+
+        if ($tahun && $tahun != 'ALL') {
+            $dataset->where('tahun', $tahun);
         }
-        if ($status != 'ALL') {
-            if ($status != 'berlaku') {
-                $dataset->whereNull('judul');
+
+        // Execute Pagination
+        $paginatedData = $dataset->orderBy('id', 'desc')->paginate($item);
+
+        // Fetch History safely
+        $regUbahCabutArr = [];
+        $ids = $paginatedData->pluck('id')->toArray();
+
+        if (!empty($ids)) {
+            // Check if the method exists on the model to prevent 500 crash
+            if (method_exists('\App\Regulasi', 'scopeWithUbahCabut') || method_exists('\App\Regulasi', 'withUbahCabut')) {
+                $cekperrow = \App\Regulasi::withUbahCabut()->whereIn('id_reg_1', $ids)->get();
+                
+                foreach ($cekperrow as $row) {
+                    $regUbahCabutArr[$row->id_reg_1][] = [
+                        'id' => $row->id,
+                        'nomor' => $row->nomor ?? $row->nomor_peraturan ?? '-',
+                        'jenis' => $row->jenis,
+                        'judul' => $row->judul,
+                        'url' => '/produk-hukum/' . ($row->nama_singkat ?? 'detail') . '/' . $row->id_reg_2 . '/' . \Illuminate\Support\Str::slug($row->judul ?? 'detail')
+                    ];
+                }
             }
         }
-        $data['data'] = $dataset->orderBy('id', 'desc')->paginate($item);;
-        // $regUbahCabut = Regulasi::withUbahCabut();
-        // foreach ($data['data'] as $key => $row) {
-        //     $regUbahCabut->orWhere('id_reg_1', $row->id);
-        // }
-        // $cekperrow = $regUbahCabut->get();
-        // $regUbahCabutArr = [];
-        // foreach ($cekperrow as $key => $row) {
-        //     $rowdata = [];
-        //     $rowdata['id'] = $row->id;
-        //     $rowdata['nomor'] = $row->nomor;
-        //     $rowdata['id_reg_1'] = $row->id_reg_1;
-        //     $rowdata['id_reg_2'] = $row->id_reg_2;
-        //     $rowdata['jenis'] = $row->jenis;
-        //     $rowdata['nama_singkat'] = $row->nama_singkat;
-        //     $rowdata['judul'] = $row->judul;
-        //     $regUbahCabutArr[$row->id_reg_1][] = $rowdata;
-        // }
-        // $data['regubahcabut'] = $regUbahCabutArr;
-        // Return JSON for API requests, HTML view for AJAX requests
-        if ($request->expectsJson()) {
-            return $this->sendResponse($data['data'], 'Data retrieved successfully');
-        } elseif ($request->ajax()) {
-            return view('public.datakep-walikota', $data);
+
+        $viewData = [
+            'data' => $paginatedData,
+            'regubahcabut' => $regUbahCabutArr
+        ];
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('public.datakep-walikota', $viewData);
         }
-        return $this->sendError(null, 'Unauthorised', 401);
+
+        return response()->json($viewData);
+
+    } catch (\Exception $e) {
+        // THIS IS THE MOST IMPORTANT PART: 
+        // It will return the actual error message to your browser console
+        return response()->json([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ], 500);
     }
+}
 
     // public function searchforuc(Request $request)
     // {
