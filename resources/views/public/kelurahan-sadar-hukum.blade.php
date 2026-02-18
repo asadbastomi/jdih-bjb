@@ -325,7 +325,6 @@ setlocale(LC_TIME, 'id_ID');
                 dataType: 'json',
                 data: params,
                 success: function(response) {
-                console.log('Kelurahan data loaded:', response);
                 
                 // Clear existing markers
                 allMarkers.forEach(function(item) {
