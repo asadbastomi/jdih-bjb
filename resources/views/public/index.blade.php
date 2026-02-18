@@ -38,7 +38,7 @@ setlocale(LC_TIME, 'id_ID');
     <link href="https://fonts.googleapis.com/css?family=Rajdhani&display=swap" rel="stylesheet">
 
     <!-- Elfsight Instagram Feed | JDIH Banjarbaru Instagram Feed -->
-    <script src="https://static.elfsight.com/platform/platform.js" async></script>
+    <!-- <script src="https://static.elfsight.com/platform/platform.js" async></script> -->
 
     <style>
         /* Animation Keyframes */
@@ -3772,8 +3772,11 @@ setlocale(LC_TIME, 'id_ID');
     </script>
 
     <!-- javascript -->
+    <!-- <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+    </script> -->
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-    </script>
+</script>
+
     <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
     <script src="{{ asset('assets/js/headline.js') }}"></script>
     <!-- Plugins js-->
@@ -3850,16 +3853,19 @@ setlocale(LC_TIME, 'id_ID');
         // PAGE LOADER
         // ==========================================
         function initPageLoader() {
-            const pageLoader = document.getElementById('pageLoader');
-            const body = document.body;
-            
-            window.addEventListener('load', function() {
-                setTimeout(function() {
-                    pageLoader.classList.add('hidden');
-                    body.classList.remove('loading');
-                }, 500);
-            });
-        }
+    const pageLoader = document.getElementById('pageLoader');
+    const body = document.body;
+    // Langsung hide saat load selesai, tanpa delay tambahan
+    window.addEventListener('load', function() {
+        pageLoader.classList.add('hidden');
+        body.classList.remove('loading');
+    });
+    // Fallback: pastikan loader hilang maksimal 4 detik
+    setTimeout(function() {
+        if (pageLoader) pageLoader.classList.add('hidden');
+        body.classList.remove('loading');
+    }, 4000);
+}
 
         // ==========================================
         // SCROLL PROGRESS INDICATOR
@@ -4680,9 +4686,7 @@ setlocale(LC_TIME, 'id_ID');
                     url: '/api/kelurahan-sadar-hukum',
                     method: 'GET',
                     dataType: 'json',
-                    success: function(response) {
-                        console.log('Kelurahan data loaded:', response);
-                        
+                    success: function(response) {     
                         // Clear existing markers
                         allMarkers.forEach(function(item) {
                             map.removeLayer(item.marker);
@@ -4950,6 +4954,7 @@ setlocale(LC_TIME, 'id_ID');
             }
         });
     </script>
+    <script src="https://static.elfsight.com/platform/platform.js" async></script>
 </body>
 
 </html>

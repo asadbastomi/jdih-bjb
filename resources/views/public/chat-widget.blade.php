@@ -929,8 +929,6 @@
 <script>
 (function() {
     'use strict';
-
-    console.log('Chat widget script loaded');
     
     // DOM Elements
     const chatToggle = document.getElementById('chat-toggle');
@@ -942,11 +940,6 @@
     const sendBtn = document.getElementById('send-btn');
     const chatBadge = document.getElementById('chat-badge');
     const examplesList = document.getElementById('examples-list');
-
-    // Check if elements exist
-    console.log('Checking elements...');
-    console.log('chatToggle:', !!chatToggle);
-    console.log('chatWindow:', !!chatWindow);
     
     if (!chatToggle || !chatWindow) {
         console.error('Chat widget elements not found');
@@ -1262,8 +1255,6 @@
         if (chatBadge) chatBadge.textContent = messageCount;
         if (chatBadge) chatBadge.classList.add('show');
     }, 2000);
-
-    console.log('Chat widget initialized successfully!');
 
 })();
 </script>
