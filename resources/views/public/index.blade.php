@@ -3772,8 +3772,6 @@ setlocale(LC_TIME, 'id_ID');
     </script>
 
     <!-- javascript -->
-    <!-- <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-    </script> -->
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
 </script>
 
@@ -3938,23 +3936,22 @@ setlocale(LC_TIME, 'id_ID');
             });
         }
 
-        function animateCounter(element, target) {
-            const duration = 2000;
-            const start = 0;
-            const increment = target / (duration / 16);
-            let current = start;
-            
-            const timer = setInterval(function() {
-                current += increment;
-                
-                if (current >= target) {
-                    element.textContent = target.toLocaleString();
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(current).toLocaleString();
-                }
-            }, 16);
+        // AFTER (fixed - always clears interval)
+    function animateCounter(element, target) {
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    let current = 0;
+    const timer = setInterval(function() {
+        current += increment;
+        if (current >= target) {
+            element.textContent = target.toLocaleString();
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current).toLocaleString();
         }
+    }, 16);
+}
+
 
         // ==========================================
         // PARALLAX EFFECTS
