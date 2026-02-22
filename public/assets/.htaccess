@@ -1,7 +1,16 @@
-<FilesMatch "\.(php|php5|php7|phtml|pl|py|jsp|asp|sh|cgi)$">
-    Order Deny,Allow
-    Deny from all
-</FilesMatch>
+# MATIKAN MESIN PHP DARI CPANEL DI FOLDER INI
+<IfModule mime_module>
+    RemoveHandler .php .php8 .phtml
+    RemoveType .php .php8 .phtml
+</IfModule>
 
-RemoveHandler .php .phtml .php5 .php7
-RemoveType .php .phtml .php5 .php7
+# BLOKIR TOTAL AKSES KE FILE SCRIPT (ANTI WEBSHELL)
+<FilesMatch ".*\.(php|php8|phtml|cgi|sh|pl|py)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

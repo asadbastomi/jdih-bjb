@@ -1,3 +1,15 @@
+# >>> TAMBAHAN KEAMANAN: BLOKIR AKSES FILE PHP LANGSUNG (ANTI WEBSHELL) <<<
+<FilesMatch "^(?!index\.php$).*\.(php|php8|phtml|cgi|sh)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+# >>> AKHIR TAMBAHAN KEAMANAN <<<
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
