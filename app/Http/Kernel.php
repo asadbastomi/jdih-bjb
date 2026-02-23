@@ -28,6 +28,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \App\Http\Middleware\LocalizationMiddleware::class,
+        \App\Http\Middleware\PreventMaliciousUploads::class,
     ];
 
 
