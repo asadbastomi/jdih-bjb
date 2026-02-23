@@ -7,17 +7,25 @@ class SecurityHeaders
 {
     public function handle($request, Closure $next)
     {
-        $response = $next($request);
-        
-        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+       $response = $next($request);
+
+        // Header Keamanan Standar
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
-        $response->headers->set('Content-Security-Policy', 
-            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
-        );
-        
+
+        // CSP yang sudah disesuaikan agar Leaflet, Google Fonts, dan CDN pihak ketiga bisa berjalan
+        $csp = "default-src 'self'; " .
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://translate.google.com https://static.elfsight.com https://static.cloudflareinsights.com; " .
+               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com; " .
+               "font-src 'self' https://fonts.gstatic.com data:; " .
+               "img-src 'self' data: https://upload.wikimedia.org https://play-lh.googleusercontent.com https://unpkg.com https://*.tile.openstreetmap.org; " .
+               "connect-src 'self' https://translate.googleapis.com;";
+               
+        $response->headers->set('Content-Security-Policy', $csp);
+
         return $response;
     }
 }
