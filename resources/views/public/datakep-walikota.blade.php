@@ -27,7 +27,7 @@ setlocale(LC_TIME, 'id_ID');
                             </a>
                         </td>
                         <td>{{ ($row->tanggal_diundangkan)? strftime("%d %B %Y", strtotime($row->tanggal_diundangkan)) : '' }} </td>
-                        <td>{{ $row->skpd }}</td>
+                        <td>{{ $row->instansi_pemrakarsa ?? $row->skpd ?? '-' }}</td>
                     </tr>
                 @endforeach
             @else

@@ -45,7 +45,7 @@ setlocale(LC_TIME, 'id_ID');
                         </td>
                         <td>
                             <a href="{{ $row->url }}">
-                                <strong>Nomor {{ $row->nomor_peraturan }} Tahun {{ $row->tahun }}</strong><br />
+                                <strong>Nomor {{ $row->nomor_peraturan ?? $row->nomor ?? '-' }} Tahun {{ $row->tahun }}</strong><br />
                                 {{ $row->judul }}
                             </a>
                             @php
@@ -75,7 +75,7 @@ setlocale(LC_TIME, 'id_ID');
 
                                     <span>
                                         <a class='link_{{ $class }}' href='{{ $ucrow['url'] }}'>
-                                            {{ $ucrow['nomor'] }}
+                                            {{ $ucrow['nomor'] ?? $ucrow['nomor_peraturan'] ?? '-' }}
                                         </a>
                                     </span>
                                     @php

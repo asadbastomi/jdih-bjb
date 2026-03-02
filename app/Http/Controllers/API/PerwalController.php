@@ -127,7 +127,9 @@ class PerwalController extends BaseController
                 ->get();
 
             foreach ($cekperrow as $row) {
-                $idText = ($row->nomor_peraturan ?? '-') . ' Tahun ' . ($row->tahun ?? '-');
+                $nomorValue = $row->nomor_peraturan ?? $row->nomor ?? '-';
+                $tahunValue = $row->tahun ?? '-';
+                $idText = $nomorValue . ' Tahun ' . $tahunValue;
                 $regUbahCabutArr[$row->id_reg_1][] = [
                     'id' => $row->id,
                     'id_text' => $idText,
@@ -199,6 +201,7 @@ class PerwalController extends BaseController
         $validator = Validator::make($request->all(), [
             'nomor' => ['required_without:nomor_peraturan'],
             'nomor_peraturan' => ['required_without:nomor'],
+            'nomor_tahun' => ['nullable', 'string'],
             'tahun' => ['required'],
             'tanggal_penetapan' => ['required'],
             'judul' => ['required'],
@@ -215,7 +218,9 @@ class PerwalController extends BaseController
         $table = new Regulasi;
         $table->kategori_id = $this->kategoriId;
 
+        $table->nomor = $request->nomor ?? $nomorPeraturan;
         $table->nomor_peraturan = $nomorPeraturan;
+        $table->nomor_tahun = $request->nomor_tahun;
         $table->tahun = $request->tahun;
         $table->tanggal_penetapan = $request->tanggal_penetapan;
         $table->judul = $request->judul;
@@ -383,6 +388,7 @@ class PerwalController extends BaseController
         $validator = Validator::make($request->all(), [
             'nomor' => ['required_without:nomor_peraturan'],
             'nomor_peraturan' => ['required_without:nomor'],
+            'nomor_tahun' => ['nullable', 'string'],
             'tahun' => ['required'],
             'tanggal_penetapan' => ['required'],
             'judul' => ['required'],
@@ -398,7 +404,9 @@ class PerwalController extends BaseController
         }
         $table = Regulasi::where('id', $request->id)->first();
 
+        $table->nomor = $request->nomor ?? $nomorPeraturan;
         $table->nomor_peraturan = $nomorPeraturan;
+        $table->nomor_tahun = $request->nomor_tahun;
         $table->tahun = $request->tahun;
         $table->tanggal_penetapan = $request->tanggal_penetapan;
         $table->judul = $request->judul;

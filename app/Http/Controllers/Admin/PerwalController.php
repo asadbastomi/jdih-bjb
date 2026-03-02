@@ -30,7 +30,7 @@ class PerwalController extends Controller
         $this->data['button'] = 'btn'.$this->data['module'];
         $this->data['fetch'] = 'api.'.$this->data['module'].'.fetch';
         $this->data['store'] = 'api.'.$this->data['module'].'.store';
-        $this->data['field'] = "['tipe_dokumen', 'judul', 'teu_badan', 'nomor_peraturan', 'jenis_peraturan', 'singkatan_jenis_peraturan', 'tempat_penetapan', 'tahun', 'tanggal_penetapan', 'tanggal_diundangkan', 'sumber', 'subjek', 'status_peraturan', 'bahasa', 'lokasi', 'bidang_hukum', 'lampiran', 'file', 'keterangan']";
+        $this->data['field'] = "['tipe_dokumen', 'judul', 'teu_badan', 'nomor_peraturan', 'nomor', 'nomor_tahun', 'jenis_peraturan', 'singkatan_jenis_peraturan', 'tempat_penetapan', 'tahun', 'tanggal_penetapan', 'tanggal_diundangkan', 'sumber', 'subjek', 'status_peraturan', 'bahasa', 'lokasi', 'bidang_hukum', 'lampiran', 'file', 'keterangan']";
         $this->data['yearstart'] = 2015;
         return view('admin.perwal.index', $this->data);
     }

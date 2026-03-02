@@ -46,21 +46,33 @@
                             </div>
                             <div class="text-sm-center float-right">
                                 <div class="form-group float-right">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Nomor</label>
+                                        <input type="text" class="form-control send" id="nomor" placeholder="contoh: 5">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Nomor Tahun</label>
+                                        <input type="text" class="form-control send" id="nomor_tahun" placeholder="contoh: 5 Tahun 2024">
+                                    </div>
+                                </div>
                                     <button id="btnreloaddata" class="btn btn-white waves-effect">
                                         <i class="mdi mdi-reload"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="table-responsive" id="table-data">
-                            {{-- Data --}}
-                        </div> <!-- end .table-responsive-->
+                                <div class="col-md-4">
                     </div>
-                </div> <!-- end card-box -->
-            </div> <!-- end col-->
+                                        <label class="control-label">Singkatan Jenis/Bentuk</label>
+                                        <input type="text" class="form-control send" id="singkatan_jenis_peraturan" placeholder="Contoh: Perwal">
         </div>
         <!-- end row -->
     </div> <!-- container -->
+                                    <div class="form-group">
+                                        <label class="control-label">Tempat Penetapan</label>
+                                        <input type="text" class="form-control send" id="tempat_penetapan" placeholder="Contoh: Banjarbaru">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
 
     <div id="modalform" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-xl modal-dialog-centered">
