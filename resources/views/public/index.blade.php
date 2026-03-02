@@ -4913,8 +4913,13 @@ setlocale(LC_TIME, 'id_ID');
                                 var firstImage = Array.isArray(images) && images.length > 0 ? images[0] : null;
                                 
                                 if (firstImage) {
-                                    // Use the path directly - it already includes /storage/ prefix from API
-                                    var imageUrl = typeof firstImage === 'string' ? firstImage : '';
+                                    var imageUrlRaw = typeof firstImage === 'string' ? firstImage : '';
+                                    var imageUrl = imageUrlRaw;
+                                    if (imageUrlRaw && !imageUrlRaw.startsWith('http')) {
+                                        // Normalize to /storage/... for local files
+                                        imageUrlRaw = imageUrlRaw.replace(/^\/?storage\//, '').replace(/^\/?upload\//, 'upload/');
+                                        imageUrl = '/storage/' + imageUrlRaw;
+                                    }
                                     var galleryHtml = `
                                         <div class="gallery-item">
                                             <img src="${imageUrl}" alt="${galeri.nama_kegiatan || 'Galeri'}" />
