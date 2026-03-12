@@ -38,33 +38,38 @@ class RelaasV2Controller extends BaseController
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nomor' => ['required'],
-            'jenis' => ['required'],
-            'tanggal' => ['required'],
-            'pihak_terkait' => ['required'],
-            'status_input' => ['required'],
-            'konten' => ['required'],
-            'dokumen' => ['required', 'array'],
-            'dokumen.*' => ['mimes:pdf', 'max:2048']
-        ]);
+        $dokumenFiles = $request->file('dokumen');
+        if ($dokumenFiles && !is_array($dokumenFiles)) {
+            $dokumenFiles = [$dokumenFiles];
+        }
+
+        $validator = Validator::make(
+            array_merge($request->all(), ['dokumen' => $dokumenFiles ?? []]),
+            [
+                'nomor' => ['required'],
+                'jenis' => ['required'],
+                'tanggal' => ['required'],
+                'pihak_terkait' => ['required'],
+                'status_input' => ['required'],
+                'konten' => ['required'],
+                'dokumen' => ['required', 'array'],
+                'dokumen.*' => ['file', 'mimes:pdf', 'max:2048']
+            ]
+        );
 
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), 'Validation Error');
         }
 
         $list_dokumen = [];
-        if ($request->dokumen) {
-            $jumlah_dokumen = count((array)$request->dokumen);
-            foreach ($request->dokumen as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
-                    $folder = "upload/relaasV2";
-                    $filename = time() . "_" . $index . "_" . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
-                    array_push($list_dokumen, $filepath);
-                }
+        foreach ($dokumenFiles ?? [] as $index => $value) {
+            if (is_file($value)) {
+                $extension = $value->extension();
+                $folder = "upload/relaasV2";
+                $filename = time() . "_" . $index . "_" . "." . $extension;
+                $filepath = "/" . $folder . "/" . $filename;
+                $value->move(public_path("storage/" . $folder . "/"), $filename);
+                array_push($list_dokumen, $filepath);
             }
         }
 
@@ -93,7 +98,11 @@ class RelaasV2Controller extends BaseController
     public function edit($id, Request $request)
     {
         $table = RelaasV2::where('id', $id)->first();
-        unset($table['dokumen']);
+
+        // Provide joined file paths so dropify can show previews on edit
+        if ($table && is_array($table->dokumen)) {
+            $table->dokumen = implode(';', $table->dokumen);
+        }
 
         Log::build([
             'driver' => 'single',
@@ -109,33 +118,38 @@ class RelaasV2Controller extends BaseController
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'nomor' => ['required'],
-            'jenis' => ['required'],
-            'tanggal' => ['required'],
-            'pihak_terkait' => ['required'],
-            'status_input' => ['required'],
-            'konten' => ['required'],
-            'dokumen' => ['nullable', 'array'],
-            'dokumen.*' => ['mimes:pdf', 'max:2048']
-        ]);
+        $dokumenFiles = $request->file('dokumen');
+        if ($dokumenFiles && !is_array($dokumenFiles)) {
+            $dokumenFiles = [$dokumenFiles];
+        }
+
+        $validator = Validator::make(
+            array_merge($request->all(), ['dokumen' => $dokumenFiles ?? []]),
+            [
+                'nomor' => ['required'],
+                'jenis' => ['required'],
+                'tanggal' => ['required'],
+                'pihak_terkait' => ['required'],
+                'status_input' => ['required'],
+                'konten' => ['required'],
+                'dokumen' => ['nullable', 'array'],
+                'dokumen.*' => ['file', 'mimes:pdf', 'max:2048']
+            ]
+        );
 
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), 'Validation Error');
         }
 
         $list_dokumen = [];
-        if ($request->dokumen) {
-            $jumlah_dokumen = count((array)$request->dokumen);
-            foreach ($request->dokumen as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
-                    $folder = "upload/relaasV2";
-                    $filename = time() . "_" . $index . "_" . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
-                    array_push($list_dokumen, $filepath);
-                }
+        foreach ($dokumenFiles ?? [] as $index => $value) {
+            if (is_file($value)) {
+                $extension = $value->extension();
+                $folder = "upload/relaasV2";
+                $filename = time() . "_" . $index . "_" . "." . $extension;
+                $filepath = "/" . $folder . "/" . $filename;
+                $value->move(public_path("storage/" . $folder . "/"), $filename);
+                array_push($list_dokumen, $filepath);
             }
         }
 

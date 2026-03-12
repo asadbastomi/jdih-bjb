@@ -141,7 +141,7 @@
                                     <label class="control-label" for="dokumen">Dokumen</label>
                                     <input type="file" data-plugins="dropify"
                                         data-allowed-file-extensions="pdf"
-                                        accept="application/pdf" class="dropify send" id="dokumen" />
+                                        accept="application/pdf" class="dropify send" id="dokumen" name="dokumen[]" multiple />
                                 </div>
                             </div>
                         </div>
@@ -172,9 +172,9 @@
             var waktu = $('#tanggal_picker').tempusDominus({
                 display: {
                     inline: true,
-                    components: {
-                        useTwentyfourHour: true,
-                    }
+                },
+                localization: {
+                    hourCycle: 'h23',
                 }
             });
             $(document).on('change.td', '#tanggal_picker', (e) => {

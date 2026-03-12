@@ -126,9 +126,9 @@
             var waktu = $('#waktupicker').tempusDominus({
                 display: {
                     inline: true,
-                    components: {
-                        useTwentyfourHour: true,
-                    }
+                },
+                localization: {
+                    hourCycle: 'h23',
                 }
             });
             $(document).on('change.td', '#waktupicker', (e) => {

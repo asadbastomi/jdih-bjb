@@ -9,6 +9,7 @@
                 <th> Tanggal </th>
                 <th> Pihak Terkait </th>
                 <th> Status </th>
+                <th> Dokumen </th>
                 <th class="fix" data-sort-ignore="true"></th>
             </tr>
         </thead>
@@ -23,7 +24,18 @@
                         <td>{{ $row->tanggal }}</td>
                         <td>{{ $row->pihak_terkait }}</td>
                         <td>{{ $row->status }}</td>
-                        {{-- <td>{{ $row->dokumen }}</td> --}}
+                        <td>
+                            @if (!empty($row->dokumen))
+                                @foreach ($row->dokumen as $idx => $doc)
+                                    @php $url = asset('storage' . $doc); @endphp
+                                    <div>
+                                        <a href="{{ $url }}" target="_blank" rel="noopener">PDF {{ $idx + 1 }}</a>
+                                    </div>
+                                @endforeach
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
                         <td class="fix">
                             <div class="data-store button-list" data-id="{{ $row->id }}">
                                 <button type="button" class="btn btn-xs btn-success waves-effect waves-light btneditdata"><i
@@ -37,13 +49,13 @@
             @else
                 <tr class="empty">
                     <td></td>
-                    <td colspan="7">Data is empty</td>
+                    <td colspan="8">Data is empty</td>
                 </tr>
             @endif
         </tbody>
         <tfoot>
             <tr class="active">
-                <td colspan="7">
+                <td colspan="8">
                     <div class="text-right">
                         @include('layouts.shared.paginate', ['paginator' => $data])
                     </div>
