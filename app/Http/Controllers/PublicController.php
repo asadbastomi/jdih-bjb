@@ -149,8 +149,12 @@ class PublicController extends Controller
         }
 
         // ── Totals (cache 30 menit) ─────────────────────────────────────────────
+        $putusanKategori = [4, 5];
+
         $this->data['totalmonografihukum'] = Cache::remember('total_monografi', 1800, fn() => Buku::count());
-        $this->data['totalputusan']        = Cache::remember('total_putusan', 1800, fn() => Putusan::count());
+        $this->data['totalputusan'] = Cache::remember('total_putusan_regulasi', 1800, function () use ($putusanKategori) {
+            return Regulasi::whereIn('kategori_id', $putusanKategori)->count();
+        });
 
         // ── Tahunanbuku ─────────────────────────────────────────────────────────
         $this->data['tahunanbuku'] = Cache::remember('tahunan_buku', 1800, function () {
@@ -166,17 +170,17 @@ class PublicController extends Controller
         }
 
         // ── Tahunanputusan ──────────────────────────────────────────────────────
-        $this->data['tahunanputusan'] = Cache::remember('tahunan_putusan', 1800, function () {
-            return Putusan::selectRaw('YEAR(tanggal_putusan) as tahun, COUNT(*) as jumlah')
+        $this->data['tahunanputusan'] = Cache::remember('tahunan_putusan_regulasi', 1800, function () use ($putusanKategori) {
+            return Regulasi::selectRaw('tahun, COUNT(tahun) AS jumlah')
+                ->whereIn('kategori_id', $putusanKategori)
                 ->groupBy('tahun')
                 ->orderBy('tahun', 'asc')
-                ->get();
+                ->get()
+                ->mapWithKeys(fn($row) => [$row->tahun => $row->jumlah])
+                ->toArray();
         });
 
-        $this->data['totalputusanbyyear'] = 0;
-        foreach ($this->data['tahunanputusan'] as $row) {
-            $this->data['totalputusanbyyear'] += $row->jumlah;
-        }
+        $this->data['totalputusanbyyear'] = array_sum($this->data['tahunanputusan']);
 
         // Map ke object sederhana untuk view
         $tahunanperda = $tahunanperda->map(function ($item) {
@@ -600,8 +604,14 @@ class PublicController extends Controller
         if ($request->input('tahun'))  $this->data['tahun']  = $request->input('tahun');
         if ($request->input('status')) $this->data['status'] = $request->input('status');
         if ($request->input('det'))    $this->data['det']    = $request->input('det');
-        $gettanggal = collect(Putusan::select('tanggal_putusan')->where('kategori_id', 4)->orderBy('tanggal_putusan', 'desc')->get()->toArray());
-        $yearList = $gettanggal->map(fn($item) => ['tahun' => Carbon::createFromFormat('Y-m-d', $item['tanggal_putusan'])->format('Y')]);
+        $gettanggal = collect(
+            Regulasi::select('tahun')
+                ->where('kategori_id', 4)
+                ->orderBy('tahun', 'desc')
+                ->get()
+                ->toArray()
+        );
+        $yearList = $gettanggal->map(fn($item) => ['tahun' => $item['tahun']]);
         $this->data['tahunlist'] = json_decode($yearList->unique()->sortDesc()->toJson());
         return view('public.row', $this->data);
     }
@@ -615,8 +625,14 @@ class PublicController extends Controller
         if ($request->input('tahun'))  $this->data['tahun']  = $request->input('tahun');
         if ($request->input('status')) $this->data['status'] = $request->input('status');
         if ($request->input('det'))    $this->data['det']    = $request->input('det');
-        $gettanggal = collect(Putusan::select('tanggal_putusan')->where('kategori_id', 5)->orderBy('tanggal_putusan', 'desc')->get()->toArray());
-        $yearList = $gettanggal->map(fn($item) => ['tahun' => Carbon::createFromFormat('Y-m-d', $item['tanggal_putusan'])->format('Y')]);
+        $gettanggal = collect(
+            Regulasi::select('tahun')
+                ->where('kategori_id', 5)
+                ->orderBy('tahun', 'desc')
+                ->get()
+                ->toArray()
+        );
+        $yearList = $gettanggal->map(fn($item) => ['tahun' => $item['tahun']]);
         $this->data['tahunlist'] = json_decode($yearList->unique()->sortDesc()->toJson());
         return view('public.row', $this->data);
     }
@@ -786,10 +802,16 @@ class PublicController extends Controller
         if ($request->input('tahun'))  $this->data['tahun']  = $request->input('tahun');
         if ($request->input('s'))      $this->data['s']      = $request->input('s');
         if ($request->input('tema'))   $this->data['tema']   = $request->input('tema');
+        $putusanYears = Regulasi::select('tahun')
+            ->whereIn('kategori_id', [4, 5])
+            ->distinct()
+            ->pluck('tahun')
+            ->toArray();
+
         $this->data['tahunlist'] = collect([
             ...Regulasi::select('tahun')->distinct()->pluck('tahun')->toArray(),
             ...Buku::select('tahun_terbit as tahun')->distinct()->pluck('tahun')->toArray(),
-            ...Putusan::selectRaw('YEAR(tanggal_putusan) as tahun')->distinct()->pluck('tahun')->toArray()
+            ...$putusanYears
         ])->unique()->sortDesc()->values();
         return view('public.dokumen', $this->data);
     }
