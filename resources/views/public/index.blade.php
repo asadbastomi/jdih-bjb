@@ -5,8 +5,6 @@ setlocale(LC_TIME, 'id_ID');
 <html lang="en">
 
 <head>
-    <!-- UserWay Accessibility Widget -->
-    <script src="https://cdn.userway.org/widget.js" data-account="N47GZNZH0E"></script>
     <meta charset="utf-8" />
     <title>Jaringan Dokumentasi dan Informasi Hukum Kota Banjarbaru</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +13,8 @@ setlocale(LC_TIME, 'id_ID');
         name="description" />
     <meta content="Kota Banjarbaru" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
+    <!-- UserWay Accessibility Widget -->
+    <script src="https://cdn.userway.org/widget.js" data-account="N47GZNZH0E"></script>
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
