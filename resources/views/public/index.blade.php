@@ -13,8 +13,7 @@ setlocale(LC_TIME, 'id_ID');
         name="description" />
     <meta content="Kota Banjarbaru" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- UserWay Accessibility Widget -->
-    <script src="https://cdn.userway.org/widget.js" data-account="N47GZNZH0E"></script>
+    
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
@@ -2822,7 +2821,8 @@ setlocale(LC_TIME, 'id_ID');
     <a href="#" class="back-to-top" id="back-to-top"> <i class="mdi mdi-chevron-up"> </i> </a>
 
     
-
+<!-- UserWay Accessibility Widget -->
+    <script src="https://cdn.userway.org/widget.js" data-account="N47GZNZH0E"></script>
     <!-- javascript -->
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
 </script>
