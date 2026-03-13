@@ -2822,6 +2822,11 @@ setlocale(LC_TIME, 'id_ID');
 
     
 <!-- UserWay Accessibility Widget -->
+    <script>
+        window._userway_config = window._userway_config || {};
+        // Position 3 = bottom-right
+        window._userway_config.position = '3';
+    </script>
     <script src="https://cdn.userway.org/widget.js" data-account="N47GZNZH0E"></script>
     <!-- javascript -->
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
