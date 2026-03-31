@@ -437,6 +437,12 @@ class PublicController extends Controller
         return view('public.pages', $this->data);
     }
 
+    public function bahariAi()
+    {
+        $this->data['title'] = 'Bahari AI';
+        return view('public.bahari-ai', $this->data);
+    }
+
     public function maknaLogo()
     {
         $this->data['type'] = 'page';

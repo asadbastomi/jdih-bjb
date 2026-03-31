@@ -30,6 +30,7 @@ Route::get('/tupoksi', 'PublicController@tupoksi')->name('tupoksi');
 Route::get('/tim-pengelola', 'PublicController@tim')->name('tim');
 Route::get('/sambutan', 'PublicController@sambutan')->name('sambutan');
 Route::get('/inovasi', 'PublicController@inovasi')->name('inovasi');
+Route::get('/bahari-ai', 'PublicController@bahariAi')->name('bahari-ai');
 Route::get('/makna-logo', 'PublicController@maknaLogo')->name('makna-logo');
 Route::get('/sejarah-banjarbaru', 'PublicController@sejarahbjb')->name('sejarahbjb');
 Route::get('/sejarah', 'PublicController@sejarah')->name('sejarah');

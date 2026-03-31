@@ -30,6 +30,33 @@ class ChatController extends Controller
             // Convert to lowercase for easier matching
             $messageLower = strtolower($message);
 
+            // KUHP concept questions (e.g., korporasi sebagai subjek tindak pidana)
+            $conceptResponse = $this->handleKuhpConceptQuestion($messageLower);
+            if (!empty($conceptResponse)) {
+                return response()->json([
+                    'success' => true,
+                    'response' => $conceptResponse
+                ]);
+            }
+
+            // KUHP topic questions (e.g., pidana pembunuhan)
+            $topicResponse = $this->handleKuhpTopicQuestion($messageLower);
+            if (!empty($topicResponse)) {
+                return response()->json([
+                    'success' => true,
+                    'response' => $topicResponse
+                ]);
+            }
+
+            // Check for article (pasal) requests first so they are not treated as title searches
+            if (preg_match('/\bpasal\s+\d+[a-z]?\b/i', $message)) {
+                $response = $this->handleArticleRequest($message);
+                return response()->json([
+                    'success' => true,
+                    'response' => $response
+                ]);
+            }
+
             // Check for "unduh" or "download" requests
             if (str_contains($messageLower, 'unduh') || str_contains($messageLower, 'download')) {
                 $response = $this->handleDownloadRequest($message);
@@ -101,16 +128,23 @@ class ChatController extends Controller
         $keywords = $this->extractKeywords($message);
         
         if (empty($keywords)) {
-            return "Mohon spesifikasikan peraturan yang ingin diunduh. Contoh: \"unduh perda pajak daerah\" atau \"download perwal ketenteraman umum\"";
+            return $this->buildInfoCard(
+                'Permintaan Unduh',
+                '<div class="text-justify">Mohon spesifikasikan peraturan yang ingin diunduh. Contoh: <strong>unduh perda pajak daerah</strong> atau <strong>download perwal ketenteraman umum</strong>.</div>'
+            );
         }
 
         $results = $this->searchRegulations($keywords);
 
         if (count($results) === 0) {
-            return "Maaf, saya tidak menemukan peraturan dengan kata kunci \"" . implode(' ', $keywords) . "\". Silakan coba kata kunci lain.";
+            return $this->buildInfoCard(
+                'Hasil Unduh',
+                '<div class="text-justify">Maaf, saya tidak menemukan peraturan dengan kata kunci <strong>"' . e(implode(' ', $keywords)) . '"</strong>. Silakan coba kata kunci lain.</div>'
+            );
         }
 
-        $response = "Berikut adalah peraturan yang ditemukan:\n\n";
+        $html = '<div class="text-justify mb-2">Berikut adalah peraturan yang ditemukan untuk diunduh:</div>';
+        $html .= '<div class="d-flex flex-column gap-2">';
         $validDownloadCount = 0;
         
         foreach ($results->take(5) as $reg) {
@@ -121,24 +155,26 @@ class ChatController extends Controller
             $nomor = $reg->nomor_peraturan ?? ($reg->nomor_tahun ?? 'N/A');
             $tahun = $reg->tahun ?? ($reg->tahun_peraturan ?? 'N/A');
             
-            $response .= "📄 {$kategori} No. {$nomor} Tahun {$tahun}\n";
-            $response .= "   {$reg->judul}\n";
+            $html .= '<div class="p-2 border rounded bg-white">';
+            $html .= '<div><strong>' . e($kategori) . ' No. ' . e($nomor) . ' Tahun ' . e($tahun) . '</strong></div>';
+            $html .= '<div class="text-justify">' . e($reg->judul) . '</div>';
             if ($downloadLink) {
-                $response .= "   📥 <a href=\"{$downloadLink}\" class=\"chat-download-btn\" target=\"_blank\">Unduh Dokumen</a>\n";
+                $html .= '<div class="mt-2"><a href="' . e($downloadLink) . '" class="chat-download-btn" target="_blank" rel="noopener noreferrer">Unduh Dokumen</a></div>';
                 $validDownloadCount++;
             } else {
-                $response .= "   ⚠️ File tidak tersedia\n";
+                $html .= '<div class="mt-2">⚠️ File tidak tersedia</div>';
             }
-            $response .= "\n";
+            $html .= '</div>';
         }
+        $html .= '</div>';
 
         if ($validDownloadCount === 0) {
-            $response .= "\n⚠️ Maaf, tidak ada dokumen yang tersedia untuk diunduh saat ini. Silakan hubungi Bagian Hukum Sekretariat Daerah Kota Banjarbaru untuk informasi lebih lanjut.";
+            $html .= '<div class="mt-2">⚠️ Maaf, tidak ada dokumen yang tersedia untuk diunduh saat ini.</div>';
         } elseif ($results->count() > 5) {
-            $response .= "Dan " . ($results->count() - 5) . " hasil lainnya...";
+            $html .= '<div class="mt-2">Dan ' . e((string) ($results->count() - 5)) . ' hasil lainnya...</div>';
         }
 
-        return $response;
+        return $this->buildInfoCard('Hasil Unduh JDIH', $html);
     }
 
     /**
@@ -149,13 +185,19 @@ class ChatController extends Controller
         $keywords = $this->extractKeywords($message);
         
         if (empty($keywords)) {
-            return "Mohon spesifikasikan peraturan yang ingin diringkas. Contoh: \"Ringkasan perda tentang pemberdayaan usaha mikro\"";
+            return $this->buildInfoCard(
+                'Ringkasan Dokumen',
+                '<div class="text-justify">Mohon spesifikasikan peraturan yang ingin diringkas. Contoh: <strong>ringkasan perda tentang pemberdayaan usaha mikro</strong>.</div>'
+            );
         }
 
         $results = $this->searchRegulations($keywords);
 
         if (count($results) === 0) {
-            return "Maaf, saya tidak menemukan peraturan dengan kata kunci \"" . implode(' ', $keywords) . "\".";
+            return $this->buildInfoCard(
+                'Ringkasan Dokumen',
+                '<div class="text-justify">Maaf, saya tidak menemukan peraturan dengan kata kunci <strong>"' . e(implode(' ', $keywords)) . '"</strong>.</div>'
+            );
         }
 
         $reg = $results->first();
@@ -163,28 +205,30 @@ class ChatController extends Controller
         $nomor = $reg->nomor_peraturan ?? ($reg->nomor_tahun ?? 'N/A');
         $tahun = $reg->tahun ?? ($reg->tahun_peraturan ?? 'N/A');
 
-        $response = "📋 Ringkasan {$kategori} No. {$nomor} Tahun {$tahun}\n\n";
+        $summary = '';
         
         if (!empty($reg->abstrak)) {
-            $response .= strip_tags($reg->abstrak);
+            $summary .= e(strip_tags($reg->abstrak));
         } else {
-            $response .= "Judul: {$reg->judul}\n";
-            $response .= "Tanggal Penetapan: " . ($reg->tanggal_penetapan ? date('d F Y', strtotime($reg->tanggal_penetapan)) : '-') . "\n";
-            $response .= "Tanggal Diundangkan: " . ($reg->tanggal_diundangkan ? date('d F Y', strtotime($reg->tanggal_diundangkan)) : '-') . "\n";
-            $response .= "Status: " . ($reg->status_peraturan ?? '-') . "\n";
+            $summary .= 'Judul: ' . e($reg->judul) . '<br>';
+            $summary .= 'Tanggal Penetapan: ' . e($reg->tanggal_penetapan ? date('d F Y', strtotime($reg->tanggal_penetapan)) : '-') . '<br>';
+            $summary .= 'Tanggal Diundangkan: ' . e($reg->tanggal_diundangkan ? date('d F Y', strtotime($reg->tanggal_diundangkan)) : '-') . '<br>';
+            $summary .= 'Status: ' . e($reg->status_peraturan ?? '-') . '<br>';
             
             if (!empty($reg->bidang_hukum)) {
-                $response .= "Bidang Hukum: {$reg->bidang_hukum}\n";
+                $summary .= 'Bidang Hukum: ' . e($reg->bidang_hukum);
             }
         }
 
         // Check if file has a valid path using helper method
         $downloadLink = $this->getDownloadLink($reg);
+        $html = '<div class="text-justify"><strong>' . e($kategori) . ' No. ' . e($nomor) . ' Tahun ' . e($tahun) . '</strong></div>';
+        $html .= '<div class="text-justify mt-2">' . nl2br($summary) . '</div>';
         if ($downloadLink) {
-            $response .= "\n\n📥 <a href=\"{$downloadLink}\" class=\"chat-download-btn\" target=\"_blank\">Lihat Dokumen Lengkap</a>";
+            $html .= '<div class="mt-3"><a href="' . e($downloadLink) . '" class="chat-download-btn" target="_blank" rel="noopener noreferrer">Lihat Dokumen Lengkap</a></div>';
         }
 
-        return $response;
+        return $this->buildInfoCard('Ringkasan JDIH', $html);
     }
 
     /**
@@ -195,32 +239,42 @@ class ChatController extends Controller
         $keywords = $this->extractKeywords($message);
         
         if (empty($keywords)) {
-            return "Mohon spesifikasikan peraturan yang ingin dicek statusnya. Contoh: \"Status perda pajak daerah 2020\"";
+            return $this->buildInfoCard(
+                'Status Peraturan',
+                '<div class="text-justify">Mohon spesifikasikan peraturan yang ingin dicek statusnya. Contoh: <strong>status perda pajak daerah 2020</strong>.</div>'
+            );
         }
 
         $results = $this->searchRegulations($keywords);
 
         if (count($results) === 0) {
-            return "Maaf, saya tidak menemukan peraturan dengan kata kunci \"" . implode(' ', $keywords) . "\".";
+            return $this->buildInfoCard(
+                'Status Peraturan',
+                '<div class="text-justify">Maaf, saya tidak menemukan peraturan dengan kata kunci <strong>"' . e(implode(' ', $keywords)) . '"</strong>.</div>'
+            );
         }
 
-        $response = "Status Peraturan:\n\n";
+        $html = '<div class="text-justify mb-2">Status peraturan yang paling relevan:</div>';
+        $html .= '<div class="d-flex flex-column gap-2">';
         
         foreach ($results->take(5) as $reg) {
             $kategori = $reg->kategori ? $reg->kategori->nama_singkat : 'Peraturan';
             $status = $reg->status_peraturan ?? 'Tidak diketahui';
             $statusIcon = $status === 'berlaku' ? '✅' : '❌';
             
-            $response .= "{$statusIcon} {$kategori} No. {$reg->nomor_peraturan} Tahun {$reg->tahun}\n";
-            $response .= "   Judul: {$reg->judul}\n";
-            $response .= "   Status: " . ucfirst($status) . "\n\n";
+            $html .= '<div class="p-2 border rounded bg-white">';
+            $html .= '<div><strong>' . e($statusIcon . ' ' . $kategori . ' No. ' . ($reg->nomor_peraturan ?? '-') . ' Tahun ' . ($reg->tahun ?? '-')) . '</strong></div>';
+            $html .= '<div class="text-justify">Judul: ' . e($reg->judul) . '</div>';
+            $html .= '<div>Status: ' . e(ucfirst($status)) . '</div>';
+            $html .= '</div>';
         }
+        $html .= '</div>';
 
         if ($results->count() > 5) {
-            $response .= "Dan " . ($results->count() - 5) . " hasil lainnya...";
+            $html .= '<div class="mt-2">Dan ' . e((string) ($results->count() - 5)) . ' hasil lainnya...</div>';
         }
 
-        return $response;
+        return $this->buildInfoCard('Status Peraturan JDIH', $html);
     }
 
     /**
@@ -231,13 +285,20 @@ class ChatController extends Controller
         $keywords = $this->extractKeywords($message);
         
         if (empty($keywords)) {
-            return "Maaf, saya tidak mengerti permintaan Anda. Silakan ketik pertanyaan yang lebih spesifik atau klik salah satu contoh pertanyaan di bawah ini.";
+            return $this->buildInfoCard(
+                'Bantuan Pencarian JDIH',
+                '<div class="text-justify">Saya belum memahami pertanyaan Anda. Coba tulis lebih spesifik, misalnya: <strong>status perda pajak daerah</strong>, <strong>unduh perwal</strong>, atau <strong>apa isi pasal 476 KUHP</strong>.</div>'
+            );
         }
 
         $results = $this->searchRegulations($keywords);
 
         if (count($results) === 0) {
-            return "Maaf, saya tidak menemukan peraturan dengan kata kunci \"" . implode(' ', $keywords) . "\" di database JDIH Kota Banjarbaru.\n\nTips:\n• Coba gunakan kata kunci yang lebih umum\n• Periksa ejaan kata kunci\n• Gunakan nama topik atau bidang hukum\n• Peraturan mungkin belum tersedia di database";
+            return $this->buildInfoCard(
+                'Hasil Pencarian',
+                '<div class="text-justify">Maaf, saya tidak menemukan peraturan dengan kata kunci <strong>"' . e(implode(' ', $keywords)) . '"</strong> di database JDIH Kota Banjarbaru.</div>'
+                . '<ul class="mt-2 mb-0"><li>Coba kata kunci lebih umum</li><li>Periksa ejaan</li><li>Gunakan topik/bidang hukum</li></ul>'
+            );
         }
 
         // Get the first result for detailed response
@@ -249,12 +310,353 @@ class ChatController extends Controller
                        stripos($reg->judul_lengkap ?? '', $searchString) !== false;
         
         if (!$isExactMatch && count($results) > 1) {
-            // If no exact match found, show a note and closest matches
-            return "Saya tidak menemukan peraturan dengan judul yang persis sama dengan \"" . $searchString . "\".\n\nNamun, saya menemukan beberapa peraturan yang mungkin relevan:\n\n" . 
-                   $this->generateBriefResults($results->take(5));
+            // If no exact title match found, show closest matches without implying failure
+            return $this->buildInfoCard(
+                'Hasil Relevan',
+                '<div class="text-justify mb-2">Saya menampilkan hasil paling relevan untuk kata kunci <strong>"' . e($searchString) . '"</strong>.</div>'
+                . $this->generateBriefResults($results->take(5))
+            );
         }
         
         return $this->generateDetailedResponse($reg, $results->count());
+    }
+
+    /**
+     * Handle article/pasal-oriented requests.
+     */
+    private function handleArticleRequest($message)
+    {
+        preg_match('/\bpasal\s+(\d+[a-z]?)\b/i', $message, $matches);
+        $articleNumber = $matches[1] ?? null;
+
+        if (!$articleNumber) {
+            return "Mohon sebutkan nomor pasal yang ingin dicari. Contoh: 'Apa isi Pasal 476 KUHP?'";
+        }
+
+        $messageLower = strtolower($message);
+
+        // Determine context to improve accuracy
+        $lawHints = [];
+        if (str_contains($messageLower, 'kuhp') || str_contains($messageLower, 'kitab undang-undang hukum pidana')) {
+            $lawHints[] = 'KUHP';
+            $lawHints[] = 'Kitab Undang-Undang Hukum Pidana';
+        }
+        if (str_contains($messageLower, 'perda')) {
+            $lawHints[] = 'Perda';
+        }
+        if (str_contains($messageLower, 'perwal')) {
+            $lawHints[] = 'Perwal';
+        }
+
+        $articlePhrase = 'pasal ' . $articleNumber;
+
+        $results = Regulasi::with('kategori')
+            ->where(function ($q) use ($articlePhrase) {
+                $q->where('judul', 'like', '%' . $articlePhrase . '%')
+                  ->orWhere('judul_lengkap', 'like', '%' . $articlePhrase . '%')
+                  ->orWhere('abstrak', 'like', '%' . $articlePhrase . '%')
+                  ->orWhere('subjek', 'like', '%' . $articlePhrase . '%');
+            })
+            ->when(!empty($lawHints), function ($q) use ($lawHints) {
+                $q->where(function ($sq) use ($lawHints) {
+                    foreach ($lawHints as $hint) {
+                        $sq->orWhere('judul', 'like', '%' . $hint . '%')
+                           ->orWhere('judul_lengkap', 'like', '%' . $hint . '%')
+                           ->orWhere('subjek', 'like', '%' . $hint . '%');
+                    }
+                });
+            })
+            ->orderBy('tanggal_diundangkan', 'desc')
+            ->limit(10)
+            ->get();
+
+        // If user asks KUHP article, prioritize curated KUHP dataset response
+        if (in_array('KUHP', $lawHints, true)) {
+            $kuhpArticle = $this->getKuhpArticles()[(string) $articleNumber] ?? null;
+            if ($kuhpArticle) {
+                return $this->buildKuhpCardResponse(
+                    'Tentu, berikut adalah isi dari pasal yang Anda minta:',
+                    [$kuhpArticle]
+                );
+            }
+        }
+
+        // If no DB result and article exists in curated KUHP dataset, return that instead of generic failure
+        if ($results->count() === 0) {
+            $kuhpArticle = $this->getKuhpArticles()[(string) $articleNumber] ?? null;
+            if ($kuhpArticle) {
+                return $this->buildKuhpCardResponse(
+                    'Tentu, berikut adalah isi dari pasal yang Anda minta:',
+                    [$kuhpArticle]
+                );
+            }
+
+            return "Saya belum menemukan rujukan yang kuat untuk Pasal {$articleNumber} pada data yang tersedia. "
+                . "Agar lebih akurat, mohon tambahkan jenis peraturannya, misalnya: 'Pasal {$articleNumber} KUHP' atau 'Pasal {$articleNumber} Perda Banjarbaru'.";
+        }
+
+        $articles = [];
+        foreach ($results->take(3) as $reg) {
+            $nomor = $articleNumber;
+            $excerpt = $reg->abstrak ? strip_tags(Str::limit($reg->abstrak, 420)) : 'Ringkasan pasal belum tersedia pada metadata dokumen ini.';
+            $downloadLink = $this->getDownloadLink($reg);
+            $anotasi = 'Perlu ditelusuri lebih lanjut pada naskah resmi untuk redaksi lengkap ayat dan penjelasan.';
+            if ($downloadLink) {
+                $anotasi .= ' <a href="' . $downloadLink . '" class="chat-download-btn" target="_blank" rel="noopener noreferrer">Buka dokumen</a>';
+            }
+
+            $articles[] = [
+                'pasal' => $nomor,
+                'isi' => $excerpt,
+                'konteks' => [
+                    $reg->judul,
+                    'Kategori: ' . ($reg->kategori ? $reg->kategori->nama_singkat : 'Peraturan'),
+                    'Tahun: ' . ($reg->tahun ?? $reg->tahun_peraturan ?? '-'),
+                ],
+                'penjelasan' => 'Penjelasan resmi tidak tersedia di metadata singkat.',
+                'anotasi' => $anotasi,
+            ];
+        }
+
+        $intro = "Saya menemukan referensi paling relevan untuk pertanyaan Pasal {$articleNumber}.";
+        return $this->buildKuhpCardResponse($intro, $articles);
+    }
+
+    /**
+     * Handle concept-style KUHP questions and return interactive card HTML.
+     */
+    private function handleKuhpConceptQuestion($messageLower)
+    {
+        $isKorporasiQuestion = str_contains($messageLower, 'korporasi')
+            && (str_contains($messageLower, 'subjek') || str_contains($messageLower, 'tindak pidana'));
+
+        if (!$isKorporasiQuestion) {
+            return null;
+        }
+
+        $intro = 'Dalam konteks KUHP, korporasi dapat menjadi subjek tindak pidana. Berikut pasal yang paling relevan untuk menjawab pertanyaan Anda.';
+
+        $kuhp = $this->getKuhpArticles();
+        $articles = array_values(array_filter([
+            $kuhp['45'] ?? null,
+            $kuhp['46'] ?? null,
+            $kuhp['146'] ?? null,
+        ]));
+
+        return $this->buildKuhpCardResponse($intro, $articles);
+    }
+
+    /**
+     * Handle KUHP topic questions such as pidana pembunuhan.
+     */
+    private function handleKuhpTopicQuestion($messageLower)
+    {
+        if (!str_contains($messageLower, 'pembunuhan')) {
+            return null;
+        }
+
+        $kuhp = $this->getKuhpArticles();
+        $articles = array_values(array_filter([
+            $kuhp['458'] ?? null,
+            $kuhp['459'] ?? null,
+            $kuhp['460'] ?? null,
+        ]));
+
+        if (empty($articles)) {
+            return null;
+        }
+
+        $intro = 'Pasal 458, 459, dan 460 KUHP mengatur pembunuhan, pembunuhan berencana, serta pembunuhan anak oleh ibu. Berikut ringkasan terstruktur per pasal.';
+        return $this->buildKuhpCardResponse($intro, $articles);
+    }
+
+    /**
+     * Curated KUHP articles for structured responses.
+     */
+    private function getKuhpArticles()
+    {
+        return [
+            '45' => [
+                'pasal' => '45',
+                'konteks' => [
+                    'BUKU KESATU ATURAN UMUM',
+                    'BAB II TINDAK PIDANA DAN PERTANGGUNGJAWABAN PIDANA',
+                    'Bagian Kedua Pertanggungjawaban Pidana',
+                    'Paragraf 3 Pertanggungjawaban Korporasi',
+                ],
+                'ayat' => [
+                    'Korporasi merupakan subjek Tindak Pidana.',
+                    'Korporasi mencakup badan hukum dan bentuk usaha lain yang disamakan dengan itu sesuai ketentuan perundang-undangan.',
+                ],
+                'penjelasan' => 'Pasal ini menegaskan bahwa pelaku tindak pidana tidak hanya orang perseorangan, tetapi juga korporasi.',
+                'anotasi' => 'Pasal 45 menjadi dasar umum untuk pertanggungjawaban pidana korporasi dan dibaca bersama Pasal 146 KUHP.',
+            ],
+            '46' => [
+                'pasal' => '46',
+                'konteks' => [
+                    'BUKU KESATU ATURAN UMUM',
+                    'BAB II TINDAK PIDANA DAN PERTANGGUNGJAWABAN PIDANA',
+                    'Paragraf 3 Pertanggungjawaban Korporasi',
+                ],
+                'ayat' => [
+                    'Tindak pidana oleh korporasi dapat dilakukan oleh pengurus atau pihak yang bertindak untuk dan atas nama korporasi.',
+                    'Pertanggungjawaban dikaitkan dengan kedudukan fungsional dalam struktur organisasi korporasi.',
+                ],
+                'penjelasan' => 'Ketentuan ini mengatur bagaimana perbuatan pengurus/representative actor dikaitkan dengan pertanggungjawaban korporasi.',
+                'anotasi' => 'Untuk pembuktian, perhatikan unsur hubungan tindakan dengan kegiatan usaha korporasi.',
+            ],
+            '146' => [
+                'pasal' => '146',
+                'konteks' => [
+                    'BUKU KESATU ATURAN UMUM',
+                    'Definisi Korporasi',
+                ],
+                'ayat' => [
+                    'Korporasi adalah kumpulan terorganisasi dari orang dan/atau kekayaan, baik berbadan hukum maupun tidak berbadan hukum.',
+                ],
+                'penjelasan' => 'Pasal ini memberi batasan konseptual tentang apa yang termasuk korporasi dalam konteks KUHP.',
+                'anotasi' => 'Ruang lingkupnya luas dan mencakup berbagai bentuk badan usaha.',
+            ],
+            '458' => [
+                'pasal' => '458',
+                'konteks' => [
+                    'BUKU KEDUA TINDAK PIDANA',
+                    'BAB XXI TINDAK PIDANA TERHADAP NYAWA DAN JANIN',
+                    'Bagian Kesatu Pembunuhan',
+                ],
+                'ayat' => [
+                    'Setiap orang yang merampas nyawa orang lain dipidana karena pembunuhan dengan pidana penjara paling lama 15 tahun.',
+                    'Jika dilakukan terhadap ibu, ayah, istri, suami, atau anak, pidananya dapat ditambah 1/3.',
+                    'Pembunuhan yang berkaitan dengan tindak pidana lain dapat dipidana penjara seumur hidup atau paling lama 20 tahun.',
+                ],
+                'penjelasan' => 'Pembunuhan dalam pasal ini menekankan unsur kesengajaan merampas nyawa orang lain.',
+                'anotasi' => 'Unsur penting: perbuatan, objek nyawa orang lain, dan kesengajaan.',
+            ],
+            '459' => [
+                'pasal' => '459',
+                'konteks' => [
+                    'BUKU KEDUA TINDAK PIDANA',
+                    'BAB XXI TINDAK PIDANA TERHADAP NYAWA DAN JANIN',
+                    'Bagian Kesatu Pembunuhan',
+                ],
+                'ayat' => [
+                    'Pembunuhan berencana diancam pidana mati, pidana penjara seumur hidup, atau pidana penjara paling lama 20 tahun.',
+                ],
+                'penjelasan' => 'Pembunuhan berencana menitikberatkan pada adanya rencana terlebih dahulu sebelum perbuatan dilakukan.',
+                'anotasi' => 'Pembuktian umumnya menilai jeda waktu, persiapan, dan tujuan pelaku.',
+            ],
+            '460' => [
+                'pasal' => '460',
+                'konteks' => [
+                    'BUKU KEDUA TINDAK PIDANA',
+                    'BAB XXI TINDAK PIDANA TERHADAP NYAWA DAN JANIN',
+                    'Bagian Kesatu Pembunuhan',
+                ],
+                'ayat' => [
+                    'Ibu yang menghilangkan nyawa anaknya pada saat atau tidak lama setelah melahirkan dipidana penjara paling lama 7 tahun.',
+                    'Jika dilakukan dengan rencana terlebih dahulu, dipidana penjara paling lama 9 tahun.',
+                ],
+                'penjelasan' => 'Pasal ini merupakan ketentuan khusus dengan konteks kondisi psikis/situasional saat atau pasca kelahiran.',
+                'anotasi' => 'Penerapan pasal ini dinilai secara ketat berdasarkan fakta peristiwa dan waktu kejadian.',
+            ],
+            '476' => [
+                'pasal' => '476',
+                'konteks' => [
+                    'BUKU KEDUA TINDAK PIDANA',
+                    'BAB XXIV TINDAK PIDANA PENCURIAN',
+                ],
+                'ayat' => [
+                    'Setiap orang yang mengambil barang yang sebagian atau seluruhnya milik orang lain, dengan maksud untuk dimiliki secara melawan hukum, dipidana karena pencurian dengan pidana penjara paling lama 5 tahun atau pidana denda paling banyak kategori V.',
+                ],
+                'penjelasan' => 'Unsur pokok pasal ini meliputi perbuatan mengambil, objek milik orang lain, maksud memiliki, dan sifat melawan hukum.',
+                'anotasi' => 'Dalam praktik, unsur-unsur bersifat kumulatif; jika satu unsur tidak terpenuhi maka tidak terpenuhi delik pencurian.',
+            ],
+        ];
+    }
+
+    /**
+     * Build interactive KUHP response card with pasal tabs and detail sections.
+     */
+    private function buildKuhpCardResponse($introText, array $articles)
+    {
+        if (empty($articles)) {
+            return $introText;
+        }
+
+        $prefix = 'kuhp-' . round(microtime(true) * 1000);
+        $firstPasal = $articles[0]['pasal'];
+
+        $html = '<div class="mt-3 p-3 border rounded" id="' . e($prefix) . '">';
+        $html .= '<div class="text-justify">' . e($introText) . '</div>';
+        $html .= '<div class="row tab-merah mt-4 mb-3"><div class="col-12 d-flex gap-2 flex-wrap">';
+
+        foreach ($articles as $article) {
+            $pasal = (string) ($article['pasal'] ?? '-');
+            $active = $pasal === (string) $firstPasal ? 'active' : '';
+            $html .= '<button class="btn btn-sm btn-outline-danger ' . $active . '" res-pasal="' . e($pasal) . '" data-prefix="' . e($prefix) . '">Pasal ' . e($pasal) . '</button>';
+        }
+
+        $html .= '</div></div>';
+        $html .= '<div id="pasal-content-' . e($prefix) . '" style="font-size: 16px;">';
+
+        foreach ($articles as $article) {
+            $pasal = (string) ($article['pasal'] ?? '-');
+            $hidden = $pasal === (string) $firstPasal ? '' : ' hidden';
+            $isi = (string) ($article['isi'] ?? '-');
+            $penjelasan = (string) ($article['penjelasan'] ?? 'Tidak ada penjelasan tambahan.');
+            $anotasi = (string) ($article['anotasi'] ?? 'Tidak ada anotasi tambahan.');
+            $konteks = $article['konteks'] ?? [];
+            $ayat = $article['ayat'] ?? [];
+
+            $html .= '<div class="kuhp-pasal-panel' . $hidden . '" data-pasal-panel="' . e($pasal) . '" data-prefix="' . e($prefix) . '">';
+            $html .= '<div class="mt-4 mb-3">';
+            $html .= '<div class="text-center mb-2">';
+            $html .= '<div class="mb-3 p-1 rounded shadow-sm bg-white border text-keterangan">';
+            foreach ($konteks as $ctx) {
+                $html .= '<div>' . e($ctx) . '</div>';
+            }
+            $html .= '</div>';
+            $html .= '<strong class="d-block mt-3">Pasal ' . e($pasal) . '</strong>';
+            $html .= '</div>';
+
+            if (!empty($ayat) && is_array($ayat)) {
+                $html .= '<ol class="ayat-list ps-3 mt-2">';
+                foreach ($ayat as $idx => $ayatText) {
+                    $html .= '<li class="mb-2 text-justify d-flex" style="list-style: none;">';
+                    $html .= '<span style="min-width: 35px; display: inline-block;">(' . e((string) ($idx + 1)) . ')</span>';
+                    $html .= '<span style="flex: 1; text-align: justify;">' . e((string) $ayatText) . '</span>';
+                    $html .= '</li>';
+                }
+                $html .= '</ol>';
+            } else {
+                $html .= '<div class="text-justify">' . e($isi) . '</div>';
+            }
+
+            $html .= '<div class="mt-3">';
+            $html .= '<button type="button" class="toggle-penjelasan btn btn-sm" data-target="#collapse-penjelasan-' . e($prefix) . '-' . e($pasal) . '">';
+            $html .= 'Lihat Penjelasan <i class="fa fa-angle-up"></i>';
+            $html .= '</button>';
+            $html .= '<div id="collapse-penjelasan-' . e($prefix) . '-' . e($pasal) . '" class="penjelasan-content hidden mt-2 p-3 border-start border-3 border-danger bg-light-subtle rounded text-justify">';
+            $html .= e($penjelasan);
+            $html .= '</div>';
+            $html .= '</div>';
+
+            $html .= '<div class="mt-3">';
+            $html .= '<button type="button" class="toggle-anotasi btn btn-sm" data-target="#collapse-anotasi-' . e($prefix) . '-' . e($pasal) . '">';
+            $html .= 'Lihat Anotasi <i class="fa fa-angle-up"></i>';
+            $html .= '</button>';
+            $html .= '<div id="collapse-anotasi-' . e($prefix) . '-' . e($pasal) . '" class="anotasi-content hidden mt-2 p-3 border-start border-3 border-danger bg-light-subtle rounded text-justify">';
+            $html .= $anotasi;
+            $html .= '</div>';
+            $html .= '</div>';
+
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+
+        $html .= '</div></div>';
+
+        return $html;
     }
 
     /**
@@ -267,75 +669,59 @@ class ChatController extends Controller
         // Fix download link - construct proper file URL from database
         $downloadLink = $this->getDownloadLink($reg);
         
-        // Build detailed response
-        $response = "Halo! Sebagai asisten AI JDIH Kota Banjarbaru, saya akan bantu memberikan informasi yang akurat mengenai " . ucfirst($kategori) . " yang Anda cari.\n\n";
-        
-        $response .= "Berdasarkan konteks peraturan yang Anda berikan, saya menemukan dokumen yang sangat relevan, yaitu:\n\n";
-        
         // Document title and number
         $nomor = $reg->nomor_peraturan ?? ($reg->nomor_tahun ?? 'N/A');
         $tahun = $reg->tahun ?? ($reg->tahun_peraturan ?? 'N/A');
-        $response .= "<strong>{$kategori} Nomor {$nomor} Tahun {$tahun}</strong>\n";
-        $response .= "{$reg->judul}\n\n";
+        $html = '<div><strong>' . e($kategori) . ' Nomor ' . e($nomor) . ' Tahun ' . e($tahun) . '</strong></div>';
+        $html .= '<div class="text-justify mb-2">' . e($reg->judul) . '</div>';
         
         // Summary section
-        $response .= "<strong>Ringkasan:</strong> ";
+        $summary = '';
         
         if (!empty($reg->abstrak)) {
-            $response .= strip_tags($reg->abstrak) . "\n\n";
+            $summary .= e(strip_tags($reg->abstrak));
         } else {
             // Generate summary from available data
-            $response .= "Peraturan ini mengatur mengenai {$reg->judul}. ";
+            $summary .= 'Peraturan ini mengatur mengenai ' . e($reg->judul) . '. ';
             
             if (!empty($reg->bidang_hukum)) {
-                $response .= "Termasuk dalam bidang hukum: {$reg->bidang_hukum}. ";
+                $summary .= 'Termasuk dalam bidang hukum: ' . e($reg->bidang_hukum) . '. ';
             }
             
             if ($reg->tanggal_penetapan) {
-                $response .= "Ditetapkan pada tanggal " . date('d F Y', strtotime($reg->tanggal_penetapan)) . ". ";
+                $summary .= 'Ditetapkan pada tanggal ' . e(date('d F Y', strtotime($reg->tanggal_penetapan))) . '. ';
             }
             
             if ($reg->tanggal_diundangkan) {
-                $response .= "Diundangkan pada tanggal " . date('d F Y', strtotime($reg->tanggal_diundangkan)) . ". ";
+                $summary .= 'Diundangkan pada tanggal ' . e(date('d F Y', strtotime($reg->tanggal_diundangkan))) . '. ';
             }
-            
-            $response .= "\n\n";
         }
+        $html .= '<div class="text-justify"><strong>Ringkasan:</strong> ' . $summary . '</div>';
         
         // Important notes section
-        $response .= "<strong>Catatan Penting:</strong> ";
+        $notes = '';
         
         if ($reg->tanggal_diundangkan) {
-            $response .= "Peraturan ini mulai berlaku pada saat diundangkan, yaitu tanggal " . date('d F Y', strtotime($reg->tanggal_diundangkan)) . ". ";
+            $notes .= 'Mulai berlaku pada tanggal ' . e(date('d F Y', strtotime($reg->tanggal_diundangkan))) . '. ';
         }
         
         if (!empty($reg->status_peraturan)) {
             $status = ucfirst($reg->status_peraturan);
-            $response .= "Status peraturan ini adalah {$status}. ";
+            $notes .= 'Status peraturan: ' . e($status) . '. ';
         }
-        
-        $response .= "\n\n";
-        
-        // Relevance section
-        $response .= "<strong>Relevansi:</strong> Dokumen ini secara langsung menjawab pertanyaan Anda karena judulnya sesuai dengan yang Anda cari dan isinya spesifik mengatur mengenai topik yang Anda tanyakan di JDIH Kota Banjarbaru.\n\n";
+        $html .= '<div class="text-justify mt-2"><strong>Catatan Penting:</strong> ' . e(trim($notes)) . '</div>';
         
         // Download link
         if ($downloadLink) {
-            $response .= "<strong>Link Download:</strong> ";
-            $response .= "<a href=\"{$downloadLink}\" class=\"chat-download-btn\" target=\"_blank\" rel=\"noopener noreferrer\">Download Dokumen</a>\n\n";
+            $html .= '<div class="mt-3"><a href="' . e($downloadLink) . '" class="chat-download-btn" target="_blank" rel="noopener noreferrer">Download Dokumen</a></div>';
         }
-        
-        // Contact information
-        $response .= "Untuk informasi lebih lanjut atau jika Anda memerlukan konsultasi hukum gratis mengenai Peraturan ini atau hal lainnya, Anda dapat datang langsung ke Bagian Hukum Sekretariat Daerah Kota Banjarbaru.\n\n";
-        
+
         // Show additional results if available
         if ($totalResults > 1) {
-            $response .= "<strong>Hasil Lainnya:</strong> Ada " . ($totalResults - 1) . " dokumen lain yang relevan dengan pencarian Anda. Ketik \"tampilkan semua\" untuk melihat hasil lainnya.\n\n";
+            $html .= '<div class="mt-2">Ada ' . e((string) ($totalResults - 1)) . ' dokumen lain yang relevan.</div>';
         }
-        
-        $response .= "Semoga informasi ini bermanfaat bagi Anda. Jika ada pertanyaan lain, jangan ragu untuk bertanya!";
-        
-        return $response;
+
+        return $this->buildInfoCard('Detail Peraturan JDIH', $html);
     }
 
     /**
@@ -343,31 +729,44 @@ class ChatController extends Controller
      */
     private function generateBriefResults($results)
     {
-        $response = "";
+        $response = '<div class="d-flex flex-column gap-2">';
         
         foreach ($results as $index => $reg) {
             $kategori = $reg->kategori ? $reg->kategori->nama_singkat : 'Peraturan';
             $nomor = $reg->nomor_peraturan ?? ($reg->nomor_tahun ?? 'N/A');
             $tahun = $reg->tahun ?? ($reg->tahun_peraturan ?? 'N/A');
             
-            $response .= ($index + 1) . ". <strong>{$kategori} No. {$nomor} Tahun {$tahun}</strong>\n";
-            $response .= "   {$reg->judul}\n";
+            $response .= '<div class="p-2 border rounded bg-white">';
+            $response .= '<div><strong>' . e(($index + 1) . '. ' . $kategori . ' No. ' . $nomor . ' Tahun ' . $tahun) . '</strong></div>';
+            $response .= '<div class="text-justify">' . e($reg->judul) . '</div>';
             
             // Show download button for any non-empty file field
             $downloadLink = $this->getDownloadLink($reg);
             if ($downloadLink) {
-                $response .= "   📥 <a href=\"{$downloadLink}\" class=\"chat-download-btn\" target=\"_blank\">Unduh Dokumen</a>\n";
+                $response .= '<div class="mt-2"><a href="' . e($downloadLink) . '" class="chat-download-btn" target="_blank" rel="noopener noreferrer">Unduh Dokumen</a></div>';
             } else {
                 // File not available in database
-                $response .= "   ⚠️ File tidak tersedia\n";
+                $response .= '<div class="mt-2">⚠️ File tidak tersedia</div>';
             }
             
-            $response .= "\n";
+            $response .= '</div>';
         }
+        $response .= '</div>';
         
-        $response .= "Ketik judul lengkap salah satu peraturan di atas untuk melihat detail informasi.";
+        $response .= '<div class="mt-2">Ketik judul salah satu peraturan di atas untuk melihat detail.</div>';
         
         return $response;
+    }
+
+    /**
+     * Build a consistent JDIH info card response.
+     */
+    private function buildInfoCard($title, $contentHtml)
+    {
+        return '<div class="mt-3 p-3 border rounded">'
+            . '<div class="fw-bold mb-2">' . e($title) . '</div>'
+            . $contentHtml
+            . '</div>';
     }
 
     /**
@@ -495,7 +894,8 @@ class ChatController extends Controller
             'tentang', 'mengenai', 'perihal', 'terkait', 'yang', 'dan', 'atau',
             'saya', 'ingin', 'mencari', 'cari', 'ada', 'tidak', 'maaf',
             'tolong', 'please', 'bisa', 'dapat', 'dapatkan', 'ambil',
-            'ringkasan', 'abstrak', 'status', 'unduh', 'download'
+            'ringkasan', 'abstrak', 'status', 'unduh', 'download',
+            'apa', 'isi', 'jelaskan', 'bagaimana', 'apakah', 'mohon', 'berikan', 'tentukan'
         ];
 
         $words = preg_split('/\s+/', $message);

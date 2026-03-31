@@ -207,7 +207,4 @@
     </div>
 </footer>
 
-<!-- Chat Widget -->
-@include('public.chat-widget')
-
 <!-- footer end -->
