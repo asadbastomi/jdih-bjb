@@ -40,6 +40,7 @@ Route::get('/pustaka', 'PublicController@pustaka')->name('pustaka');
 Route::get('/susunan-organisasi', 'PublicController@susunanorganisasi')->name('susunanorganisasi');
 Route::get('/kontak', 'PublicController@kontak')->name('kontak');
 Route::get('/artikel', 'PublicController@artikel')->name('artikel');
+Route::get('/artikel/{id}/{slug}', 'PublicController@artikelDetail')->name('artikel.detail');
 Route::get('/pengumuman', 'PublicController@pengumuman')->name('pengumuman');
 Route::get('/kegiatan', 'PublicController@kegiatan')->name('kegiatan');
 Route::get('/kegiatan/cat/{kategori}', 'PublicController@kegiatan')->name('kegiatan.category');
@@ -132,6 +133,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('/relaas-v2', 'RelaasV2Controller')->only(['index']);
         // SOP
         Route::resource('/sop', 'SopController')->only(['index']);
+        // Kecamatan
+        Route::resource('/kecamatan', 'KecamatanController')->only(['index']);
+        // Kelurahan
+        Route::resource('/kelurahan', 'KelurahanController')->only(['index']);
         
         // Kelurahan Sadar Hukum
         Route::resource('/kelurahan-sadar-hukum', 'KelurahanSadarHukumController')->only(['index']);

@@ -558,6 +558,10 @@ class PublicController extends Controller
             ->leftJoin('kategori', 'regulasi.kategori_id', '=', 'kategori.id')
             ->first();
 
+        if (!$this->data['data']) {
+            return redirect('/404');
+        }
+
         $regUbahCabut = Regulasi::withUbahCabut();
         $regUbahCabut->where('id_reg_1', $this->data['data']->id);
         $cekperrow = $regUbahCabut->get();
@@ -573,6 +577,53 @@ class PublicController extends Controller
                 'nama_singkat'=> $row->nama_singkat,
                 'judul'       => $row->judul,
                 'url'         => '/produk-hukum/' . $row->nama_singkat . '/' . $row->id_reg_2 . '/' . Str::slug($row->judul),
+            ];
+        }
+
+        $popularItem = PopularItem::where('id_item', $this->data['data']->id)->first();
+        $this->data['hit']          = $popularItem->hit ?? 0;
+        $this->data['unduhan']      = $popularItem->downloaded ?? 0;
+        $this->data['regubahcabut'] = $regUbahCabutArr;
+
+        $hitRequest = new Request();
+        $hitRequest->merge(['id' => $this->data['data']->id, 'kategori' => $this->data['data']->kategori_id]);
+        $this->addHit($hitRequest);
+
+        return view('public.produk-hukum', $this->data);
+    }
+
+    public function artikelDetail($id, $slug)
+    {
+        $this->data['data'] = Regulasi::select('regulasi.*', 'kategori.nama_singkat', 'kategori.nama')
+            ->whereIn('regulasi.kategori_id', [6, 7, 8])
+            ->where('regulasi.id', $id)
+            ->leftJoin('kategori', 'regulasi.kategori_id', '=', 'kategori.id')
+            ->first();
+
+        if (!$this->data['data']) {
+            return redirect('/404');
+        }
+
+        $expectedSlug = Str::slug($this->data['data']->judul ?? 'artikel-hukum');
+        if ($slug !== $expectedSlug) {
+            return redirect()->route('artikel.detail', ['id' => $id, 'slug' => $expectedSlug]);
+        }
+
+        $regUbahCabut = Regulasi::withUbahCabut();
+        $regUbahCabut->where('id_reg_1', $this->data['data']->id);
+        $cekperrow = $regUbahCabut->get();
+
+        $regUbahCabutArr = [];
+        foreach ($cekperrow as $row) {
+            $regUbahCabutArr[$row->id_reg_1][] = [
+                'id'           => $row->id,
+                'nomor'        => 'Nomor ' . ($row->nomor_peraturan ?? $row->nomor ?? '-') . ' Tahun ' . ($row->tahun ?? '-'),
+                'id_reg_1'     => $row->id_reg_1,
+                'id_reg_2'     => $row->id_reg_2,
+                'jenis'        => $row->jenis,
+                'nama_singkat' => $row->nama_singkat,
+                'judul'        => $row->judul,
+                'url'          => '/produk-hukum/' . $row->nama_singkat . '/' . $row->id_reg_2 . '/' . Str::slug($row->judul),
             ];
         }
 
@@ -755,11 +806,12 @@ class PublicController extends Controller
     {
         $kategoriId = ($kategori == 'putusan-tu') ? 5 : 4;
 
-        $this->data['data'] = Putusan::select('putusan.*', 'kategori.nama')
+        $this->data['data'] = Putusan::with([
+            'kategori:id,nama,nama_singkat',
+            'temaDokumen:id,nama,warna',
+        ])
             ->where('kategori_id', $kategoriId)
-            ->where('putusan.id', $id)
-            ->with('temaDokumen')
-            ->leftJoin('kategori', 'putusan.kategori_id', '=', 'kategori.id')
+            ->where('id', $id)
             ->first();
 
         if (!$this->data['data']) return redirect('/404');

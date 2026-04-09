@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class PenghargaanV2Controller extends BaseController
 {
@@ -39,10 +40,17 @@ class PenghargaanV2Controller extends BaseController
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $uploadedPhotos = $request->file('foto');
+        if ($uploadedPhotos && !is_array($uploadedPhotos)) {
+            $uploadedPhotos = [$uploadedPhotos];
+        }
+
+        $validator = Validator::make(array_merge($request->all(), [
+            'foto' => $uploadedPhotos ?? [],
+        ]), [
             'nama' => ['required'],
             'detail' => ['nullable'],
-            'foto' => ['required', 'array'],
+            'foto' => ['required', 'array', 'min:1'],
             'foto.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:2048']
         ]);
 
@@ -51,17 +59,12 @@ class PenghargaanV2Controller extends BaseController
         }
 
         $list_foto = [];
-        if ($request->foto) {
-            $jumlah_foto = count((array)$request->foto);
-            foreach ($request->foto as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
-                    $folder = "upload/penghargaanV2";
-                    $filename = time() . "_" . $index . "." . $extension;
-                    $filepath = $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
-                    array_push($list_foto, $filepath);
-                }
+        foreach ($uploadedPhotos ?? [] as $index => $value) {
+            if ($value && $value->isValid()) {
+                $extension = $value->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $value->storeAs('upload/penghargaanV2', $filename, 'public');
+                $list_foto[] = $storedPath;
             }
         }
 
@@ -101,7 +104,14 @@ class PenghargaanV2Controller extends BaseController
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
+        $uploadedPhotos = $request->file('foto');
+        if ($uploadedPhotos && !is_array($uploadedPhotos)) {
+            $uploadedPhotos = [$uploadedPhotos];
+        }
+
+        $validator = Validator::make(array_merge($request->all(), [
+            'foto' => $uploadedPhotos ?? [],
+        ]), [
             'nama' => ['required'],
             'detail' => ['nullable'],
             'foto' => ['nullable', 'array'],
@@ -113,21 +123,20 @@ class PenghargaanV2Controller extends BaseController
         }
 
         $list_foto = [];
-        if ($request->foto) {
-            $jumlah_foto = count((array)$request->foto);
-            foreach ($request->foto as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
-                    $folder = "upload/penghargaanV2";
-                    $filename = time() . "_" . $index . "_" . "." . $extension;
-                    $filepath = $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
-                    array_push($list_foto, $filepath);
-                }
+        foreach ($uploadedPhotos ?? [] as $index => $value) {
+            if ($value && $value->isValid()) {
+                $extension = $value->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $value->storeAs('upload/penghargaanV2', $filename, 'public');
+                $list_foto[] = $storedPath;
             }
         }
 
-        $table = PenghargaanV2::where('id', $request->id)->first();
+        $table = PenghargaanV2::where('id', $id)->first();
+        if (!$table) {
+            return $this->sendError(null, 'Data not found', 500);
+        }
+
         $table->nama = $request->nama;
         $table->detail = $request->detail;
 

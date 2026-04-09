@@ -30,6 +30,10 @@ class TemaDokumenController extends BaseController
         }
 
         $data['data'] = $dataset->orderBy('nama', 'asc')->paginate($item);
+        // Add is_active boolean for frontend filtering
+        foreach ($data['data'] as $tema) {
+            $tema->is_active = ($tema->status === 'aktif');
+        }
 
         // Return JSON for API requests, HTML view for AJAX requests
         if ($request->expectsJson()) {
@@ -61,6 +65,9 @@ class TemaDokumenController extends BaseController
         }
 
         $data['data'] = $dataset->orderBy('nama', 'asc')->paginate($item);
+        foreach ($data['data'] as $tema) {
+            $tema->is_active = ($tema->status === 'aktif');
+        }
 
         return view('admin.tema-dokumen.data', $data);
     }
@@ -190,7 +197,7 @@ class TemaDokumenController extends BaseController
         // Handle icon file upload
         if ($request->hasFile('icon')) {
             // Delete old icon if exists
-            if ($tema->icon) {
+            if ($this->isStoredIconPath($tema->icon)) {
                 Storage::disk('public')->delete($tema->icon);
             }
             $icon = $request->file('icon');
@@ -224,6 +231,10 @@ class TemaDokumenController extends BaseController
             return $this->sendError(null, 'Tidak dapat menghapus tema ini karena masih terhubung dengan peraturan', 400);
         }
 
+        if ($this->isStoredIconPath($tema->icon)) {
+            Storage::disk('public')->delete($tema->icon);
+        }
+
         if ($tema->delete()) {
             return $this->sendResponse($tema, 'Data deleted successfully');
         } else {
@@ -241,5 +252,10 @@ class TemaDokumenController extends BaseController
     {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $nama)));
         return $slug;
+    }
+
+    private function isStoredIconPath($icon)
+    {
+        return is_string($icon) && strpos($icon, 'upload/tema-dokumen/') === 0;
     }
 }

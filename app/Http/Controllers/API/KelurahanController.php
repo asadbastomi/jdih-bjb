@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController as BaseController;
+use App\Kelurahan;
 use App\Kecamatan;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Validator;
 
-class KecamatanController extends BaseController
+class KelurahanController extends BaseController
 {
-    /**
-     * Get all kecamatan for dropdown/filter
-     */
     public function index()
     {
-        $kecamatan = Kecamatan::orderBy('nama_kecamatan', 'asc')->get();
+        $data = Kelurahan::with('kecamatan:id,nama_kecamatan')
+            ->orderBy('nama_kelurahan', 'asc')
+            ->get();
 
-        return $this->sendResponse($kecamatan, 'Data retrieved successfully');
+        return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
     public function fetch(Request $request)
@@ -26,7 +26,7 @@ class KecamatanController extends BaseController
         $search = $request->search;
 
         if ($request->page == 'last') {
-            $getLast = Kecamatan::paginate($item);
+            $getLast = Kelurahan::paginate($item);
             $currentPage = $getLast->lastPage();
             Paginator::currentPageResolver(function () use ($currentPage) {
                 return $currentPage;
@@ -34,7 +34,7 @@ class KecamatanController extends BaseController
         }
 
         if ($request->page == 'findme' && $request->idnow) {
-            $allData = Kecamatan::select('id')->orderBy('id', 'asc')->get();
+            $allData = Kelurahan::select('id')->orderBy('id', 'asc')->get();
             $number = 0;
             foreach ($allData as $key => $value) {
                 if ($value->id == $request->idnow) {
@@ -50,19 +50,21 @@ class KecamatanController extends BaseController
             }
         }
 
-        $dataset = Kecamatan::query();
+        $dataset = Kelurahan::with('kecamatan:id,nama_kecamatan');
         if (!empty($search)) {
             $dataset->where(function ($query) use ($search) {
-                $query->where('nama_kecamatan', 'like', '%' . $search . '%')
-                    ->orWhere('kota', 'like', '%' . $search . '%')
-                    ->orWhere('alamat', 'like', '%' . $search . '%');
+                $query->where('nama_kelurahan', 'like', '%' . $search . '%')
+                    ->orWhere('alamat', 'like', '%' . $search . '%')
+                    ->orWhereHas('kecamatan', function ($q) use ($search) {
+                        $q->where('nama_kecamatan', 'like', '%' . $search . '%');
+                    });
             });
         }
 
         $data['data'] = $dataset->orderBy('id', 'asc')->paginate($item);
 
         if ($request->ajax()) {
-            return view('admin.kecamatan.data', $data);
+            return view('admin.kelurahan.data', $data);
         }
 
         return $this->sendError(null, 'Unauthorised', 401);
@@ -71,8 +73,8 @@ class KecamatanController extends BaseController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_kecamatan' => ['required'],
-            'kota' => ['nullable'],
+            'kecamatan_id' => ['required', 'exists:kecamatans,id'],
+            'nama_kelurahan' => ['required'],
             'alamat' => ['nullable'],
             'latitude' => ['nullable'],
             'longitude' => ['nullable'],
@@ -83,9 +85,9 @@ class KecamatanController extends BaseController
             return $this->sendError($validator->errors(), 'Validation Error');
         }
 
-        $table = new Kecamatan;
-        $table->nama_kecamatan = $request->nama_kecamatan;
-        $table->kota = $request->kota;
+        $table = new Kelurahan;
+        $table->kecamatan_id = $request->kecamatan_id;
+        $table->nama_kelurahan = $request->nama_kelurahan;
         $table->alamat = $request->alamat;
         $table->latitude = $request->latitude;
         $table->longitude = $request->longitude;
@@ -101,7 +103,7 @@ class KecamatanController extends BaseController
 
     public function edit($id)
     {
-        $table = Kecamatan::where('id', $id)->first();
+        $table = Kelurahan::with('kecamatan:id,nama_kecamatan')->where('id', $id)->first();
         if ($table) {
             return $this->sendResponse($table, 'Data retrieved');
         }
@@ -112,8 +114,8 @@ class KecamatanController extends BaseController
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nama_kecamatan' => ['required'],
-            'kota' => ['nullable'],
+            'nama_kelurahan' => ['required'],
+            'kecamatan_id' => ['required', 'exists:kecamatans,id'],
             'alamat' => ['nullable'],
             'latitude' => ['nullable'],
             'longitude' => ['nullable'],
@@ -124,13 +126,13 @@ class KecamatanController extends BaseController
             return $this->sendError($validator->errors(), 'Validation Error');
         }
 
-        $table = Kecamatan::where('id', $id)->first();
+        $table = Kelurahan::where('id', $id)->first();
         if (!$table) {
             return $this->sendError(null, 'Data not found', 500);
         }
 
-        $table->nama_kecamatan = $request->nama_kecamatan;
-        $table->kota = $request->kota;
+        $table->kecamatan_id = $request->kecamatan_id;
+        $table->nama_kelurahan = $request->nama_kelurahan;
         $table->alamat = $request->alamat;
         $table->latitude = $request->latitude;
         $table->longitude = $request->longitude;
@@ -146,7 +148,7 @@ class KecamatanController extends BaseController
 
     public function destroy($id)
     {
-        $table = Kecamatan::where('id', $id)->first();
+        $table = Kelurahan::where('id', $id)->first();
         if (!$table) {
             return $this->sendError(null, 'Data not found', 500);
         }

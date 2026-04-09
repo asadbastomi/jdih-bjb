@@ -108,6 +108,48 @@
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
+    .bahari-widget-link {
+        position: fixed;
+        left: 22px;
+        bottom: 22px;
+        z-index: 950;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #0b3b60 0%, #1f5f8b 60%, #1f9cf0 100%);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 0.2px;
+        text-decoration: none;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.24);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .bahari-widget-link:hover,
+    .bahari-widget-link:focus {
+        color: #ffffff;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 18px 38px rgba(15, 23, 42, 0.3);
+    }
+
+    .bahari-widget-link .mdi {
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    @media (max-width: 640px) {
+        .bahari-widget-link {
+            left: 14px;
+            bottom: 14px;
+            padding: 9px 12px;
+            font-size: 12px;
+        }
+    }
 </style>
 <footer class="footer" style="background: var(--gradient-dark); color: var(--gray-300); padding: 60px 0 20px; position: relative; overflow: hidden; border-top: 4px solid var(--primary-color); width: 100%; margin: 0 auto;">
     <div class="container-fluid">
@@ -206,5 +248,12 @@
         <div style="position: absolute; bottom: -30%; left: -5%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
     </div>
 </footer>
+
+@unless (request()->is('bahari-ai') || request()->is('bahari-ai/*'))
+    <a href="/bahari-ai" class="bahari-widget-link" aria-label="Buka halaman Bahari AI">
+        <i class="mdi mdi-robot"></i>
+        <span>Bahari AI</span>
+    </a>
+@endunless
 
 <!-- footer end -->

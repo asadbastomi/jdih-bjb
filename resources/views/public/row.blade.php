@@ -31,11 +31,12 @@ setlocale(LC_TIME, 'id_ID');
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet"
         type="text/css" />
+    @include('public.partials.legal-detail-styles')
 
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f7f9fb;
             margin: 0;
             padding: 0;
         }
@@ -43,93 +44,61 @@ setlocale(LC_TIME, 'id_ID');
         .section {
             position: relative;
             padding: 40px 0;
-            overflow: hidden;
+            overflow: visible;
         }
 
-        .bg-gradient {
-            background: linear-gradient(135deg, #7A332B 0%, #A54439 25%, #B8544A 50%, #C9645B 75%, #D9746C 100%);
-            position: relative;
+        .page-hero {
+            background: linear-gradient(135deg, #0b3b60 0%, #1f5f8b 35%, #0f172a 100%);
+            color: #f8fafc;
+            padding: 48px 0 38px;
         }
 
-        .bg-gradient::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 25%),
-                radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 25%);
-            z-index: 1;
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 9999px;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            margin-bottom: 14px;
         }
 
-        .bg-pattern {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(30deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
-                linear-gradient(150deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
-                linear-gradient(30deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
-                linear-gradient(150deg, rgba(255, 255, 255, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.1) 87.5%, rgba(255, 255, 255, 0.1)),
-                linear-gradient(60deg, rgba(255, 255, 255, 0.1) 25%, transparent 25.5%, transparent 75%, rgba(255, 255, 255, 0.1) 75%, rgba(255, 255, 255, 0.1)),
-                linear-gradient(60deg, rgba(255, 255, 255, 0.1) 25%, transparent 25.5%, transparent 75%, rgba(255, 255, 255, 0.1) 75%, rgba(255, 255, 255, 0.1));
-            background-size: 80px 140px;
-            z-index: 2;
+        .page-title {
+            font-size: 34px;
+            line-height: 1.2;
+            font-weight: 800;
+            margin: 0 0 12px;
+            color: #f8fafc;
         }
 
-        .floating-shapes {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 3;
+        .page-subtitle {
+            max-width: 760px;
+            margin: 0;
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.7;
         }
 
-        .shape {
-            position: absolute;
-            opacity: 0.2;
-            animation: float 20s infinite ease-in-out;
+        .page-hero-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
         }
 
-        .shape-1 {
-            width: 80px;
-            height: 80px;
-            background-color: #fff;
-            border-radius: 50%;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .shape-2 {
-            width: 120px;
-            height: 120px;
-            background-color: #fff;
-            border-radius: 50%;
-            top: 70%;
-            left: 80%;
-            animation-delay: 2s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg) scale(1);
-            }
-            25% {
-                transform: translateY(-15px) rotate(90deg) scale(1.05);
-            }
-            50% {
-                transform: translateY(0) rotate(180deg) scale(1);
-            }
-            75% {
-                transform: translateY(15px) rotate(270deg) scale(0.95);
-            }
+        .page-chip {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: #e2e8f0;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .container-fluid, .card-box {
@@ -138,40 +107,43 @@ setlocale(LC_TIME, 'id_ID');
         }
 
         .input-group, .card-box {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
+            background-color: #fff;
+            border-radius: 14px;
+            border: 1px solid #e5edf3;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
         }
 
         .table-card {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
+            background-color: #fff;
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
         }
 
         .btn-info {
-            background-color: #A54439;
-            border-color: #A54439;
+            background: #2563eb;
+            border-color: #2563eb;
             color: white;
+            box-shadow: none;
         }
 
         .btn-info:hover {
-            background-color: #8A362D;
-            border-color: #8A362D;
+            background: #1d4ed8;
+            border-color: #1d4ed8;
             color: white;
         }
 
         .pagination .page-link {
-            color: #A54439;
+            color: #2563eb;
         }
 
         .pagination .page-item.active .page-link {
-            background-color: #A54439;
-            border-color: #A54439;
+            background: #2563eb;
+            border-color: #2563eb;
         }
 
         .badge.bg-success {
-            background-color: #A54439 !important;
+            background: #0f9d58 !important;
         }
 
         @media (max-width: 768px) {
@@ -185,49 +157,59 @@ setlocale(LC_TIME, 'id_ID');
 <body>
     @include('public.header')
 
-    <section class="section pt-3 pb-3" style=" background-color: #def0fb; ">
+    <section class="page-hero">
         <div class="container-fluid">
-            <h3>{{ isset($title) ? (app()->getLocale() == 'id' ? $judul : $title) : $judul }}</h3>
+            <div class="page-badge">
+                <span class="mdi mdi-book-open-page-variant"></span>
+                <span>JDIH Kota Banjarbaru</span>
+            </div>
+            <h3 class="page-title">{{ isset($title) ? (app()->getLocale() == 'id' ? $judul : $title) : $judul }}</h3>
+            <p class="page-subtitle">
+                Telusuri data hukum dengan tampilan yang bersih, minimalis, dan konsisten seperti Bahari AI.
+            </p>
+            <div class="page-hero-chips">
+                <span class="page-chip">Pencarian cepat</span>
+                <span class="page-chip">Data ringkas</span>
+                <span class="page-chip">Detail per item</span>
+            </div>
         </div> <!-- end container-fluid -->
     </section>
 
-    <section class="section bg-gradient">
-        <div class="bg-pattern"></div>
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-        </div>
+    <section class="legal-main">
 
         @isset($tahunlist)
             <div class="container-fluid mb-3">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="{{ __('public.ketiksesuatu') }}"
-                                id="textserach" value="{{ isset($s) ? str_replace('-', ' ', $s) : '' }}">
-                            @if ($judul != 'Propemperda' && $judul != 'Monograf Hukum' && $judul != 'Artikel Hukum')
-                                <select class="form-control col-2" name="status" id="status">
-                                    <option value="ALL">Semua Status</option>
-                                    <option value="berlaku"
-                                        {{ isset($status) ? ($status == 'berlaku' ? 'selected' : '') : '' }}>Berlaku
-                                    </option>
-                                    <option value="tidak_berlaku"
-                                        {{ isset($status) ? ($status == 'tidak-berlaku' ? 'selected' : '') : '' }}>Tidak
-                                        Berlaku</option>
-                                </select>
-                            @endif
-                            <select class="form-control col-2" name="tahun" id="tahun">
-                                <option value="ALL">{{ __('public.seluruhtahun') }}</option>
-                                @foreach ($tahunlist as $key => $value)
-                                    <option value="{{ $value->tahun }}"
-                                        {{ isset($tahun) ? ($tahun == $value->tahun ? 'selected' : '') : '' }}>
-                                        {{ $value->tahun }}</option>
-                                @endforeach
-                            </select>
-                            <div class="input-group-append">
-                                <button class="btn btn-info waves-effect waves-light" type="button"
-                                    id="btncari">{{ __('public.cari') }}</button>
+                        <div class="legal-card mb-3">
+                            <div class="legal-card-body">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="{{ __('public.ketiksesuatu') }}"
+                                        id="textserach" value="{{ isset($s) ? str_replace('-', ' ', $s) : '' }}">
+                                    @if ($judul != 'Propemperda' && $judul != 'Monograf Hukum' && $judul != 'Artikel Hukum')
+                                        <select class="form-control col-2" name="status" id="status">
+                                            <option value="ALL">Semua Status</option>
+                                            <option value="berlaku"
+                                                {{ isset($status) ? ($status == 'berlaku' ? 'selected' : '') : '' }}>Berlaku
+                                            </option>
+                                            <option value="tidak_berlaku"
+                                                {{ isset($status) ? ($status == 'tidak-berlaku' ? 'selected' : '') : '' }}>Tidak
+                                                Berlaku</option>
+                                        </select>
+                                    @endif
+                                    <select class="form-control col-2" name="tahun" id="tahun">
+                                        <option value="ALL">{{ __('public.seluruhtahun') }}</option>
+                                        @foreach ($tahunlist as $key => $value)
+                                            <option value="{{ $value->tahun }}"
+                                                {{ isset($tahun) ? ($tahun == $value->tahun ? 'selected' : '') : '' }}>
+                                                {{ $value->tahun }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-info waves-effect waves-light" type="button"
+                                            id="btncari">{{ __('public.cari') }}</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -237,7 +219,7 @@ setlocale(LC_TIME, 'id_ID');
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card-box p-0 position-relative">
+                    <div class="card-box p-0 position-relative legal-card">
                         <div id="index-content">
                             <div class="table-responsive" id="table-data">
                                 {{-- Data --}}

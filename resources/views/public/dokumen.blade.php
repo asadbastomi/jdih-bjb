@@ -32,6 +32,8 @@ setlocale(LC_TIME, 'id_ID');
     <link href="{{ asset('assets/libs/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet"
         type="text/css" />
 
+    @include('public.partials.legal-detail-styles')
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -193,56 +195,65 @@ setlocale(LC_TIME, 'id_ID');
 <body>
     @include('public.header')
 
-    <section class="section pt-3 pb-3" style=" background-color: #def0fb; ">
+    <section class="legal-hero">
         <div class="container-fluid">
-            <h3>Pencarian Dokumen</h3>
-            <p class="text-muted mb-0">Cari dokumen hukum di seluruh database JDIH Kota Banjarbaru</p>
+            <span class="legal-eyebrow">
+                <i class="mdi mdi-magnify"></i>
+                <span>Pencarian Dokumen</span>
+            </span>
+            <h1 class="legal-title mb-2">Pencarian Dokumen</h1>
+            <p class="legal-subtitle mb-0">Cari dokumen hukum di seluruh database JDIH Kota Banjarbaru</p>
+            <div class="legal-chip-wrap">
+                <span class="legal-chip">Perda</span>
+                <span class="legal-chip">Perwal</span>
+                <span class="legal-chip">Artikel</span>
+                <span class="legal-chip">Putusan</span>
+            </div>
         </div> <!-- end container-fluid -->
     </section>
 
-    <section class="section bg-gradient">
-        <div class="bg-pattern"></div>
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-        </div>
+    <section class="legal-main">
 
         <div class="container-fluid mb-3">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Ketik kata kunci..."
-                            id="textserach" value="{{ isset($s) ? str_replace('-', ' ', $s) : '' }}">
-                        
-                        <select class="form-control col-2" name="jenis" id="jenis">
-                            <option value="">Semua Jenis</option>
-                            <option value="perda">Perda</option>
-                            <option value="perwal">Perwal</option>
-                            <option value="kepwal">Keputusan Walikota</option>
-                            <option value="sk-walikota">SK Walikota</option>
-                            <option value="surat-edaran">Surat Edaran</option>
-                            <option value="artikel-hukum">Artikel Hukum</option>
-                            <option value="buku">Monografi Hukum</option>
-                            <option value="putusan-negeri">Putusan PN</option>
-                            <option value="putusan-tu">Putusan PTUN</option>
-                        </select>
+                    <div class="legal-card mb-3">
+                        <div class="legal-card-body">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Ketik kata kunci..."
+                                    id="textserach" value="{{ isset($s) ? str_replace('-', ' ', $s) : '' }}">
 
-                        <select class="form-control col-2" name="status" id="status">
-                            <option value="">Semua Status</option>
-                            <option value="berlaku">Berlaku</option>
-                            <option value="tidak_berlaku">Tidak Berlaku</option>
-                        </select>
+                                <select class="form-control col-2" name="jenis" id="jenis">
+                                    <option value="">Semua Jenis</option>
+                                    <option value="perda">Perda</option>
+                                    <option value="perwal">Perwal</option>
+                                    <option value="kepwal">Keputusan Walikota</option>
+                                    <option value="sk-walikota">SK Walikota</option>
+                                    <option value="surat-edaran">Surat Edaran</option>
+                                    <option value="artikel-hukum">Artikel Hukum</option>
+                                    <option value="buku">Monografi Hukum</option>
+                                    <option value="putusan-negeri">Putusan PN</option>
+                                    <option value="putusan-tu">Putusan PTUN</option>
+                                </select>
 
-                        <select class="form-control col-2" name="tahun" id="tahun">
-                            <option value="">Semua Tahun</option>
-                            @for($y = 2026; $y >= 2000; $y--)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endfor
-                        </select>
+                                <select class="form-control col-2" name="status" id="status">
+                                    <option value="">Semua Status</option>
+                                    <option value="berlaku">Berlaku</option>
+                                    <option value="tidak_berlaku">Tidak Berlaku</option>
+                                </select>
 
-                        <div class="input-group-append">
-                            <button class="btn btn-info waves-effect waves-light" type="button"
-                                id="btncari">Cari</button>
+                                <select class="form-control col-2" name="tahun" id="tahun">
+                                    <option value="">Semua Tahun</option>
+                                    @for($y = 2026; $y >= 2000; $y--)
+                                        <option value="{{ $y }}">{{ $y }}</option>
+                                    @endfor
+                                </select>
+
+                                <div class="input-group-append">
+                                    <button class="btn btn-info waves-effect waves-light" type="button"
+                                        id="btncari">Cari</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -252,7 +263,7 @@ setlocale(LC_TIME, 'id_ID');
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card-box p-0 position-relative">
+                    <div class="card-box p-0 position-relative legal-card">
                         <div id="index-content">
                             <div class="table-responsive" id="table-data">
                                 {{-- Data will be loaded here --}}

@@ -245,7 +245,7 @@
                 success: function(response) {
                     var options = '';
                     $.each(response.data, function(index, tema) {
-                        if (tema.status) {
+                        if (tema.is_active) {
                             options += '<option value="' + tema.id + '" data-icon="' + tema.icon + '" data-color="' + tema.warna + '">' + tema.nama + '</option>';
                         }
                     });

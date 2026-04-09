@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\KelurahanSadarHukum;
+use App\Kelurahan;
+use App\Kecamatan;
 use App\AgendaKelurahan;
 use App\InfografisKelurahan;
 use Illuminate\Http\Request;
@@ -99,31 +101,34 @@ class KelurahanSadarHukumController extends Controller
 
     public function fetch(Request $request)
     {
-        $query = KelurahanSadarHukum::query();
-        
-        // Search
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('nama_kelurahan', 'like', "%{$search}%")
-                  ->orWhere('kecamatan', 'like', "%{$search}%")
-                  ->orWhere('kota', 'like', "%{$search}%");
+        $item = 10;
+        $search = $request->search;
+
+        $query = KelurahanSadarHukum::with(['kelurahan:id,nama_kelurahan,kecamatan_id', 'kecamatan:id,nama_kecamatan']);
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('status', 'like', "%{$search}%")
+                    ->orWhere('sk_walikota_nomor', 'like', "%{$search}%")
+                    ->orWhere('sk_gubernur_nomor', 'like', "%{$search}%")
+                    ->orWhereHas('kelurahan', function ($sub) use ($search) {
+                        $sub->where('nama_kelurahan', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('kecamatan', function ($sub) use ($search) {
+                        $sub->where('nama_kecamatan', 'like', "%{$search}%");
+                    });
             });
         }
-        
-        // Pagination
-        $perPage = $request->input('per_page', 10);
-        $page = $request->input('page', 1);
-        
-        $kelurahan = $query->orderBy('nama_kelurahan', 'asc')->paginate($perPage, ['*'], 'page', $page);
-        
+
+        $data['data'] = $query->orderBy('id', 'asc')->paginate($item);
+
+        if ($request->ajax()) {
+            return view('admin.kelurahan-sadar-hukum.data', $data);
+        }
+
         return response()->json([
             'success' => true,
-            'data' => $kelurahan->items(),
-            'total' => $kelurahan->total(),
-            'per_page' => $kelurahan->perPage(),
-            'current_page' => $kelurahan->currentPage(),
-            'last_page' => $kelurahan->lastPage(),
+            'data' => $data['data'],
         ]);
     }
 
@@ -316,12 +321,12 @@ class KelurahanSadarHukumController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_kelurahan' => 'required|string|max:255',
-            'kecamatan' => 'required|string|max:255',
-            'kota' => 'nullable|string|max:255',
+            'kelurahan_id' => 'required_without:nama_kelurahan|nullable|exists:kelurahans,id',
+            'kecamatan_id' => 'required_without:kecamatan|nullable|exists:kecamatans,id',
+            'nama_kelurahan' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'alamat' => 'nullable|string',
             'sk_walikota_nomor' => 'nullable|string|max:255',
             'sk_walikota_tanggal' => 'nullable|date',
             'sk_walikota_detail' => 'nullable|string',
@@ -329,6 +334,11 @@ class KelurahanSadarHukumController extends Controller
             'sk_gubernur_tanggal' => 'nullable|date',
             'sk_gubernur_detail' => 'nullable|string',
             'status' => 'nullable|in:Binaan,Sadar Hukum',
+            'is_active' => 'nullable|boolean',
+            'posbankum_alamat' => 'nullable|string|max:255',
+            'posbankum_jadwal' => 'nullable|string|max:255',
+            'posbankum_telepon' => 'nullable|string|max:255',
+            'posbankum_keterangan' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -339,7 +349,43 @@ class KelurahanSadarHukumController extends Controller
             ], 422);
         }
 
-        $kelurahan = KelurahanSadarHukum::create($request->all());
+        $kelurahanId = $request->kelurahan_id;
+        if (!$kelurahanId && $request->nama_kelurahan) {
+            $kel = Kelurahan::where('nama_kelurahan', $request->nama_kelurahan)->first();
+            $kelurahanId = $kel ? $kel->id : null;
+        }
+
+        $kecamatanId = $request->kecamatan_id;
+        if (!$kecamatanId && $request->kecamatan) {
+            $kec = Kecamatan::where('nama_kecamatan', $request->kecamatan)->first();
+            $kecamatanId = $kec ? $kec->id : null;
+        }
+
+        if (!$kelurahanId || !$kecamatanId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kelurahan atau kecamatan tidak valid',
+            ], 422);
+        }
+
+        $kelurahan = KelurahanSadarHukum::create([
+            'kelurahan_id' => $kelurahanId,
+            'kecamatan_id' => $kecamatanId,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'sk_walikota_nomor' => $request->sk_walikota_nomor,
+            'sk_walikota_tanggal' => $request->sk_walikota_tanggal,
+            'sk_walikota_detail' => $request->sk_walikota_detail,
+            'sk_gubernur_nomor' => $request->sk_gubernur_nomor,
+            'sk_gubernur_tanggal' => $request->sk_gubernur_tanggal,
+            'sk_gubernur_detail' => $request->sk_gubernur_detail,
+            'status' => $request->status ?? 'Binaan',
+            'is_active' => $request->has('is_active') ? (bool) $request->is_active : true,
+            'posbankum_alamat' => $request->posbankum_alamat,
+            'posbankum_jadwal' => $request->posbankum_jadwal,
+            'posbankum_telepon' => $request->posbankum_telepon,
+            'posbankum_keterangan' => $request->posbankum_keterangan,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -348,17 +394,37 @@ class KelurahanSadarHukumController extends Controller
         ], 201);
     }
 
+    public function edit($id)
+    {
+        $table = KelurahanSadarHukum::with(['kelurahan:id,nama_kelurahan,kecamatan_id', 'kecamatan:id,nama_kecamatan'])
+            ->where('id', $id)
+            ->first();
+
+        if (!$table) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data retrieved',
+            'data' => $table,
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         $kelurahan = KelurahanSadarHukum::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'nama_kelurahan' => 'sometimes|required|string|max:255',
-            'kecamatan' => 'sometimes|required|string|max:255',
-            'kota' => 'nullable|string|max:255',
+            'kelurahan_id' => 'nullable|exists:kelurahans,id',
+            'kecamatan_id' => 'nullable|exists:kecamatans,id',
+            'nama_kelurahan' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'alamat' => 'nullable|string',
             'sk_walikota_nomor' => 'nullable|string|max:255',
             'sk_walikota_tanggal' => 'nullable|date',
             'sk_walikota_detail' => 'nullable|string',
@@ -367,6 +433,10 @@ class KelurahanSadarHukumController extends Controller
             'sk_gubernur_detail' => 'nullable|string',
             'status' => 'nullable|in:Binaan,Sadar Hukum',
             'is_active' => 'sometimes|boolean',
+            'posbankum_alamat' => 'nullable|string|max:255',
+            'posbankum_jadwal' => 'nullable|string|max:255',
+            'posbankum_telepon' => 'nullable|string|max:255',
+            'posbankum_keterangan' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -377,7 +447,36 @@ class KelurahanSadarHukumController extends Controller
             ], 422);
         }
 
-        $kelurahan->update($request->all());
+        $kelurahanId = $request->kelurahan_id;
+        if (!$kelurahanId && $request->nama_kelurahan) {
+            $kel = Kelurahan::where('nama_kelurahan', $request->nama_kelurahan)->first();
+            $kelurahanId = $kel ? $kel->id : null;
+        }
+
+        $kecamatanId = $request->kecamatan_id;
+        if (!$kecamatanId && $request->kecamatan) {
+            $kec = Kecamatan::where('nama_kecamatan', $request->kecamatan)->first();
+            $kecamatanId = $kec ? $kec->id : null;
+        }
+
+        $kelurahan->update([
+            'kelurahan_id' => $kelurahanId ?? $kelurahan->kelurahan_id,
+            'kecamatan_id' => $kecamatanId ?? $kelurahan->kecamatan_id,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'sk_walikota_nomor' => $request->sk_walikota_nomor,
+            'sk_walikota_tanggal' => $request->sk_walikota_tanggal,
+            'sk_walikota_detail' => $request->sk_walikota_detail,
+            'sk_gubernur_nomor' => $request->sk_gubernur_nomor,
+            'sk_gubernur_tanggal' => $request->sk_gubernur_tanggal,
+            'sk_gubernur_detail' => $request->sk_gubernur_detail,
+            'status' => $request->status ?? $kelurahan->status,
+            'is_active' => $request->has('is_active') ? (bool) $request->is_active : $kelurahan->is_active,
+            'posbankum_alamat' => $request->posbankum_alamat,
+            'posbankum_jadwal' => $request->posbankum_jadwal,
+            'posbankum_telepon' => $request->posbankum_telepon,
+            'posbankum_keterangan' => $request->posbankum_keterangan,
+        ]);
 
         return response()->json([
             'success' => true,

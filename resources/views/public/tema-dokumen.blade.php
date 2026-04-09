@@ -31,13 +31,13 @@ setlocale(LC_TIME, 'id_ID');
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet"
         type="text/css" />
+    @include('public.partials.legal-detail-styles')
 </head>
 
 <body>
     @include('public.header')
 
-    <!-- Page Title -->
-    <section class="section pt-3 pb-3 " style="background-color: #def0fb;">
+    <section class="legal-hero">
         <div class="container-fluid">
             <div class="d-flex align-items-center">
                 @if(isset($tema) && $tema->icon)
@@ -49,23 +49,26 @@ setlocale(LC_TIME, 'id_ID');
                         <i class="mdi {{ $tema->icon }} fs-1 mr-3" style="color: {{ $tema->warna ?? '#0acf97' }}; font-size: 80px;"></i>
                     @endif
                 @else
-                    <i class="mdi mdi-tag-outline fs-1 mr-3" style="color: #0acf97; font-size: 80px;"></i>
+                    <i class="mdi mdi-tag-outline fs-1 mr-3" style="color: #1f9cf0; font-size: 80px;"></i>
                 @endif
                 <div>
-                    <h2 class="mb-0">{{ isset($tema) ? $tema->nama : 'Tema Dokumen' }}</h2>
-                    <p class="text-muted mb-0">{{ isset($tema) ? $tema->deskripsi : 'Dokumen hukum berdasarkan tema' }}</p>
+                    <span class="legal-eyebrow mb-2">
+                        <i class="mdi mdi-tag-outline"></i>
+                        <span>Tema Dokumen</span>
+                    </span>
+                    <h1 class="legal-title mb-2" style="font-size: 30px;">{{ isset($tema) ? $tema->nama : 'Tema Dokumen' }}</h1>
+                    <p class="legal-subtitle mb-0">{{ isset($tema) ? $tema->deskripsi : 'Dokumen hukum berdasarkan tema' }}</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Regulasi List -->
-    <section class="section bg-gradient" id="features">
+    <section class="legal-main" id="features">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header bg-light">
+                    <div class="card legal-card">
+                        <div class="card-header legal-card-header">
                             <h4 class="mb-0">Regulasi Berdasarkan Tema: {{ isset($tema) ? $tema->nama : 'Tema Dokumen' }}</h4>
                         </div>
                         <div class="card-body">

@@ -13,18 +13,24 @@
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/landing.min.css') }}" rel="stylesheet" type="text/css" />
+    @include('public.partials.legal-detail-styles')
 </head>
 
 <body>
     @include('public.header')
 
-    <section class="section pt-3 pb-3" style="background-color: #def0fb;">
+    <section class="legal-hero">
         <div class="container-fluid">
-            <h3>Pengumuman/Relaas</h3>
+            <span class="legal-eyebrow">
+                <i class="mdi mdi-bullhorn-outline"></i>
+                <span>Pengumuman/Relaas</span>
+            </span>
+            <h1 class="legal-title mb-2" style="font-size: 30px;">Pengumuman/Relaas</h1>
+            <p class="legal-subtitle mb-0">Pengumuman resmi tampil dalam format yang lebih rapi dan konsisten.</p>
         </div>
     </section>
 
-    <section class="section bg-gradient">
+    <section class="legal-main">
         <div class="container-fluid">
             <div class="row" id="relaas-container">
                 {{-- <div class="col-12 text-center">
@@ -35,7 +41,7 @@
                 @if ($relaas->count())
                     @foreach ($relaas as $key => $row)
                         <div class="col-md-6 col-lg-4">
-                            <div class="card shadow-sm border-0 mb-4">
+                            <div class="content-grid-card">
                                 <div class="card-body">
                                     <span class="text-muted small">{{ $row->tanggal }}</span>
                                     <h5 class="card-title mt-1">{{ $row->nomor }}</h5>
@@ -43,7 +49,7 @@
                                     <p class="small mb-1"><strong>Pihak Terkait:</strong> {{ $row->pihak_terkait }}</p>
                                     <p class="small mb-3">
                                         <strong>Status:</strong>
-                                        <span class="badge badge-{{ $row->status == 'berlaku' ? 'success' : 'danger' }}">{{ $row->status }}</span>
+                                        <span class="badge {{ $row->status == 'berlaku' ? 'badge-success' : 'badge-danger' }}">{{ $row->status }}</span>
                                     </p>
                                     {{-- <p class="text-muted">{{ $row->konten }}</p> --}}
                                     <div class="d-flex justify-content-between">

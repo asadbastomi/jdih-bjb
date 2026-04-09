@@ -31,19 +31,23 @@ setlocale(LC_TIME, 'id_ID');
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet"
         type="text/css" />
+    @include('public.partials.legal-detail-styles')
 </head>
 
 <body>
     @include('public.header')
 
-    <section class="section pt-3 pb-3" style=" margin-top: 105px; background-color: #def0fb; ">
+    <section class="legal-hero">
         <div class="container-fluid">
-            <h3>{{ isset($page->judul) ? translateIt($page->judul) : '' }}
-            </h3>
+            <span class="legal-eyebrow">
+                <i class="mdi mdi-file-document-outline"></i>
+                <span>Halaman Informasi</span>
+            </span>
+            <h1 class="legal-title mb-2" style="font-size: 30px;">{{ isset($page->judul) ? translateIt($page->judul) : '' }}</h1>
         </div> <!-- end container-fluid -->
     </section>
 
-    <section class="section bg-gradient" id="features">
+    <section class="legal-main" id="features">
         <div class="container-fluid clearfix">
             @if ($type == 'post')
                 <div class="mb-4 text-right">

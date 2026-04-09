@@ -1,279 +1,127 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <title>{{ $data->judul ?? 'Detail Monografi Hukum' }} - JDIH Kota Banjarbaru</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('layouts.public-detail')
 
-    <!-- Bootstrap core CSS -->
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
-    
-    <!-- Material Icon -->
-    <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css">
-    
-    <!-- Custom Css -->
-    <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css">
-    
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            background-color: #f5f6fa;
-            font-family: 'Nunito', sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .content-wrapper {
-            flex: 1 0 auto;
-        }
-        .footer {
-            flex-shrink: 0;
-        }
-        .card {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
-            border: none;
-        }
-        .card-body {
-            padding: 2rem;
-        }
-        .table th {
-            background-color: #6366f1;
-            color: white;
-            font-weight: 600;
-            width: 200px;
-        }
-        .page-title-box {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            padding: 2rem;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            color: white;
-        }
-        .page-title {
-            color: white;
-            margin: 0;
-        }
-        .breadcrumb {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .breadcrumb-item a {
-            color: rgba(255, 255, 255, 0.9);
-        }
-        .breadcrumb-item.active {
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    @include('public.header')
+@section('title', ($data->judul ?? 'Detail Monografi Hukum') . ' - JDIH Kota Banjarbaru')
+@section('meta_description', 'Detail monografi hukum JDIH Kota Banjarbaru')
 
-    <section class="section pt-3 pb-3" style="background-color: #def0fb;">
+@section('content')
+    @php
+        $rows = [
+            ['Tipe Dokumen', $data->tipe_dokumen ?? '-'],
+            ['Kategori', optional($data->kategori)->nama ?? '-'],
+            ['Judul', $data->judul ?? '-'],
+            ['T.E.U. Orang/Badan', $data->teu_orang_badan ?? '-'],
+            ['Penerbit', $data->penerbit ?? '-'],
+            ['Tahun Terbit', $data->tahun_terbit ?? '-'],
+            ['Tempat Terbit', $data->tempat_terbit ?? '-'],
+            ['Cetakan/Edisi', $data->cetakan_edisi ?? '-'],
+            ['Nomor Panggil', $data->nomor_panggil ?? '-'],
+            ['Deskripsi Fisik', $data->deskripsi_fisik ?? '-'],
+            ['ISBN/ISSN', $data->isbn_issn ?? '-'],
+            ['Bahasa', $data->bahasa ?? '-'],
+            ['Bidang Hukum', $data->bidang_hukum ?? '-'],
+            ['Subjek', $data->subjek ?? '-'],
+            ['Nomor Induk Buku', $data->nomor_induk_buku ?? '-'],
+            ['Lokasi', $data->lokasi ?? '-'],
+            ['Jumlah Eksemplar', $data->jumlah ?? '-'],
+            ['Keterangan', $data->keterangan ?? '-'],
+        ];
+    @endphp
+
+    <section class="legal-hero">
         <div class="container-fluid">
-            <h4 class="text-muted">Monografi Hukum</h4>
-            <h2>{{ $data->judul }}</h2>
+            <span class="legal-eyebrow">
+                <i class="mdi mdi-book-open-page-variant"></i>
+                Detail Monografi Hukum
+            </span>
+
+            <h1 class="legal-title">{{ $data->judul ?? '-' }}</h1>
+            <p class="legal-subtitle">{{ optional($data->kategori)->nama ?? 'Monografi Hukum' }}</p>
+
+            <div class="legal-chip-wrap">
+                <span class="legal-chip">Kategori: {{ strtoupper(optional($data->kategori)->nama_singkat ?? 'buku') }}</span>
+                <span class="legal-chip">Tahun: {{ $data->tahun_terbit ?? '-' }}</span>
+                <span class="legal-chip">Bahasa: {{ $data->bahasa ?? '-' }}</span>
+            </div>
         </div>
     </section>
 
-    <div class="content-wrapper">
-    <section class="section" style="background-color: #f5f6fa;">
-        <div class="container-fluid py-4">
+    <section class="legal-main">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    @if($data->cover_url)
-                                        <img src="{{ $data->cover_url }}" alt="{{ $data->judul }}" class="img-fluid rounded mb-3">
-                                    @else
-                                        <div class="text-center bg-light p-5 rounded mb-3">
-                                            <i class="mdi mdi-book-open-page-variant display-4 text-muted"></i>
-                                            <p class="text-muted mt-2">Tidak Ada Cover</p>
-                                        </div>
-                                    @endif
+                <div class="col-lg-4 col-xl-3">
+                    <div class="legal-card">
+                        <div class="legal-card-header">Statistik</div>
+                        <div class="legal-card-body">
+                            <div class="metric-grid">
+                                <div class="metric-box">
+                                    <span class="metric-label">Dilihat</span>
+                                    <span class="metric-value">{{ $hit ?? 0 }}</span>
                                 </div>
-                                <div class="col-md-9">
-                                    <h3 class="mb-3">{{ $data->judul }}</h3>
-                                    
-                                    <!-- Metadata Table -->
-                                    <table class="table table-bordered table-striped">
-                                        <tbody>
-                                            @if($data->tipe_dokumen)
-                                                <tr>
-                                                    <th width="200">Tipe Dokumen</th>
-                                                    <td>{{ $data->tipe_dokumen }}</td>
-                                                </tr>
-                                            @endif
-
-                                            @if($data->kategori)
-                                                <tr>
-                                                    <th>Kategori</th>
-                                                    <td>{{ $data->kategori->nama }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->teu_orang_badan)
-                                                <tr>
-                                                    <th>T.E.U. Orang/Badan</th>
-                                                    <td>{{ $data->teu_orang_badan }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->penerbit)
-                                                <tr>
-                                                    <th>Penerbit</th>
-                                                    <td>{{ $data->penerbit }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->tahun_terbit)
-                                                <tr>
-                                                    <th>Tahun Terbit</th>
-                                                    <td>{{ $data->tahun_terbit }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->tempat_terbit)
-                                                <tr>
-                                                    <th>Tempat Terbit</th>
-                                                    <td>{{ $data->tempat_terbit }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->cetakan_edisi)
-                                                <tr>
-                                                    <th>Cetakan/Edisi</th>
-                                                    <td>{{ $data->cetakan_edisi }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->nomor_panggil)
-                                                <tr>
-                                                    <th>Nomor Panggil</th>
-                                                    <td>{{ $data->nomor_panggil }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->deskripsi_fisik)
-                                                <tr>
-                                                    <th>Deskripsi Fisik</th>
-                                                    <td>{{ $data->deskripsi_fisik }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->isbn_issn)
-                                                <tr>
-                                                    <th>ISBN/ISSN</th>
-                                                    <td>{{ $data->isbn_issn }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->bahasa)
-                                                <tr>
-                                                    <th>Bahasa</th>
-                                                    <td>{{ $data->bahasa }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->bidang_hukum)
-                                                <tr>
-                                                    <th>Bidang Hukum</th>
-                                                    <td>{{ $data->bidang_hukum }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->subjek)
-                                                <tr>
-                                                    <th>Subjek</th>
-                                                    <td>{{ $data->subjek }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->nomor_induk_buku)
-                                                <tr>
-                                                    <th>Nomor Induk Buku</th>
-                                                    <td>{{ $data->nomor_induk_buku }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->lokasi)
-                                                <tr>
-                                                    <th>Lokasi</th>
-                                                    <td>{{ $data->lokasi }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->jumlah)
-                                                <tr>
-                                                    <th>Jumlah Eksemplar</th>
-                                                    <td>{{ $data->jumlah }}</td>
-                                                </tr>
-                                            @endif
-                                            
-                                            @if($data->lampiran)
-                                                <tr>
-                                                    <th>Lampiran</th>
-                                                    <td>{{ $data->lampiran }}</td>
-                                                </tr>
-                                            @endif
-
-                                            @if($data->keterangan)
-                                                <tr>
-                                                    <th>Keterangan</th>
-                                                    <td>{{ $data->keterangan }}</td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-
-                                    <!-- Tema Dokumen -->
-                                    @if($data->temaDokumen && $data->temaDokumen->count() > 0)
-                                        <div class="mt-3">
-                                            <h5>Tema Dokumen</h5>
-                                            <div class="mb-3">
-                                                @foreach($data->temaDokumen as $tema)
-                                                    <span class="badge mr-1 mb-1" style="background-color: {{ $tema->warna ?? '#6c757d' }}; color: white;">
-                                                        {{ $tema->nama }}
-                                                    </span>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <!-- Action Buttons -->
-                                    <div class="mt-3">
-                                        @if($data->file_url)
-                                            <a href="{{ $data->file_url }}" 
-                                               class="btn btn-primary waves-effect waves-light" 
-                                               target="_blank"
-                                               onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id ?? 9 }})">
-                                                <i class="mdi mdi-download mr-2"></i>Unduh PDF
-                                            </a>
-                                        @endif
-                                        
-                                        <a href="{{ route('monograf-hukum') }}" class="btn btn-secondary waves-effect waves-light">
-                                            <i class="mdi mdi-arrow-left mr-2"></i>Kembali
-                                        </a>
-                                    </div>
-
-                                    <!-- Statistics -->
-                                    <div class="mt-3">
-                                        <small class="text-muted">
-                                            <i class="mdi mdi-eye mr-1"></i>Dilihat: {{ $hit ?? 0 }} kali
-                                            @if($data->file)
-                                                &nbsp;&nbsp;|&nbsp;&nbsp;
-                                                <i class="mdi mdi-download mr-1"></i>Diunduh: {{ $unduhan ?? 0 }} kali
-                                            @endif
-                                        </small>
-                                    </div>
+                                <div class="metric-box">
+                                    <span class="metric-label">Diunduh</span>
+                                    <span class="metric-value">{{ $unduhan ?? 0 }}</span>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if ($data->cover_url)
+                        <div class="legal-card">
+                            <div class="legal-card-header">Sampul Buku</div>
+                            <div class="legal-card-body">
+                                <div class="cover-wrapper">
+                                    <img src="{{ $data->cover_url }}" alt="Cover {{ $data->judul }}" loading="lazy" decoding="async">
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($data->temaDokumen && $data->temaDokumen->count() > 0)
+                        <div class="legal-card">
+                            <div class="legal-card-header">Tema Dokumen</div>
+                            <div class="legal-card-body">
+                                @foreach ($data->temaDokumen as $tema)
+                                    <span class="theme-badge" style="background-color: {{ $tema->warna ?? '#6c757d' }};">
+                                        {{ $tema->nama }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="col-lg-8 col-xl-9">
+                    <div class="legal-card">
+                        <div class="legal-card-header">Informasi Buku</div>
+                        <div class="legal-card-body">
+                            <table class="meta-table">
+                                <tbody>
+                                    @foreach ($rows as $meta)
+                                        <tr>
+                                            <th>{{ $meta[0] }}</th>
+                                            <td>{{ $meta[1] ?: '-' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="legal-card">
+                        <div class="legal-card-header">Unduhan Berkas</div>
+                        <div class="legal-card-body">
+                            <div class="doc-actions">
+                                @if ($data->file_url)
+                                    <a href="{{ $data->file_url }}" class="btn btn-primary waves-effect waves-light" target="_blank" onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id ?? 9 }})">
+                                        <i class="mdi mdi-download mr-1"></i>
+                                        Unduh PDF
+                                    </a>
+                                @endif
+
+                                <a href="{{ route('monograf-hukum') }}" class="btn btn-secondary waves-effect waves-light">
+                                    <i class="mdi mdi-arrow-left mr-1"></i>
+                                    Kembali
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -281,36 +129,8 @@
             </div>
         </div>
     </section>
-</div>
+@endsection
 
-    
-
-    <!-- Vendor js -->
-    <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
-    <!-- App js -->
-    <script src="{{ asset('assets/js/app.js') }}"></script>
-
-    <script>
-    function incrementDownload(id, kategori) {
-        if (typeof $ !== 'undefined') {
-            $.ajax({
-                type: 'POST',
-                url: '{{ route('client-download') }}',
-                data: {
-                    id: id,
-                    kategori: kategori,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    console.log('Download count incremented');
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error incrementing download count:', error);
-                }
-            });
-        }
-    }
-    </script>
-   
-</body>
-</html>
+@section('page-scripts')
+    @include('public.partials.legal-detail-download-script')
+@endsection

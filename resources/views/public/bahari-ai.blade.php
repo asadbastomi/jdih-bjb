@@ -19,6 +19,10 @@ setlocale(LC_TIME, 'id_ID');
     <link href="{{ asset('assets/css/headline.css') }}" rel="stylesheet" type="text/css" />
 
     <style>
+        body {
+            background: #f7f9fb;
+        }
+
         .bahari-hero {
             background: linear-gradient(135deg, #0b3b60 0%, #1f5f8b 35%, #0f172a 100%);
             color: #f8fafc;
@@ -187,7 +191,7 @@ setlocale(LC_TIME, 'id_ID');
                         <span class="mdi mdi-robot"></span>
                         <span>Bahari AI · Banjarbaru Hukum & Regulasi Intelligence</span>
                     </div>
-                    <h1 class="display-4 font-weight-bold mb-3">Asisten hukum digital untuk Kota Banjarbaru</h1>
+                    <h1 class="display-4 font-weight-bold mb-3" style="color: #e2e8f0;">Asisten hukum digital untuk Kota Banjarbaru</h1>
                     <p class="lead mb-4" style="max-width: 720px; color: #e2e8f0;">
                         Bahari AI membantu Anda menemukan regulasi (KUHP, Perda, Perwali, dan produk hukum lainnya),
                         menyajikan abstrak, metadata, serta tautan unduhan dengan format yang konsisten.
@@ -301,15 +305,15 @@ setlocale(LC_TIME, 'id_ID');
 
     @include('public.footer')
 
+    <!-- javascript -->
+    <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
+    <script src="{{ asset('assets/js/headline.js') }}"></script>
+
     <script>
         (function() {
-            const chatWindow = document.getElementById('chat-window');
-            if (chatWindow) {
-                chatWindow.classList.add('active');
-                const chatInput = document.getElementById('chat-input');
-                if (chatInput) {
-                    chatInput.focus();
-                }
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput) {
+                chatInput.setAttribute('autocomplete', 'off');
             }
         })();
     </script>

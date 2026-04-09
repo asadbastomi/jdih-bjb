@@ -55,13 +55,13 @@
                         <span> Dashboards </span>
                     </a>
                 </li>
+
                 <li>
-                    <a href="#sidebarDashboards" data-toggle="collapse">
+                    <a href="#sidebarManagement" data-toggle="collapse">
                         <i class="mdi mdi-locker-multiple"></i>
-                        <span class="badge badge-success badge-pill float-right"></span>
                         <span> Management </span>
                     </a>
-                    <div class="collapse" id="sidebarDashboards">
+                    <div class="collapse" id="sidebarManagement">
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{ route('admin.roles.index') }}">Role</a>
@@ -73,7 +73,7 @@
                     </div>
                 </li>
 
-                <li class="menu-title mt-2">Feature</li>
+                <li class="menu-title mt-2">Konten Website</li>
 
                 <li>
                     <a href="{{ route('admin.halaman.index') }}">
@@ -111,6 +111,9 @@
                         <span> Categories </span>
                     </a>
                 </li>
+
+                <li class="menu-title mt-2">Produk Hukum</li>
+
                 <li>
                     <a href="{{ route('admin.tema-dokumen.index') }}">
                         <i class="mdi mdi-tag-multiple"></i>
@@ -153,18 +156,30 @@
                         <span> Monografi </span>
                     </a>
                 </li>
-                {{-- <li>
-                    <a href="/dashboard/penghargaan">
-                        <i class="mdi mdi-trophy"></i>
-                        <span> Penghargaan </span>
+
+                <li class="menu-title mt-2">Wilayah & Komunitas</li>
+
+                <li>
+                    <a href="{{ route('admin.kecamatan.index') }}">
+                        <i class="mdi mdi-map-marker-radius"></i>
+                        <span> Kecamatan </span>
                     </a>
-                </li> --}}
-                {{-- <li>
-                    <a href="/dashboard/relaas">
-                        <i class="mdi mdi-bullhorn"></i>
-                        <span> Relaas </span>
+                </li>
+                <li>
+                    <a href="{{ route('admin.kelurahan.index') }}">
+                        <i class="mdi mdi-map-marker-multiple"></i>
+                        <span> Kelurahan </span>
                     </a>
-                </li> --}}
+                </li>
+                <li>
+                    <a href="{{ route('admin.kelurahan-sadar-hukum.index') }}">
+                        <i class="mdi mdi-home-city-outline"></i>
+                        <span> Kelurahan Sadar Hukum </span>
+                    </a>
+                </li>
+
+                <li class="menu-title mt-2">Publikasi & Layanan</li>
+
                 <li>
                     <a href="/dashboard/relaas-v2">
                         <i class="mdi mdi-bullhorn"></i>

@@ -332,6 +332,22 @@
             // Memuat tema dokumen saat halaman dimuat
             loadTemaDokumen();
 
+            function getTemaItems(response) {
+                if (!response || !response.data) {
+                    return [];
+                }
+
+                if (Array.isArray(response.data)) {
+                    return response.data;
+                }
+
+                if (Array.isArray(response.data.data)) {
+                    return response.data.data;
+                }
+
+                return [];
+            }
+
             // Fungsi untuk memuat tema dokumen
             function loadTemaDokumen() {
                 $.ajax({
@@ -340,7 +356,8 @@
                     dataType: 'json',
                     success: function (response) {
                         var options = '';
-                        $.each(response.data, function (index, tema) {
+                        var temaItems = getTemaItems(response);
+                        $.each(temaItems, function (index, tema) {
                             if (tema.status) {
                                 options += '<option value="' + tema.id + '" data-icon="' + tema.icon + '" data-color="' + tema.warna + '">' + tema.nama + '</option>';
                             }
@@ -558,11 +575,12 @@
                     method: 'GET',
                     dataType: 'json',
                     success: function (response) {
+                        var temaItems = getTemaItems(response);
                         // Kosongkan select2 terlebih dahulu
                         $('#tema_dokumen').empty();
 
                         // Tambahkan opsi tema
-                        $.each(response.data, function (index, tema) {
+                        $.each(temaItems, function (index, tema) {
                             if (tema.status) {
                                 var option = new Option(tema.nama, tema.id, false, false);
                                 option.dataset.icon = tema.icon;
@@ -624,11 +642,12 @@
                             method: 'GET',
                             dataType: 'json',
                             success: function (temaResponse) {
+                                var temaItems = getTemaItems(temaResponse);
                                 // Kosongkan select2 terlebih dahulu
                                 $('#tema_dokumen').empty();
 
                                 // Tambahkan opsi tema
-                                $.each(temaResponse.data, function (index, tema) {
+                                $.each(temaItems, function (index, tema) {
                                     if (tema.status) {
                                         var option = new Option(tema.nama, tema.id, false, false);
                                         option.dataset.icon = tema.icon;

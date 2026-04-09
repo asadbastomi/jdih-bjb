@@ -37,6 +37,7 @@ Route::get('galeri', 'API\GaleriController@publicfetch')->name('api.galeri.publi
 
 // Kecamatan - Public Routes
 Route::get('kecamatan', 'API\KecamatanController@index')->name('api.kecamatan.index');
+Route::get('kelurahan', 'API\KelurahanController@index')->name('api.kelurahan.index');
 
 // Kelurahan Sadar Hukum - Public Routes
 Route::get('kelurahan-sadar-hukum', 'API\KelurahanSadarHukumController@index')->name('api.kelurahan-sadar-hukum.index');
@@ -139,9 +140,9 @@ Route::middleware('auth.api.or.web')->group(function () {
         Route::resource('jadwal', 'API\JadwalController')->only(['store', 'edit', 'update', 'destroy']);
 
         // Tema Dokumen - Admin routes
-        Route::post('tema-dokumen/fetch', 'API\TemaDokumenController@fetch')->name('api.tema-dokumen.fetch');
-        Route::post('tema-dokumen/link-regulasi', 'API\TemaDokumenController@linkRegulasiToTema')->name('api.tema-dokumen.link-regulasi');
-        Route::post('tema-dokumen/unlink-regulasi', 'API\TemaDokumenController@unlinkRegulasiFromTema')->name('api.tema-dokumen.unlink-regulasi');
+        Route::post('tema-dokumen/fetch', 'API\TemaDokumenController@fetch')->name('tema-dokumen.fetch');
+        Route::post('tema-dokumen/link-regulasi', 'API\TemaDokumenController@linkRegulasiToTema')->name('tema-dokumen.link-regulasi');
+        Route::post('tema-dokumen/unlink-regulasi', 'API\TemaDokumenController@unlinkRegulasiFromTema')->name('tema-dokumen.unlink-regulasi');
         Route::resource('tema-dokumen', 'API\TemaDokumenController')->only(['store', 'update', 'destroy']);
 
         // Faq
@@ -165,6 +166,12 @@ Route::middleware('auth.api.or.web')->group(function () {
         Route::resource('sop', 'API\SopController')->only(['store', 'edit', 'update', 'destroy']);
 
         // Kelurahan Sadar Hukum - Admin Routes
+        Route::post('kecamatan/fetch', 'API\KecamatanController@fetch')->name('kecamatan.fetch');
+        Route::resource('kecamatan', 'API\KecamatanController')->only(['store', 'edit', 'update', 'destroy']);
+
+        Route::post('kelurahan/fetch', 'API\KelurahanController@fetch')->name('kelurahan.fetch');
+        Route::resource('kelurahan', 'API\KelurahanController')->only(['store', 'edit', 'update', 'destroy']);
+
         Route::post('kelurahan-sadar-hukum/fetch', 'API\KelurahanSadarHukumController@fetch')->name('kelurahan-sadar-hukum.fetch');
         Route::post('kelurahan-sadar-hukum/upload-infografis', 'API\KelurahanSadarHukumController@uploadInfografis')->name('kelurahan-sadar-hukum.upload-infografis');
         Route::delete('kelurahan-sadar-hukum/infografis/{id}', 'API\KelurahanSadarHukumController@deleteInfografis')->name('kelurahan-sadar-hukum.delete-infografis');

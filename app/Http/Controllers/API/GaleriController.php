@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class GaleriController extends BaseController
 {
@@ -64,45 +65,30 @@ class GaleriController extends BaseController
 
     public function store(Request $request)
     {
-        // Validate nama_kegiatan
-        $validator = Validator::make($request->all(), [
+        $uploadedPhotos = $request->file('foto_kegiatan');
+        if ($uploadedPhotos && !is_array($uploadedPhotos)) {
+            $uploadedPhotos = [$uploadedPhotos];
+        }
+
+        $validator = Validator::make(array_merge($request->all(), [
+            'foto_kegiatan' => $uploadedPhotos ?? [],
+        ]), [
             'nama_kegiatan' => ['required'],
+            'foto_kegiatan' => ['required', 'array', 'min:1'],
+            'foto_kegiatan.*' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:4096'],
         ]);
-        
+
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), 'Validation Error');
         }
-        
-        // Validate foto_kegiatan separately to handle array check properly
-        if (!$request->hasFile('foto_kegiatan') || empty($request->file('foto_kegiatan'))) {
-            return $this->sendError(['foto_kegiatan' => ['Foto kegiatan harus diisi minimal 1 gambar']], 'Validation Error');
-        }
-        
-        $files = $request->file('foto_kegiatan');
-        if (!is_array($files)) {
-            $files = [$files];
-        }
-        
-        // Validate each file
-        foreach ($files as $index => $file) {
-            if (!$file->isValid()) {
-                return $this->sendError(['foto_kegiatan.' . $index => ['File tidak valid']], 'Validation Error');
-            }
-            if (!$file->isValid() || !$file->getClientOriginalName() || !$file->isFile()) {
-                return $this->sendError(['foto_kegiatan.' . $index => ['File harus berupa gambar yang valid']], 'Validation Error');
-            }
-        }
 
         $list_foto_kegiatan = [];
-        
-        foreach ($files as $index => $file) {
+        foreach ($uploadedPhotos as $index => $file) {
             if ($file && $file->isValid()) {
-                $extension = $file->extension();
-                $folder = "upload/galeri";
-                $filename = time() . "_" . $index . "." . $extension;
-                $filepath = "/storage/" . $folder . "/" . $filename;
-                $file->move(public_path("storage/" . $folder . "/"), $filename);
-                array_push($list_foto_kegiatan, $filepath);
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $file->storeAs('upload/galeri', $filename, 'public');
+                $list_foto_kegiatan[] = '/storage/' . $storedPath;
             }
         }
 
@@ -120,47 +106,49 @@ class GaleriController extends BaseController
     public function edit($id, Request $request)
     {
         $table = Galeri::where('id', $id)->first();
-        unset($table['foto_kegiatan']);
-
-        if ($table) {
-            return $this->sendResponse($table, 'Data retrieved');
-        } else {
+        if (!$table) {
             return $this->sendError(null, 'Data not found', 500);
         }
+
+        unset($table['foto_kegiatan']);
+
+        return $this->sendResponse($table, 'Data retrieved');
     }
 
     public function update(Request $request, $id)
     {
-        // Validate nama_kegiatan
-        $validator = Validator::make($request->all(), [
+        $uploadedPhotos = $request->file('foto_kegiatan');
+        if ($uploadedPhotos && !is_array($uploadedPhotos)) {
+            $uploadedPhotos = [$uploadedPhotos];
+        }
+
+        $validator = Validator::make(array_merge($request->all(), [
+            'foto_kegiatan' => $uploadedPhotos ?? [],
+        ]), [
             'nama_kegiatan' => ['required'],
+            'foto_kegiatan' => ['nullable', 'array'],
+            'foto_kegiatan.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:4096'],
         ]);
-        
+
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), 'Validation Error');
         }
 
         $list_foto_kegiatan = [];
-        
-        if ($request->hasFile('foto_kegiatan')) {
-            $files = $request->file('foto_kegiatan');
-            if (!is_array($files)) {
-                $files = [$files];
-            }
-            
-            foreach ($files as $index => $file) {
-                if ($file && $file->isValid()) {
-                    $extension = $file->extension();
-                    $folder = "upload/galeri";
-                    $filename = time() . "_" . $index . "_" . "." . $extension;
-                    $filepath = "/storage/" . $folder . "/" . $filename;
-                    $file->move(public_path("storage/" . $folder . "/"), $filename);
-                    array_push($list_foto_kegiatan, $filepath);
-                }
+        foreach ($uploadedPhotos ?? [] as $index => $file) {
+            if ($file && $file->isValid()) {
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $file->storeAs('upload/galeri', $filename, 'public');
+                $list_foto_kegiatan[] = '/storage/' . $storedPath;
             }
         }
 
-        $table = Galeri::where('id', $request->id)->first();
+        $table = Galeri::where('id', $id)->first();
+        if (!$table) {
+            return $this->sendError(null, 'Data not found', 500);
+        }
+
         $table->nama_kegiatan = $request->nama_kegiatan;
         if ($list_foto_kegiatan) {
             $table->foto_kegiatan = $list_foto_kegiatan;

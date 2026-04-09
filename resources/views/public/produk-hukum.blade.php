@@ -1,418 +1,242 @@
-<?php
-setlocale(LC_TIME, 'id_ID');
-?>
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.public-detail')
 
-<head>
-    <meta charset="utf-8" />
-    <title>Jaringan Dokumentasi dan Informasi Hukum Kota Banjarbaru</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Jaringan Dokumentasi dan Informasi Hukum Kota Banjarbaru" name="description" />
-    <meta content="Kota Banjarbaru" name="author" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+@section('title', 'Detail Produk Hukum - JDIH Kota Banjarbaru')
+@section('meta_description', 'Detail produk hukum JDIH Kota Banjarbaru')
 
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
+@section('content')
+    @php
+        $nomorText = $data->nomor_peraturan ?? $data->nomor ?? '-';
+        $tahunText = $data->tahun ?? '-';
+        $kategoriText = strtoupper($data->nama_singkat ?? '-');
+        $isArtikelLike = in_array((int) ($data->kategori_id ?? 0), [6, 7, 8], true);
 
-    <!-- Bootstrap core CSS -->
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"
-        id="bs-default-stylesheet" />
+        $isCabut = false;
+        if (array_key_exists($data->id, $regubahcabut ?? [])) {
+            foreach ($regubahcabut[$data->id] as $ucrow) {
+                if (($ucrow['jenis'] ?? '') == 'cabut') {
+                    $isCabut = true;
+                    break;
+                }
+            }
+        }
 
-    <!--Material Icon -->
-    <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+        $statusLabel = $isCabut ? 'Tidak Berlaku' : 'Berlaku';
+        $statusClass = $isCabut ? 'inactive' : 'active';
 
-    <!-- Custom  Css -->
-    <link href="{{ asset('assets/css/landing.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/headline.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/splide-core.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/splide.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/themes/splide-sea-green.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/libs/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet"
-        type="text/css" />
-</head>
+        $resolveRegulasiFile = function ($filename, $type = 'file') use ($data, $isArtikelLike) {
+            if (!$filename) {
+                return null;
+            }
 
-<body>
-    @include('public.header')
+            $base = trim(explode(';', $filename)[0]);
+            if ($base === '') {
+                return null;
+            }
 
-    <section class="section pt-3 pb-3 " style="background-color: #def0fb;">
+            $namaSingkat = $data->nama_singkat ?? '';
+            $tahun = $data->tahun ?? '';
+            if ($type === 'file') {
+                if (!$isArtikelLike && $namaSingkat && $tahun) {
+                    return '/upload/' . $namaSingkat . '/' . $tahun . '/' . $base;
+                }
+                return '/upload/artikel/' . $base;
+            }
+
+            if ($type === 'abstrak') {
+                if (!$isArtikelLike && $namaSingkat && $tahun) {
+                    return '/upload/abstrak/' . $namaSingkat . '/' . $tahun . '/' . $base;
+                }
+                return '/upload/abstrak/artikel/' . $base;
+            }
+
+            if ($type === 'lampiran') {
+                if (!$isArtikelLike && $namaSingkat && $tahun) {
+                    return '/upload/lampiran/' . $namaSingkat . '/' . $tahun . '/' . $base;
+                }
+                return '/upload/lampiran/artikel/' . $base;
+            }
+
+            return '/upload/artikel/' . $base;
+        };
+
+        $fileUrl = $resolveRegulasiFile($data->file ?? null, 'file');
+        $abstrakUrl = $resolveRegulasiFile($data->abstrak ?? null, 'abstrak');
+        $lampiranUrl = $resolveRegulasiFile($data->lampiran ?? null, 'lampiran');
+
+        $rows = [
+            ['Tipe Dokumen', $data->tipe_dokumen ?? $data->nama ?? '-'],
+            ['Judul', $data->judul ?? '-'],
+            ['Nomor', $nomorText],
+            ['Tahun', $tahunText],
+            ['Jenis/Bentuk Peraturan', $data->jenis_peraturan ?? '-'],
+            ['Singkatan Jenis/Bentuk', $data->singkatan_jenis_peraturan ?? '-'],
+            ['T.E.U. Badan/Pengarang', $data->teu_badan ?? '-'],
+            ['Penandatangan', $data->penandatangan ?? '-'],
+            ['Tempat Penetapan', $data->tempat_penetapan ?? '-'],
+            ['Tanggal Penetapan', $data->tanggal_penetapan ?? '-'],
+            ['Tanggal Pengundangan', $data->tanggal_diundangkan ?? '-'],
+            ['Sumber', $data->sumber ?? '-'],
+            ['Subjek', $data->subjek ?? '-'],
+            ['Bahasa', $data->bahasa ?? '-'],
+            ['Lokasi', $data->lokasi ?? '-'],
+            ['Bidang Hukum', $data->bidang_hukum ?? '-'],
+            ['Status Peraturan', $data->status_peraturan ?? '-'],
+            ['Keterangan', $data->keterangan ?? '-'],
+        ];
+
+        if ($isArtikelLike) {
+            $rows = [
+                ['Tipe Dokumen', 'Artikel'],
+                ['Judul', $data->judul ?? '-'],
+                ['T.E.U. Orang/Badan', $data->teu_badan ?? '-'],
+                ['Tempat Terbit', $data->tempat_penetapan ?? $data->tempat ?? '-'],
+                ['Tahun', $tahunText],
+                ['Sumber', $data->sumber ?? '-'],
+                ['Subjek', $data->subjek ?? '-'],
+                ['Bahasa', $data->bahasa ?? '-'],
+                ['Bidang Hukum', $data->bidang_hukum ?? '-'],
+                ['Lokasi', $data->lokasi ?? '-'],
+                ['Lampiran', $data->lampiran ?? '-'],
+            ];
+        }
+    @endphp
+
+    <section class="legal-hero">
         <div class="container-fluid">
-            <h4 class="text-muted">{{ ($data->kategori->tipeDokumen->nama=="Monografi Hukum") ? $data->nama : $data->nama . ' Nomor ' . $data->nomor . ' Tahun ' . $data->tahun }}</h4>
-            <h2>{{ $data->judul }}</h2>
-        </div> <!-- end container-fluid -->
+            <span class="legal-eyebrow">
+                <i class="mdi mdi-book-open-page-variant"></i>
+                Detail Produk Hukum
+            </span>
+
+            <h1 class="legal-title">{{ $data->judul ?? '-' }}</h1>
+            <p class="legal-subtitle">{{ $data->nama ?? 'Produk Hukum' }} Nomor {{ $nomorText }} Tahun {{ $tahunText }}</p>
+
+            <div class="legal-chip-wrap">
+                <span class="legal-chip">Kategori: {{ $kategoriText }}</span>
+                <span class="legal-chip">Nomor: {{ $nomorText }}</span>
+                <span class="legal-chip">Tahun: {{ $tahunText }}</span>
+            </div>
+        </div>
     </section>
 
-    <style>
-        .field {
-            width: 1px;
-            white-space: nowrap;
-            text-align: right
-        }
-
-        .spacer {
-            width: 1px
-        }
-    </style>
-    <section class="section bg-gradient" id="features">
-        <div class="container-fluid clearfix">
+    <section class="legal-main">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3">
-                    <div
-                        style="border: 1px solid #f3f3f3; border-radius: 5px; box-shadow: 20px 20px 40px -30px #bebebe5e, -20px -20px 60px #ffffff; ">
-                        <table class="table table-sm mb-0">
-                            <tbody>
-                                <tr>
-                                    <td style="font-size: 18px;font-weight: 600;border-top: 0px">
-                                        <small class="m-0">Tipe Dokumen</small>
-                                        <h4 class="m-0">{{ $data->tipe_dokumen ?? $data->kategori->tipeDokumen->nama }}</h4>
-                                    </td>
-                                </tr>
-                                @if (array_key_exists($data->id, $regubahcabut))
-                                    @php
-                                        $hasCabut = false;
-                                    @endphp
+                <div class="col-lg-4 col-xl-3">
+                    <div class="legal-card">
+                        <div class="legal-card-header">Status dan Statistik</div>
+                        <div class="legal-card-body">
+                            <div class="status-badge {{ $statusClass }}">
+                                <i class="mdi mdi-shield-check"></i>
+                                {{ $statusLabel }}
+                            </div>
 
-                                    @foreach ($regubahcabut[$data->id] as $ucrow)
-                                        @if ($ucrow['jenis'] == 'cabut')
-                                            @php
-                                                $hasCabut = true;
-                                                break;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-
-                                    @if ($hasCabut)
-                                        <tr class="bg-danger text-white">
-                                            <td style="font-size: 18px;font-weight: 600;">Tidak Berlaku</td>
-                                        </tr>
-                                    @else
-                                        <tr class="bg-success text-white">
-                                            <td style="font-size: 18px;font-weight: 600;">Berlaku</td>
-                                        </tr>
-                                    @endif
-                                @else
-                                    @if ($data->kategori->tipeDokumen->nama!="Monografi Hukum")
-                                        <tr class="bg-success text-white">
-                                            <td style="font-size: 18px;font-weight: 600;">Berlaku</td>
-                                        </tr>
-                                    @endif
-                                @endif
-                                <tr>
-                                    <td style="font-size: 12px">
-                                        <small><strong>Keterangan Status</strong></small>
-                                        <p class="m-0">
-                                            @php $temp = '' @endphp
-                                            @if (array_key_exists($data->id, $regubahcabut))
-                                                @foreach ($regubahcabut[$data->id] as $key => $ucrow)
-                                                    {!! $key != 0 ? '<br>' : '' !!}
-                                                    @if ($temp != $ucrow['jenis'])
-                                                        <span
-                                                            style="font-weight:bold;width: 75px;display: inline-block;">
-                                                            {{ substr($ucrow['jenis'], 0, 2) == 'me' ? $ucrow['jenis'] : 'di' . $ucrow['jenis'] }}
-                                                        </span>
-                                                    @else
-                                                        {{ ',' }}
-                                                    @endif
-
-                                                    @php
-                                                        $class = '';
-                                                        if ($ucrow['jenis'] == 'mengubah') {
-                                                            $class = 'ubah';
-                                                        } elseif ($ucrow['jenis'] == 'mencabut') {
-                                                            $class = 'cabut';
-                                                        } else {
-                                                            $class = $ucrow['jenis'];
-                                                        }
-                                                    @endphp
-
-                                                    <span>
-                                                        <a class='link_{{ $class }}'
-                                                            href='{{ $ucrow['url'] }}'>
-                                                            {{ $ucrow['nomor'] }}
-                                                        </a>
-                                                    </span>
-
-                                                    @php $temp = $ucrow['jenis'] @endphp
-                                                @endforeach
-                                            @endif
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="font-size: 14px"><strong>Dilihat</strong> {{ $hit ?? '0' }} kali
-                                    </td>
-                                </tr>
-                                @if ($data->kategori->tipeDokumen->nama!="Monografi Hukum")
-                                    <tr>
-                                        <td style="font-size: 14px"><strong>Diunduh</strong> {{ $unduhan ?? '0' }} kali
-                                        </td>
-                                    </tr>
-                                @endif
-                                @if ($data->cover)
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="mt-2 mb-2">
-                                            <div class="mt-2">
-                                                <img src="{{ url($data->cover) }}" alt="Cover {{ $data->judul }}"
-                                                    class="img-thumbnail" style="max-width: 100%; max-height: 600px;">
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endif
-                            </tbody>
-                        </table>
+                            <div class="metric-grid mt-3">
+                                <div class="metric-box">
+                                    <span class="metric-label">Dilihat</span>
+                                    <span class="metric-value">{{ $hit ?? 0 }}</span>
+                                </div>
+                                <div class="metric-box">
+                                    <span class="metric-label">Diunduh</span>
+                                    <span class="metric-value">{{ $unduhan ?? 0 }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    @if (array_key_exists($data->id, $regubahcabut ?? []) && count($regubahcabut[$data->id]) > 0)
+                        <div class="legal-card">
+                            <div class="legal-card-header">Relasi Regulasi</div>
+                            <div class="legal-card-body">
+                                <ul class="relation-list">
+                                    @foreach ($regubahcabut[$data->id] as $ucrow)
+                                        <li>
+                                            {{ ucfirst($ucrow['jenis'] ?? '-') }}:
+                                            <a href="{{ $ucrow['url'] ?? '#' }}">{{ $ucrow['nomor'] ?? '-' }}</a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($data->cover)
+                        <div class="legal-card">
+                            <div class="legal-card-header">Sampul Dokumen</div>
+                            <div class="legal-card-body">
+                                <div class="cover-wrapper">
+                                    <img src="{{ url($data->cover) }}" alt="Cover {{ $data->judul }}" loading="lazy" decoding="async">
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
-                <div class="col-md-9">
-                    <div class="table-responsive"
-                        style="border-radius: 5px; box-shadow: 20px 20px 40px #bebebe5e, -20px -20px 60px #ffffff; ">
-                        <table class="table table-hover mb-0">
-                            <tbody>
-                                <tr>
-                                    <th scope="row" class="field" style="border-top: 0px">Jenis/Bentuk Peraturan</th>
-                                    <td class="spacer" style="border-top: 0px">:</td>
-                                    <td style="border-top: 0px">{{ $data->jenis_peraturan ?? $data->nama ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Singkatan Jenis/Bentuk</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->singkatan_jenis_peraturan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Nomor Peraturan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->nomor_peraturan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Tahun</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->tahun ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Judul</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->judul ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">T.E.U. Badan/Pengarang</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->teu_badan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Penandatangan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->penandatangan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Tanggal Penetapan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->tanggal_penetapan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Tempat Penetapan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->tempat_penetapan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Tanggal Pengundangan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->tanggal_diundangkan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Sumber</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->sumber ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Subjek</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->subjek ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Bahasa</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->bahasa ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Lokasi</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->lokasi ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Bidang Hukum</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->bidang_hukum ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Status Peraturan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->status_peraturan ?? '-' }}</td>
-                                </tr>
-                                @if ($data->kategori->tipeDokumen->id == 2)
-                                <!-- Informasi khusus untuk monografi hukum -->
-                                <tr>
-                                    <th scope="row" class="field">Nomor Panggil</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->nomor_panggil ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Edisi/Cetakan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->edisi ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">ISBN</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->isbn ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Deskripsi Fisik</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->deskripsi_fisik ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Nomor Induk Buku</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->nomor_induk_buku ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Jumlah Eksemplar</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->jumlah ?? '0' }} buku</td>
-                                </tr>
+
+                <div class="col-lg-8 col-xl-9">
+                    <div class="legal-card">
+                        <div class="legal-card-header">Informasi Dokumen</div>
+                        <div class="legal-card-body">
+                            <table class="meta-table">
+                                <tbody>
+                                    @foreach ($rows as $meta)
+                                        <tr>
+                                            <th>{{ $meta[0] }}</th>
+                                            @if ($isArtikelLike && $meta[0] === 'Lampiran')
+                                                <td>
+                                                    @if ($lampiranUrl)
+                                                        <a class="btn btn-warning btn-sm waves-effect waves-light" href="{{ $lampiranUrl }}" target="_blank">
+                                                            <i class="mdi mdi-paperclip mr-1"></i>
+                                                            Download Lampiran (PDF)
+                                                        </a>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
+                                            @else
+                                                <td>{{ $meta[1] ?: '-' }}</td>
+                                            @endif
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="legal-card">
+                        <div class="legal-card-header">Unduhan Berkas</div>
+                        <div class="legal-card-body">
+                            <div class="doc-actions">
+                                @if ($fileUrl)
+                                    <a class="btn btn-info btn-sm waves-effect waves-light"
+                                        onclick="downloading({{ $data->id }},{{ $data->kategori_id }})"
+                                        href="{{ $fileUrl }}" target="_blank">
+                                        <i class="mdi mdi-cloud-download-outline mr-1"></i>
+                                        Download Berkas
+                                    </a>
                                 @endif
-                                <tr>
-                                    <th scope="row" class="field">Keterangan</th>
-                                    <td class="spacer">:</td>
-                                    <td>{{ $data->keterangan ?? '-' }} </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="field">Berkas {{ $data->kategori->tipeDokumen->id == 2 ? 'Fulltext' : 'Produk Hukum' }}</th>
-                                    <td class="spacer">:</td>
-                                    <td>
-                                        @if ($data->file)
-                                            <a type="button"
-                                                onclick="downloading({{ $data->id }},{{ $data->kategori_id }})"
-                                                class="btn btn-info btn-sm waves-effect waves-light mb-1"
-                                                href="{{ $data->kategori->tipeDokumen->id == 2 ? url($data->file) : '/upload/' . $data->nama_singkat . '/' . $data->tahun . '/' . $data->file }}"
-                                                target="_blank">
-                                                <span class="btn-label"><i
-                                                        class="mdi mdi-cloud-download-outline"></i></span> Download {{ $data->kategori->tipeDokumen->id == 2 ? 'Fulltext' : 'Berkas' }}
-                                            </a><br>
-                                        @else
-                                            <span class="text-muted">{{ $data->kategori->tipeDokumen->id == 2 ? 'Fulltext tidak tersedia' : 'Berkas tidak tersedia' }}</span>
-                                        @endif
-                                        @if ($data->abstrak)
-                                            <a type="button"
-                                                class="btn btn-success btn-sm waves-effect waves-light mb-1"
-                                                href="/upload/abstrak/{{ $data->nama_singkat }}/{{ $data->tahun }}/{{ $data->abstrak }}"
-                                                target="_blank">
-                                                <span class="btn-label"><i
-                                                        class="mdi mdi-cloud-download-outline"></i></span> Download Abstrak
-                                            </a>
-                                        @endif
-                                        @if ($data->lampiran)
-                                        <a type="button"
-                                            class="btn btn-warning btn-sm waves-effect waves-light mb-1"
-                                            href="/upload/lampiran/{{ $data->nama_singkat }}/{{ $data->tahun }}/{{ $data->lampiran }}"
-                                            target="_blank">
-                                            <span class="btn-label"><i
-                                                    class="mdi mdi-cloud-download-outline"></i></span> Download Lampiran
-                                        </a>
-                                        @endif
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                                @if ($abstrakUrl)
+                                    <a class="btn btn-success btn-sm waves-effect waves-light" href="{{ $abstrakUrl }}" target="_blank">
+                                        <i class="mdi mdi-file-document-outline mr-1"></i>
+                                        Download Abstrak
+                                    </a>
+                                @endif
+
+                                @if ($lampiranUrl)
+                                    <a class="btn btn-warning btn-sm waves-effect waves-light" href="{{ $lampiranUrl }}" target="_blank">
+                                        <i class="mdi mdi-paperclip mr-1"></i>
+                                        Download Lampiran
+                                    </a>
+                                @endif
+
+                                @if (!$fileUrl && !$abstrakUrl && !$lampiranUrl)
+                                    <span class="text-muted">Berkas belum tersedia.</span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    @include('public.footer')
-
-    <!-- Back to top -->
-    <a href="#" class="back-to-top" id="back-to-top"> <i class="mdi mdi-chevron-up"> </i> </a>
-
-    <!-- javascript -->
-    <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
-    <script src="{{ asset('assets/js/headline.js') }}"></script>
-    <script src="{{ asset('assets/js/pubmisc.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
-    <!-- Plugins js-->
-    <script src="{{ asset('assets/libs/morris.js06/morris.js06.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/raphael/raphael.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/bootstrap-select/bootstrap-select.min.js') }}"></script>
-    <!-- custom js -->
-    <script>
-        ! function($) {
-            "use strict";
-
-            var Ubold = function() {};
-
-            Ubold.prototype.initStickyMenu = function() {
-                    $(window).scroll(function() {
-                        var scroll = $(window).scrollTop();
-
-                        if (scroll >= 50) {
-                            $(".sticky").addClass("nav-sticky");
-                        } else {
-                            $(".sticky").removeClass("nav-sticky");
-                        }
-                    });
-                },
-
-                Ubold.prototype.initSmoothLink = function() {
-                    $('.navbar-nav a').on('click', function(event) {
-                        var $anchor = $(this);
-                        $('html, body').stop().animate({
-                            scrollTop: $($anchor.attr('href')).offset().top - 50
-                        }, 1500);
-                        event.preventDefault();
-                    });
-
-                    // general
-                    $("a.smooth-scroll").on('click', function(e) {
-                        e.preventDefault();
-                        var dest = $(this).attr('href');
-                        $('html,body').animate({
-                            scrollTop: $(dest).offset().top
-                        }, 'slow');
-                    });
-                },
-
-
-                Ubold.prototype.initBacktoTop = function() {
-                    $(window).scroll(function() {
-                        if ($(this).scrollTop() > 100) {
-                            $('.back-to-top').fadeIn();
-                        } else {
-                            $('.back-to-top').fadeOut();
-                        }
-                    });
-                    $('.back-to-top').click(function() {
-                        $("html, body").animate({
-                            scrollTop: 0
-                        }, 1000);
-                        return false;
-                    });
-                },
-
-
-                Ubold.prototype.init = function() {
-                    this.initStickyMenu();
-                    this.initSmoothLink();
-                    this.initBacktoTop();
-                },
-                //init
-                $.Ubold = new Ubold, $.Ubold.Constructor = Ubold
-        }(window.jQuery)
-        //initializing
-    </script>
-</body>
-
-</html>
+@endsection

@@ -31,47 +31,57 @@ setlocale(LC_TIME, 'id_ID');
     <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet"
         type="text/css" />
+    @include('public.partials.legal-detail-styles')
 </head>
 
 <body>
     @include('public.header')
 
-    <section class="section pt-3 pb-3" style=" margin-top: 105px; background-color: #def0fb; ">
+    <section class="legal-hero">
         <div class="container-fluid">
-            <h3>{{ isset($title) ? (app()->getLocale() == 'id' ? $judul : $title) : $judul }}</h3>
+            <span class="legal-eyebrow">
+                <i class="mdi mdi-book-open-page-variant"></i>
+                <span>JDIH Kota Banjarbaru</span>
+            </span>
+            <h1 class="legal-title mb-2">{{ isset($title) ? (app()->getLocale() == 'id' ? $judul : $title) : $judul }}</h1>
+            <p class="legal-subtitle mb-0">Tampilan arsip data yang bersih, formal, dan konsisten.</p>
         </div> <!-- end container-fluid -->
     </section>
 
-    <section class="section bg-gradient">
+    <section class="legal-main">
         @isset($tahunlist)
             <div class="container-fluid mb-3">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="input-group" style=" box-shadow: 20px 20px 40px #bebebe5e, -20px -20px 60px #ffffff; ">
-                            <input type="text" class="form-control" placeholder="{{ __('public.ketiksesuatu') }}"
-                                id="textserach" value="{{ isset($s) ? str_replace('-', ' ', $s) : '' }}">
-                            @if ($judul != 'Propemperda' && $judul != 'Monograf Hukum' && $judul != 'Artikel Hukum')
-                                <select class="form-control col-2" name="status" id="status">
-                                    <option value="ALL">Semua Status</option>
-                                    <option value="berlaku"
-                                        {{ isset($status) ? ($status == 'berlaku' ? 'selected' : '') : '' }}>Berlaku
-                                    </option>
-                                    <option value="tidak_berlaku"
-                                        {{ isset($status) ? ($status == 'tidak-berlaku' ? 'selected' : '') : '' }}>Tidak
-                                        Berlaku</option>
-                                </select>
-                            @endif
-                            <select class="form-control col-2" name="tahun" id="tahun">
-                                <option value="ALL">{{ __('public.seluruhtahun') }}</option>
-                                @foreach ($tahunlist as $key => $value)
-                                    <option value="{{ $value->tahun }}"
-                                        {{ isset($tahun) ? ($tahun == $value->tahun ? 'selected' : '') : '' }}>
-                                        {{ $value->tahun }}</option>
-                                @endforeach
-                            </select>
-                            <div class="input-group-append">
-                                <button class="btn btn-info waves-effect waves-light" type="button"
-                                    id="btncari">{{ __('public.cari') }}</button>
+                        <div class="legal-card mb-3">
+                            <div class="legal-card-body">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="{{ __('public.ketiksesuatu') }}"
+                                        id="textserach" value="{{ isset($s) ? str_replace('-', ' ', $s) : '' }}">
+                                    @if ($judul != 'Propemperda' && $judul != 'Monograf Hukum' && $judul != 'Artikel Hukum')
+                                        <select class="form-control col-2" name="status" id="status">
+                                            <option value="ALL">Semua Status</option>
+                                            <option value="berlaku"
+                                                {{ isset($status) ? ($status == 'berlaku' ? 'selected' : '') : '' }}>Berlaku
+                                            </option>
+                                            <option value="tidak_berlaku"
+                                                {{ isset($status) ? ($status == 'tidak-berlaku' ? 'selected' : '') : '' }}>Tidak
+                                                Berlaku</option>
+                                        </select>
+                                    @endif
+                                    <select class="form-control col-2" name="tahun" id="tahun">
+                                        <option value="ALL">{{ __('public.seluruhtahun') }}</option>
+                                        @foreach ($tahunlist as $key => $value)
+                                            <option value="{{ $value->tahun }}"
+                                                {{ isset($tahun) ? ($tahun == $value->tahun ? 'selected' : '') : '' }}>
+                                                {{ $value->tahun }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-info waves-effect waves-light" type="button"
+                                            id="btncari">{{ __('public.cari') }}</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -81,8 +91,7 @@ setlocale(LC_TIME, 'id_ID');
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card-box p-0 position-relative"
-                        style=" box-shadow: 20px 20px 40px #bebebe5e, -20px -20px 60px #ffffff; ">
+                    <div class="card-box p-0 position-relative legal-card">
                         <div id="index-content">
                             <div class="table-responsive" id="table-data">
                                 {{-- Data --}}

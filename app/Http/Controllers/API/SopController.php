@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class SopController extends BaseController
 {
@@ -43,10 +44,17 @@ class SopController extends BaseController
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $uploadedFiles = $request->file('file_sop');
+        if ($uploadedFiles && !is_array($uploadedFiles)) {
+            $uploadedFiles = [$uploadedFiles];
+        }
+
+        $validator = Validator::make(array_merge($request->all(), [
+            'file_sop' => $uploadedFiles ?? [],
+        ]), [
             'nama' => ['required'],
             'deskripsi' => ['nullable'],
-            'file_sop' => ['required', 'array'],
+            'file_sop' => ['required', 'array', 'min:1'],
             'file_sop.*' => ['required', 'file', 'mimes:pdf', 'max:2048']
         ]);
 
@@ -55,16 +63,12 @@ class SopController extends BaseController
         }
 
         $file_path = null;
-        if ($request->file_sop) {
-            foreach ($request->file_sop as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
-                    $folder = "upload/sop";
-                    $filename = time() . "_" . $index . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
-                    $file_path = $filepath;
-                }
+        foreach ($uploadedFiles ?? [] as $index => $value) {
+            if ($value && $value->isValid()) {
+                $extension = $value->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $value->storeAs('upload/sop', $filename, 'public');
+                $file_path = '/' . $storedPath;
             }
         }
 
@@ -102,7 +106,14 @@ class SopController extends BaseController
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
+        $uploadedFiles = $request->file('file_sop');
+        if ($uploadedFiles && !is_array($uploadedFiles)) {
+            $uploadedFiles = [$uploadedFiles];
+        }
+
+        $validator = Validator::make(array_merge($request->all(), [
+            'file_sop' => $uploadedFiles ?? [],
+        ]), [
             'nama' => ['required'],
             'deskripsi' => ['nullable'],
             'file_sop' => ['nullable', 'array'],
@@ -114,20 +125,20 @@ class SopController extends BaseController
         }
 
         $file_path = null;
-        if ($request->file_sop) {
-            foreach ($request->file_sop as $index => $value) {
-                if (is_file($value)) {
-                    $extension = $value->extension();
-                    $folder = "upload/sop";
-                    $filename = time() . "_" . $index . "." . $extension;
-                    $filepath = "/" . $folder . "/" . $filename;
-                    $value->move(public_path("storage/" . $folder . "/"), $filename);
-                    $file_path = $filepath;
-                }
+        foreach ($uploadedFiles ?? [] as $index => $value) {
+            if ($value && $value->isValid()) {
+                $extension = $value->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $value->storeAs('upload/sop', $filename, 'public');
+                $file_path = '/' . $storedPath;
             }
         }
 
-        $table = Sop::where('id', $request->id)->first();
+        $table = Sop::where('id', $id)->first();
+        if (!$table) {
+            return $this->sendError(null, 'Data not found', 500);
+        }
+
         $table->nama = $request->nama;
         $table->deskripsi = $request->deskripsi;
         if ($file_path) {

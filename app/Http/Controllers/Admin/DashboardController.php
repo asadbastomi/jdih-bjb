@@ -83,26 +83,38 @@ class DashboardController extends BaseController
         $this->data['maxtahun'] = max(array_column($combine, 'tahun'));
         $this->data['mintahun'] = min(array_column($combine, 'tahun'));
 
+        $this->data['stats']['pageviews'] = 14420;
+        $this->data['stats']['visitors'] = 6419;
+        $this->data['stats']['bounce'] = 100;
+        $this->data['stats']['avg_visit'] = '3m 4s';
+
         try {
-            $response = Http::get('http://apiforward.dev.bjb.city/stat-jdih');
-            $stats = json_decode($response->getBody()->getContents());
+            $response = Http::timeout(5)
+                ->connectTimeout(3)
+                ->acceptJson()
+                ->get('http://apiforward.dev.bjb.city/stat-jdih');
 
-            $totalSeconds = $stats->totaltime->value / $stats->uniques->value;
+            if ($response->ok()) {
+                $stats = $response->object();
 
-            $minutes = floor($totalSeconds / 60);
-            $seconds = $totalSeconds % 60;
+                $pageviews = (int) data_get($stats, 'pageviews.value', 0);
+                $visitors = (int) data_get($stats, 'uniques.value', 0);
+                $bouncesValue = (float) data_get($stats, 'bounces.value', 0);
+                $bouncesChange = (float) data_get($stats, 'bounces.change', 0);
+                $totalTime = (float) data_get($stats, 'totaltime.value', 0);
 
-            $avgvisit = sprintf('%dm %ds', $minutes, $seconds);
+                $totalSeconds = $visitors > 0 ? $totalTime / $visitors : 0;
+                $minutes = floor($totalSeconds / 60);
+                $seconds = (int) ($totalSeconds % 60);
+                $avgvisit = sprintf('%dm %ds', $minutes, $seconds);
 
-            $this->data['stats']['pageviews'] = $stats->pageviews->value;
-            $this->data['stats']['visitors'] = $stats->uniques->value;
-            $this->data['stats']['bounce'] = $stats->bounces->value / $stats->bounces->change * 100;
-            $this->data['stats']['avg_visit'] = $avgvisit;
-        } catch (\Exception $e) {
-            $this->data['stats']['pageviews'] = 14420;
-            $this->data['stats']['visitors'] = 6419;
-            $this->data['stats']['bounce'] = 100;
-            $this->data['stats']['avg_visit'] = '3m 4s';
+                $this->data['stats']['pageviews'] = $pageviews;
+                $this->data['stats']['visitors'] = $visitors;
+                $this->data['stats']['bounce'] = $bouncesChange != 0 ? ($bouncesValue / $bouncesChange) * 100 : 0;
+                $this->data['stats']['avg_visit'] = $avgvisit;
+            }
+        } catch (\Throwable $e) {
+            // Keep default stats when external API is unavailable/slow.
         }
 
         return view('admin.dashboard', $this->data);

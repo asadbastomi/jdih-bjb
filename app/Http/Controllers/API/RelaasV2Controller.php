@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class RelaasV2Controller extends BaseController
 {
@@ -63,13 +64,11 @@ class RelaasV2Controller extends BaseController
 
         $list_dokumen = [];
         foreach ($dokumenFiles ?? [] as $index => $value) {
-            if (is_file($value)) {
-                $extension = $value->extension();
-                $folder = "upload/relaasV2";
-                $filename = time() . "_" . $index . "_" . "." . $extension;
-                $filepath = "/" . $folder . "/" . $filename;
-                $value->move(public_path("storage/" . $folder . "/"), $filename);
-                array_push($list_dokumen, $filepath);
+            if ($value && $value->isValid()) {
+                $extension = $value->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $value->storeAs('upload/relaasV2', $filename, 'public');
+                $list_dokumen[] = '/' . $storedPath;
             }
         }
 
@@ -143,17 +142,19 @@ class RelaasV2Controller extends BaseController
 
         $list_dokumen = [];
         foreach ($dokumenFiles ?? [] as $index => $value) {
-            if (is_file($value)) {
-                $extension = $value->extension();
-                $folder = "upload/relaasV2";
-                $filename = time() . "_" . $index . "_" . "." . $extension;
-                $filepath = "/" . $folder . "/" . $filename;
-                $value->move(public_path("storage/" . $folder . "/"), $filename);
-                array_push($list_dokumen, $filepath);
+            if ($value && $value->isValid()) {
+                $extension = $value->getClientOriginalExtension();
+                $filename = time() . "_" . $index . "_" . uniqid() . "." . $extension;
+                $storedPath = $value->storeAs('upload/relaasV2', $filename, 'public');
+                $list_dokumen[] = '/' . $storedPath;
             }
         }
 
-        $table = RelaasV2::where('id', $request->id)->first();
+        $table = RelaasV2::where('id', $id)->first();
+        if (!$table) {
+            return $this->sendError(null, 'Data not found', 500);
+        }
+
         $table->nomor = $request->nomor;
         $table->jenis = $request->jenis;
         $table->tanggal = $request->tanggal;
