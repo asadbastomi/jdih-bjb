@@ -27,6 +27,7 @@
             </div>
         </div>
         <!-- end page title -->
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="card-box pb-2 position-relative">
@@ -46,38 +47,24 @@
                             </div>
                             <div class="text-sm-center float-right">
                                 <div class="form-group float-right">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Nomor</label>
-                                        <input type="text" class="form-control send" id="nomor" placeholder="contoh: 5">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Nomor Tahun</label>
-                                        <input type="text" class="form-control send" id="nomor_tahun" placeholder="contoh: 5 Tahun 2024">
-                                    </div>
-                                </div>
                                     <button id="btnreloaddata" class="btn btn-white waves-effect">
                                         <i class="mdi mdi-reload"></i>
-                                <div class="col-md-4">
-                    </div>
-                                        <label class="control-label">Singkatan Jenis/Bentuk</label>
-                                        <input type="text" class="form-control send" id="singkatan_jenis_peraturan" placeholder="Contoh: Perwal">
-        </div>
-        <!-- end row -->
-    </div> <!-- container -->
-                                    <div class="form-group">
-                                        <label class="control-label">Tempat Penetapan</label>
-                                        <input type="text" class="form-control send" id="tempat_penetapan" placeholder="Contoh: Banjarbaru">
-                                    </div>
+                                    </button>
                                 </div>
-                                <div class="col-md-4">
+                            </div>
+                        </div>
+                        <div class="table-responsive" id="table-data"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.container -->
 
+    <!-- Modal Form Main -->
     <div id="modalform" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <form id="{{$form}}" class="async" >
+                <form id="{{$form}}" class="async">
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -146,7 +133,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Tanggal diundangkan</label>
+                                    <label class="control-label">Tanggal Diundangkan</label>
                                     <input type="text" class="form-control send" id="tanggal_diundangkan" placeholder="Tanggal" required>
                                 </div>
                             </div>
@@ -196,19 +183,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tambahan Tema Dokumen -->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">Tema Dokumen <small>(pilih satu atau lebih)</small></label>
-                                    <select class="form-control select2-multiple send" name="tema_dokumen[]" id="tema_dokumen" data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema...">
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- End Tambahan Tema Dokumen -->
-
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group dropifyheightforce119">
@@ -245,19 +219,20 @@
         </div>
     </div><!-- /.modal -->
 
+    <!-- Modal Form Ubah Cabut -->
     <div id="modalformubahcabut" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <form id="formubahcabut" class="async" >
+                <form id="formubahcabut" class="async">
                     <div class="modal-header">
-                        <h4 class="modal-title">Ubah Cabut Regulasi</h4>
+                        <h4 class="modal-title">Ubah / Cabut Regulasi</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     </div>
                     <div class="modal-body p-4">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Diubah</label>
+                                    <label class="control-label">Diubah Oleh</label>
                                     <select class="form-control select2-multiple select2-ajax send" id="ubah" multiple="multiple" data-placeholder="Tulis Nomor atau Tentang Regulasi ..."></select>
                                 </div>
                             </div>
@@ -265,7 +240,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Dicabut</label>
+                                    <label class="control-label">Dicabut Oleh</label>
                                     <select class="form-control select2-multiple select2-ajax send" id="cabut" multiple="multiple" data-placeholder="Tulis Nomor atau Tentang Regulasi ..."></select>
                                 </div>
                             </div>
@@ -297,7 +272,7 @@
 <script src="{{asset('assets/libs/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 <!-- Page js-->
 <script src="{{asset('assets/js/pages/form-fileuploads.init.js')}}"></script>
-    <script>
+<script>
     var flatpickrtanggal_penetapan = flatpickr('#tanggal_penetapan', {
         altInput: true,
         altFormat: "j F Y",
@@ -316,93 +291,11 @@
     });
     var textserach = '';
 
-    // Fungsi untuk memuat tema dokumen
-    function loadTemaDokumen() {
-        $.ajax({
-            url: '/api/tema-dokumen',
-            method: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                var options = '';
-                var temaItems = getTemaItems(response);
-                $.each(temaItems, function(index, tema) {
-                    if (tema.status) {
-                        options += '<option value="' + tema.id + '" data-icon="' + tema.icon + '" data-color="' + tema.warna + '">' + tema.nama + '</option>';
-                    }
-                });
-                $('#tema_dokumen').html(options);
-
-                // Reinisialisasi select2 setelah memuat tema
-                $('#tema_dokumen').select2({
-                    templateResult: formatTema,
-                    templateSelection: formatTema
-                });
-            },
-            error: function(error) {
-                console.error('Error loading tema:', error);
-            }
-        });
-    }
-
-    // Fungsi untuk memformat tampilan tema
-    function formatTema(tema) {
-        if (!tema.id) {
-            return tema.text;
-        }
-
-        var $tema = $(
-            '<span><i class="mdi mdi-checkbox-blank-circle mr-1" style="color:' + $(tema.element).data('color') + '"></i> ' + tema.text + '</span>'
-        );
-
-        return $tema;
-    }
-
-    // Fungsi untuk memperbarui tema dokumen
-    function updateTemaDokumen(regulasiId, selectedTemas) {
-        if (!regulasiId || !selectedTemas) {
-            return;
-        }
-
-        $.ajax({
-            url: '/api/regulasi/' + regulasiId + '/tema',
-            method: 'POST',
-            data: {
-                tema_ids: selectedTemas
-            },
-            success: function(response) {
-            },
-            error: function(error) {
-                console.error('Error updating tema dokumen:', error);
-                notifyMe('Error', 'Gagal memperbarui tema dokumen', 'error');
-            }
-        });
-    }
-
-    function getTemaItems(response) {
-        if (!response || !response.data) {
-            return [];
-        }
-
-        if (Array.isArray(response.data)) {
-            return response.data;
-        }
-
-        if (Array.isArray(response.data.data)) {
-            return response.data.data;
-        }
-
-        return [];
-    }
-
     $(function($){
         loadTable('{{ route($fetch) }}', textserach);
 
-        // Memuat tema dokumen saat halaman dimuat
-        loadTemaDokumen();
-
         $(document).on('submit','form.async',function(){
             event.preventDefault();
-            // Form Halaman
             if ($(this).attr('id')=='{{$form}}') {
                 isnew = isNew('{{$form}}');
                 if (isnew.status) {
@@ -417,50 +310,7 @@
                             'after' : 300
                         }
                     }
-
-                    // Mendapatkan nilai tema dokumen yang dipilih
-                    var selectedTemas = $('#tema_dokumen').val();
-                    if (selectedTemas && selectedTemas.length > 0) {
-                        // Menambahkan parameter tambahan untuk tema dokumen
-                        var formdata = makeForm('{{$form}}', 'post');
-                        $.each(selectedTemas, function(index, temaId) {
-                            formdata.append('tema_dokumen[]', temaId);
-                        });
-
-                        $.ajax({
-                            type: 'post',
-                            url: '{{ route($store) }}',
-                            data: formdata,
-                            dataType: 'json',
-                            async: true,
-                            processData: false,
-                            contentType: false,
-                            success: function(response) {
-                                notifyMe('Success', response.message, 'success', 10000);
-
-                                // Jika berhasil disimpan, perbarui tema dokumen
-                                if (response.data && response.data.id) {
-                                    updateTemaDokumen(response.data.id, selectedTemas);
-                                }
-
-                                btnLoadingStop('btn{{$module}}');
-                                clearSearch();
-                                $('#modalform').modal('hide');
-                                loadTable('{{ route($fetch) }}', null, 'first', {'stat':'addfirst', 'table':'table-main'});
-                            },
-                            error: function(response) {
-                                if (response.responseJSON.message == 'Validation Error') {
-                                    $.each(response.responseJSON.data, function(key, data){
-                                        notifyMe(key, data, 'error');
-                                    });
-                                }
-                                btnLoadingStop('btn{{$module}}');
-                            }
-                        });
-                    } else {
-                        // Jika tidak ada tema yang dipilih, lanjutkan seperti biasa
-                        sentData('{{ route($store) }}', option);
-                    }
+                    sentData('{{ route($store) }}', option);
                 } else {
                     option = {
                         'module' : '{{$module}}',
@@ -474,63 +324,7 @@
                             'after' : 300
                         }
                     }
-
-                    // Mendapatkan nilai tema dokumen yang dipilih
-                    var selectedTemas = $('#tema_dokumen').val();
-
-                    // Dapatkan ID dari input hidden
-                    var regulasiId = $('#{{$form}} input.id').val();
-
-                    if (!regulasiId) {
-                        notifyMe('Error', 'ID regulasi tidak ditemukan', 'error');
-                        btnLoadingStop('btn{{$module}}');
-                        return;
-                    }
-
-                    // Buat form data termasuk tema_dokumen
-                    var formData = makeForm('{{$form}}', 'put');
-                    formData.append('_method', 'PUT');
-
-                    // Tambahkan tema dokumen ke form data
-                    if (selectedTemas && selectedTemas.length > 0) {
-                        $.each(selectedTemas, function(index, temaId) {
-                            formData.append('tema_dokumen[]', temaId);
-                        });
-                    }
-
-                    // Kirim data ke server
-                    $.ajax({
-                        type: 'post',
-                        url: '{{ url('api') }}/{{$module}}/' + regulasiId,
-                        data: formData,
-                        dataType: 'json',
-                        async: true,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            notifyMe('Success', response.message, 'success', 10000);
-                            btnLoadingStop('btn{{$module}}');
-                            clearSearch();
-                            $('#modalform').modal('hide');
-
-                            var crrentPage = $('.pagination li.page-item.active a.page-link').text();
-                            if (textserach) {
-                                crrentPage = 'findme';
-                            }
-                            loadTable('{{ route($fetch) }}', null, crrentPage, {'stat':'update', 'id':response.data.id, 'table':'table-main'}, response.data.id);
-                        },
-                        error: function(response) {
-                            if (response.responseJSON && response.responseJSON.message == 'Validation Error') {
-                                $.each(response.responseJSON.data, function(key, data){
-                                    notifyMe(key, data, 'error');
-                                });
-                            } else {
-                                notifyMe('Error', 'Gagal menyimpan data', 'error');
-                                console.error('Error response:', response);
-                            }
-                            btnLoadingStop('btn{{$module}}');
-                        }
-                    });
+                    sentData('{{ url('api') }}/{{$module}}/'+isnew.id, option);
                 }
             }
             if ($(this).attr('id')=='formubahcabut') {
@@ -549,135 +343,38 @@
                 sentData('{{ url('api') }}/{{$module}}/updateuc', option);
             }
         });
+
         $(document).on('click', '#btnreloaddata', function(event) {
             event.preventDefault();
             clearSearch();
             loadTable('{{ route($fetch) }}', textserach);
         });
+
         $(document).on('click', '#btnadddata', function(event) {
             event.preventDefault();
             $('#modalform .modal-title').text('Add New');
-
-            // Muat tema dokumen saat modal dibuka
-            $.ajax({
-                url: '/api/tema-dokumen',
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    var temaItems = getTemaItems(response);
-                    // Kosongkan select2 terlebih dahulu
-                    $('#tema_dokumen').empty();
-
-                    // Tambahkan opsi tema
-                    $.each(temaItems, function(index, tema) {
-                        if (tema.status) {
-                            var option = new Option(tema.nama, tema.id, false, false);
-                            option.dataset.icon = tema.icon;
-                            option.dataset.color = tema.warna;
-                            $('#tema_dokumen').append(option);
-                        }
-                    });
-
-                    // Reinisialisasi select2
-                    $('#tema_dokumen').select2({
-                        templateResult: formatTema,
-                        templateSelection: formatTema,
-                        width: '100%'
-                    });
-                },
-                error: function(error) {
-                    console.error('Error loading tema:', error);
-                }
-            });
-
+            fieldClear('{{$form}}');
             $("#modalform").modal({
                 backdrop: 'static',
                 keyboard: false
             });
         });
+
         $(document).on('click', '.btneditdata', function(event) {
             event.preventDefault();
             rowid = $(this).parent().attr('data-id');
             $('#modalform .modal-title').text('Edit {{$title}}');
-
-            // Pertama, ambil data regulasi
-            $.ajax({
-                url: '{{ url('api') }}/{{$module}}/' + rowid + '/edit',
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    // Isi form dengan data regulasi
-                    option = {
-                        'success' : {
-                            'request' : 'appliedtoform',
-                            'modal' : 'modalform',
-                            'form' : '{{$form}}',
-                            'field' : {!! $field !!},
-                        }
-                    }
-                    getData('{{ url('api') }}/{{$module}}/'+rowid+'/edit', option);
-
-                    // Ambil tema dokumen yang terkait
-                    var selectedTemasFromResponse = [];
-                    if (response.data.tema_dokumen && response.data.tema_dokumen.length > 0) {
-                        $.each(response.data.tema_dokumen, function(index, tema) {
-                            selectedTemasFromResponse.push(tema.id.toString());
-                        });
-                    }
-
-                    // Muat tema dokumen dan terapkan pilihan
-                    $.ajax({
-                        url: '/api/tema-dokumen',
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function(temaResponse) {
-                            var temaItems = getTemaItems(temaResponse);
-                            // Kosongkan select2 terlebih dahulu
-                            $('#tema_dokumen').empty();
-
-                            // Tambahkan opsi tema
-                            $.each(temaItems, function(index, tema) {
-                                if (tema.status) {
-                                    var option = new Option(tema.nama, tema.id, false, false);
-                                    option.dataset.icon = tema.icon;
-                                    option.dataset.color = tema.warna;
-                                    $('#tema_dokumen').append(option);
-                                }
-                            });
-
-                            // Reinisialisasi select2
-                            $('#tema_dokumen').select2({
-                                templateResult: formatTema,
-                                templateSelection: formatTema,
-                                width: '100%'
-                            });
-
-                            // Terapkan pilihan tema setelah select2 diinisialisasi
-                            if (selectedTemasFromResponse.length > 0) {
-                                // Pastikan select2 sudah diinisialisasi
-                                if ($('#tema_dokumen').data('select2')) {
-                                    $('#tema_dokumen').val(selectedTemasFromResponse).trigger('change');
-                                } else {
-                                    // Jika select2 belum siap, tunggu sebentar
-                                    var checkSelect2 = setInterval(function() {
-                                        if ($('#tema_dokumen').data('select2')) {
-                                            $('#tema_dokumen').val(selectedTemasFromResponse).trigger('change');
-                                            clearInterval(checkSelect2);
-                                        }
-                                    }, 100);
-                                }
-                            }
-                        },
-                        error: function(error) {
-                            console.error('Error loading tema:', error);
-                        }
-                    });
-                },
-                error: function(error) {
-                    console.error('Error loading regulasi:', error);
+            option = {
+                'success' : {
+                    'request' : 'appliedtoform',
+                    'modal' : 'modalform',
+                    'form' : '{{$form}}',
+                    'field' : {!! $field !!},
                 }
-            });
+            }
+            getData('{{ url('api') }}/{{$module}}/'+rowid+'/edit', option);
         });
+
         $(document).on('click', '.btneditubahcabut', function(event) {
             event.preventDefault();
             rowid = $(this).parent().attr('data-id');
@@ -692,6 +389,7 @@
             }
             getData('{{ url('api') }}/{{$module}}/'+rowid+'/edituc', option);
         });
+
         $(document).on('click', '.btndeletedata', function(event) {
             event.preventDefault();
             rowid = $(this).parent().attr('data-id');
@@ -718,11 +416,13 @@
                 }
             });
         });
+
         $(document).on('click', '.page-link', function(event) {
             event.preventDefault();
             var page = $(this).attr('href').split('page=')[1];
             loadTable('{{ route($fetch) }}', textserach, page);
         });
+
         $(document).on('keyup', '#search-data', delay(function (event) {
             var search = true;
             if (textserach==this.value) {
@@ -733,6 +433,7 @@
                 loadTable('{{ route($fetch) }}', textserach);
             }
         }, 500));
+
         $('#modalformubahcabut').on('hidden.bs.modal', function (e) {
             formname = $(this).find('form').attr('id');
             $(this).find('input.additional').remove();
@@ -740,18 +441,7 @@
             fieldIndcator('clear', formname);
             $('.select2-search__field').css('width', '406px');
         })
-        $('#konten').summernote({
-            placeholder: 'Write something...',
-            height: 230,
-            dialogsInBody: true,
-            callbacks: {
-                // fix broken checkbox on link modal
-                onInit: function onInit(e) {
-                    var editor = $(e.editor);
-                    editor.find('.custom-control-description').addClass('custom-control-label').parent().removeAttr('for');
-                }
-            }
-        });
+
         $('.select2-ajax').select2({
             ajax: {
                 minimumInputLength: 3,
@@ -770,7 +460,8 @@
                 }
             }
         });
+
         $('.select2-search__field').css('width', '406px');
     });
-    </script>
+</script>
 @endsection
