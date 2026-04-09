@@ -165,6 +165,10 @@ Route::middleware('auth.api.or.web')->group(function () {
         Route::post('sop/fetch', 'API\SopController@fetch')->name('sop.fetch');
         Route::resource('sop', 'API\SopController')->only(['store', 'edit', 'update', 'destroy']);
 
+        // Bahari AI Custom Answer
+        Route::post('bahari-ai-custom-answer/fetch', 'API\BahariAiCustomAnswerController@fetch')->name('bahari-ai-custom-answer.fetch');
+        Route::resource('bahari-ai-custom-answer', 'API\BahariAiCustomAnswerController')->only(['store', 'edit', 'update', 'destroy']);
+
         // Kelurahan Sadar Hukum - Admin Routes
         Route::post('kecamatan/fetch', 'API\KecamatanController@fetch')->name('kecamatan.fetch');
         Route::resource('kecamatan', 'API\KecamatanController')->only(['store', 'edit', 'update', 'destroy']);

@@ -133,6 +133,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('/relaas-v2', 'RelaasV2Controller')->only(['index']);
         // SOP
         Route::resource('/sop', 'SopController')->only(['index']);
+        // Jawaban Kustom Bahari AI
+        Route::resource('/bahari-ai-custom-answer', 'BahariAiCustomAnswerController')->only(['index']);
         // Kecamatan
         Route::resource('/kecamatan', 'KecamatanController')->only(['index']);
         // Kelurahan

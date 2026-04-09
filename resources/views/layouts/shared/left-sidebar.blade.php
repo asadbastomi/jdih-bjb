@@ -216,6 +216,12 @@
                         <span> SOP </span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.bahari-ai-custom-answer.index') }}">
+                        <i class="mdi mdi-robot"></i>
+                        <span> Jawaban Kustom Bahari AI </span>
+                    </a>
+                </li>
 
             </ul>
 

@@ -1,1 +1,1 @@
-<script>document.write(new Date().getFullYear())</script> &copy; Kota Banjarbaru. Crafted with <i class="ti-heart text-danger font-size-12"></i> by <a href="" class="text-primary-50">edofh</a> @ diskominfobjb
+<script>document.write(new Date().getFullYear())</script> &copy; Kota Banjarbaru. Crafted with <i class="ti-heart text-danger font-size-12"></i> by <a href="" class="text-primary-50">CV. Luxmedia Tech</a> @ diskominfobjb

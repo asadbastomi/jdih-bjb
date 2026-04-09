@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\BahariAiCustomAnswer;
 use App\Regulasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -29,6 +30,15 @@ class ChatController extends Controller
 
             // Convert to lowercase for easier matching
             $messageLower = strtolower($message);
+
+            // Check custom answers managed from admin dashboard
+            $customResponse = $this->handleCustomAnswer($message, $messageLower);
+            if (!empty($customResponse)) {
+                return response()->json([
+                    'success' => true,
+                    'response' => $customResponse
+                ]);
+            }
 
             // KUHP concept questions (e.g., korporasi sebagai subjek tindak pidana)
             $conceptResponse = $this->handleKuhpConceptQuestion($messageLower);
@@ -468,6 +478,60 @@ class ChatController extends Controller
 
         $intro = 'Pasal 458, 459, dan 460 KUHP mengatur pembunuhan, pembunuhan berencana, serta pembunuhan anak oleh ibu. Berikut ringkasan terstruktur per pasal.';
         return $this->buildKuhpCardResponse($intro, $articles);
+    }
+
+    private function handleCustomAnswer($message, $messageLower)
+    {
+        $customAnswers = BahariAiCustomAnswer::where('is_active', true)
+            ->orderBy('prioritas', 'desc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        if ($customAnswers->isEmpty()) {
+            return null;
+        }
+
+        foreach ($customAnswers as $item) {
+            $keywords = preg_split('/[\r\n,;|]+/', (string) $item->kata_kunci);
+            $keywords = array_values(array_filter(array_map('trim', $keywords)));
+
+            if (empty($keywords)) {
+                continue;
+            }
+
+            if ($this->isCustomAnswerMatched($messageLower, $keywords, (string) $item->tipe_pencocokan)) {
+                $content = nl2br(e((string) $item->jawaban));
+                return $this->buildInfoCard('Jawaban Bahari AI', '<div class="text-justify">' . $content . '</div>');
+            }
+        }
+
+        return null;
+    }
+
+    private function isCustomAnswerMatched($messageLower, array $keywords, $matchType)
+    {
+        $normalizedMessage = trim(strtolower($messageLower));
+        $type = strtolower(trim($matchType));
+
+        foreach ($keywords as $keyword) {
+            $normalizedKeyword = trim(strtolower($keyword));
+            if ($normalizedKeyword === '') {
+                continue;
+            }
+
+            if ($type === 'exact') {
+                if ($normalizedMessage === $normalizedKeyword) {
+                    return true;
+                }
+                continue;
+            }
+
+            if (str_contains($normalizedMessage, $normalizedKeyword)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
