@@ -74,54 +74,29 @@
                     </div>
                     <div class="modal-body p-4">
                         <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Tipe Dokumen</label>
-                                    <input type="text" class="form-control send" id="tipe_dokumen" placeholder="Contoh: Artikel">
-                                </div>
-                            </div>
-                            <div class="col-md-9">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Judul</label>
                                     <input type="text" class="form-control send" id="judul"
                                         placeholder="Judul" required>
+                                    <input type="hidden" class="send" id="tipe_dokumen" value="Artikel">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">T.E.U. Badan/Pengarang</label>
                                     <input type="text" class="form-control send" id="teu_badan" placeholder="Contoh: Penulis">
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="control-label">Nomor Peraturan</label>
-                                    <input type="text" class="form-control send" id="nomor_peraturan" placeholder="contoh: 5">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="control-label">Jenis/Bentuk Peraturan</label>
-                                    <input type="text" class="form-control send" id="jenis_peraturan" placeholder="Contoh: Artikel">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="control-label">Singkatan Jenis/Bentuk</label>
-                                    <input type="text" class="form-control send" id="singkatan_jenis_peraturan" placeholder="Contoh: Art">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">Tempat Penetapan</label>
                                     <input type="text" class="form-control send" id="tempat_penetapan" placeholder="Contoh: Kota Banjarbaru">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label class="control-label">Tahun Penetapan/Pengundangan</label>
                                     <input type="text" class="form-control send" id="tahun" placeholder="contoh: 2023" autocomplete="off" required>
@@ -129,20 +104,6 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="control-label">Tanggal Penetapan</label>
-                                    <input type="text" class="form-control send" id="tanggal_penetapan"
-                                        placeholder="Tanggal" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="control-label">Tanggal diundangkan</label>
-                                    <input type="text" class="form-control send" id="tanggal_diundangkan"
-                                        placeholder="Tanggal">
-                                </div>
-                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Kategori</label>
@@ -154,23 +115,24 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Status Peraturan</label>
-                                    <select class="form-control send" id="status_peraturan">
-                                        <option value="berlaku">Berlaku</option>
-                                        <option value="tidak_berlaku">Tidak Berlaku</option>
-                                        <option value="dicabut">Dicabut</option>
-                                        <option value="diubah">Diubah</option>
-                                    </select>
+                                    <label class="control-label">Sumber</label>
+                                    <input type="text" class="form-control send" id="sumber" placeholder="Contoh: Jurnal Hukum" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    <label class="control-label">Subjek</label>
+                                    <input type="text" class="form-control send" id="subjek" placeholder="Contoh: Hukum Pidana" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
                                     <label class="control-label">Bahasa</label>
-                                    <input type="text" class="form-control send" id="bahasa" placeholder="Contoh: Indonesia" value="Indonesia">
+                                    <input type="text" class="form-control send" id="bahasa" placeholder="Contoh: Indonesia">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -179,22 +141,6 @@
                                     <input type="text" class="form-control send" id="lokasi" placeholder="Contoh: Kota Banjarbaru">
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">Sumber</label>
-                                    <input type="text" class="form-control send" id="sumber" placeholder="Contoh: Jurnal Hukum" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">Subjek</label>
-                                    <input type="text" class="form-control send" id="subjek" placeholder="Contoh: Hukum Pidana" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Bidang Hukum</label>
@@ -218,31 +164,25 @@
                         <!-- End Tambahan Tema Dokumen -->
 
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group dropifyheightforce119">
                                     <label class="control-label">Abstrak <small>(optional)</small></label>
                                     <input type="file" data-plugins="dropify" accept="application/pdf" class="send"
                                         id="abstrak" />
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group dropifyheightforce119">
                                     <label class="control-label">File</label>
                                     <input type="file" data-plugins="dropify" accept="application/pdf" class="send"
                                         id="file" />
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group dropifyheightforce119">
                                     <label class="control-label">Lampiran <small>(optional)</small></label>
                                     <input type="file" data-plugins="dropify" accept="application/pdf" class="send"
                                         id="lampiran" />
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="control-label">Keterangan <small>(optional)</small></label>
-                                    <textarea class="form-control send" id="keterangan" rows="5"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -269,16 +209,6 @@
     <!-- Page js-->
     <script src="{{ asset('assets/js/pages/form-fileuploads.init.js') }}"></script>
     <script>
-        var flatpickrtanggal_penetapan = flatpickr('#tanggal_penetapan', {
-            altInput: true,
-            altFormat: "j F Y",
-            dateFormat: "Y-m-d",
-        });
-        var flatpickrtanggal_diundangkan = flatpickr('#tanggal_diundangkan', {
-            altInput: true,
-            altFormat: "j F Y",
-            dateFormat: "Y-m-d",
-        });
         $("#tahun").datepicker({
             todayHighlight: true,
             format: "yyyy",

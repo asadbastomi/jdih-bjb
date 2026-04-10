@@ -34,7 +34,6 @@ setlocale(LC_TIME, 'id_ID');
         type="text/css" />
     <link href="{{ asset('assets/libs/chartist/chartist.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/ladda/ladda.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css?family=Rajdhani&display=swap" rel="stylesheet">
 
     <!-- Elfsight Instagram Feed | JDIH Banjarbaru Instagram Feed -->
@@ -784,6 +783,7 @@ setlocale(LC_TIME, 'id_ID');
             overflow: hidden;
             transition: all 0.3s ease;
             background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
         }
 
         .modern-card:hover {
@@ -799,6 +799,7 @@ setlocale(LC_TIME, 'id_ID');
             font-weight: 600;
             position: relative;
             overflow: hidden;
+            line-height: 1.4;
         }
 
         .card-header-custom::before {
@@ -813,26 +814,52 @@ setlocale(LC_TIME, 'id_ID');
             transform: translate(30px, -30px);
         }
 
+        .product-scroll-panel {
+            max-height: 420px;
+            overflow-y: auto;
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+            padding: 14px;
+        }
+
+        .product-scroll-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .product-scroll-panel::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+        }
+
+        .product-scroll-panel::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #0ea5e9 0%, #2563eb 100%);
+            border-radius: 999px;
+        }
+
         .product-list {
             list-style: none;
             padding: 0;
             margin: 0;
-            max-height: 400px;
-            overflow-y: auto;
+            display: grid;
+            gap: 12px;
         }
 
         .product-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            transition: all 0.3s ease;
+            padding: 14px 16px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 14px;
+            background: #fff;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+        }
+
+        .product-item a {
+            display: block;
         }
 
         .product-item:hover {
-            background: #f8f9fa;
-        }
-
-        .product-item:last-child {
-            border-bottom: none;
+            transform: translateY(-2px);
+            border-color: rgba(37, 99, 235, 0.35);
+            box-shadow: 0 12px 22px rgba(37, 99, 235, 0.12);
         }
 
         .product-badge {
@@ -848,15 +875,17 @@ setlocale(LC_TIME, 'id_ID');
         }
 
         .product-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--dark-color);
-            margin: 5px 0;
+            margin: 6px 0;
+            line-height: 1.45;
         }
 
         .product-meta {
             font-size: 0.9rem;
             color: #6c757d;
+            line-height: 1.45;
         }
 
         /* Statistics Section - Symmetrical Grid Design */
@@ -2106,60 +2135,56 @@ setlocale(LC_TIME, 'id_ID');
     <section class="content-section animate-on-scroll fade-in-up">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 mb-4">
+                <div class="col-12 mb-4">
                     <div class="modern-card animate-on-scroll fade-in-left delay-100">
                         <div class="card-header-custom">
                             Produk Hukum Terbaru
                         </div>
                         <div class="card-body p-0">
-                            <div class="splide slider-terbaru" role="group" aria-label="Produk Hukum Terbaru">
-                                <div class="splide__track">
-                                    <ul class="splide__list product-list">
-                                        @foreach ($regulasi as $r)
-                                            <li class="splide__slide product-item">
-                                                <a href="/produk-hukum/{{ $r->nama_singkat }}/{{ $r->id }}/{{ Str::slug($r->judul) }}"
-                                                    class="text-decoration-none">
-                                                    <span class="product-badge">{{ $r->nama_singkat }}</span>
-                                                    <div class="product-meta">
-                                                        {{ $r->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($r->tanggal_diundangkan)) : '' }}
-                                                    </div>
-                                                    <div class="product-title">Nomor {{ $r->nomor_peraturan }} Tahun
-                                                        {{ $r->tahun }}</div>
-                                                    <div class="product-meta">{{ $r->judul }}</div>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                            <div class="product-scroll-panel" aria-label="Produk Hukum Terbaru">
+                                <ul class="product-list">
+                                    @foreach ($regulasi as $r)
+                                        <li class="product-item">
+                                            <a href="/produk-hukum/{{ $r->nama_singkat }}/{{ $r->id }}/{{ Str::slug($r->judul) }}"
+                                                class="text-decoration-none">
+                                                <span class="product-badge">{{ $r->nama_singkat }}</span>
+                                                <div class="product-meta">
+                                                    {{ $r->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($r->tanggal_diundangkan)) : '' }}
+                                                </div>
+                                                <div class="product-title">Nomor {{ $r->nomor_peraturan }} Tahun
+                                                    {{ $r->tahun }}</div>
+                                                <div class="product-meta">{{ $r->judul }}</div>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 mb-4">
+                <div class="col-12 mb-4">
                     <div class="modern-card">
                         <div class="card-header-custom">
                             Produk Hukum yang sering dicari
                         </div>
                         <div class="card-body p-0">
-                            <div class="splide slider-sering" role="group" aria-label="Produk Hukum Sering Dicari">
-                                <div class="splide__track">
-                                    <ul class="splide__list product-list">
-                                        @foreach ($popular_item as $p)
-                                            <li class="splide__slide product-item">
-                                                <a href="/produk-hukum/{{ $p->kategori->nama_singkat }}/{{ $p->regulasi->id }}/{{ Str::slug($p->regulasi->judul) }}"
-                                                    class="text-decoration-none">
-                                                    <span class="product-badge">{{ $p->kategori->nama_singkat }}</span>
-                                                    <div class="product-meta">
-                                                        {{ $p->regulasi->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($p->regulasi->tanggal_diundangkan)) : '' }}
-                                                    </div>
-                                                    <div class="product-title">Nomor {{ $p->regulasi->nomor_peraturan }} Tahun
-                                                        {{ $p->regulasi->tahun }}</div>
-                                                    <div class="product-meta">{{ $p->regulasi->judul }}</div>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                            <div class="product-scroll-panel" aria-label="Produk Hukum Sering Dicari">
+                                <ul class="product-list">
+                                    @foreach ($popular_item as $p)
+                                        <li class="product-item">
+                                            <a href="/produk-hukum/{{ $p->kategori->nama_singkat }}/{{ $p->regulasi->id }}/{{ Str::slug($p->regulasi->judul) }}"
+                                                class="text-decoration-none">
+                                                <span class="product-badge">{{ $p->kategori->nama_singkat }}</span>
+                                                <div class="product-meta">
+                                                    {{ $p->regulasi->tanggal_diundangkan ? strftime('%d %B %Y', strtotime($p->regulasi->tanggal_diundangkan)) : '' }}
+                                                </div>
+                                                <div class="product-title">Nomor {{ $p->regulasi->nomor_peraturan }} Tahun
+                                                    {{ $p->regulasi->tahun }}</div>
+                                                <div class="product-meta">{{ $p->regulasi->judul }}</div>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -2844,7 +2869,6 @@ setlocale(LC_TIME, 'id_ID');
     <script src="{{ asset('assets/libs/chartist-plugin-tooltips/chartist-plugin-tooltips.min.js') }}"></script>
     <script src="{{ asset('assets/libs/ladda/ladda.min.js') }}"></script>
     <script src="{{ asset('assets/libs/cookie/js.cookie.js') }}"></script>
-    <script src="{{ asset('assets/libs/splide/splide.min.js') }}"></script>
     <script src="{{ asset('assets/js/pact.js') }}"></script>
 
     <!-- custom js -->
@@ -2871,38 +2895,64 @@ setlocale(LC_TIME, 'id_ID');
         $(document).ready(function() {
             // Custom Hero Slider with Dynamic Motion
             initCustomHeroSlider();
-            
-            // Initialize Splide carousels as replacement for Slick
-            new Splide('.slider-sering', {
-                type: 'loop',
-                direction: 'ttb',
-                perPage: 5,
-                height: '400px',
-                autoplay: true,
-                interval: 3000,
-                pauseOnHover: true,
-                arrows: false,
-                pagination: false,
-                wheel: false,
-                drag: true,
-                speed: 300
-            }).mount();
 
-            new Splide('.slider-terbaru', {
-                type: 'loop',
-                direction: 'ttb',
-                perPage: 5,
-                height: '400px',
-                autoplay: true,
-                interval: 3000,
-                pauseOnHover: true,
-                arrows: false,
-                pagination: false,
-                wheel: false,
-                drag: true,
-                speed: 300
-            }).mount();
+            // Auto-scroll for vertical product lists
+            initProductAutoScroll();
         });
+
+        function initProductAutoScroll() {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) {
+                return;
+            }
+
+            const panels = document.querySelectorAll('.product-scroll-panel');
+
+            panels.forEach(function(panel) {
+                let frameId = null;
+                let isPaused = false;
+                const speed = 0.45;
+
+                function step() {
+                    if (!isPaused) {
+                        const maxScroll = panel.scrollHeight - panel.clientHeight;
+                        if (maxScroll > 0) {
+                            const nextScroll = panel.scrollTop + speed;
+                            panel.scrollTop = nextScroll >= maxScroll ? 0 : nextScroll;
+                        }
+                    }
+                    frameId = requestAnimationFrame(step);
+                }
+
+                panel.addEventListener('mouseenter', function() {
+                    isPaused = true;
+                });
+
+                panel.addEventListener('mouseleave', function() {
+                    isPaused = false;
+                });
+
+                panel.addEventListener('touchstart', function() {
+                    isPaused = true;
+                }, {
+                    passive: true
+                });
+
+                panel.addEventListener('touchend', function() {
+                    isPaused = false;
+                }, {
+                    passive: true
+                });
+
+                frameId = requestAnimationFrame(step);
+
+                window.addEventListener('beforeunload', function() {
+                    if (frameId) {
+                        cancelAnimationFrame(frameId);
+                    }
+                });
+            });
+        }
 
         // ==========================================
         // PAGE LOADER
