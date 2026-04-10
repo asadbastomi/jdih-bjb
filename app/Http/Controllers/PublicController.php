@@ -336,6 +336,36 @@ class PublicController extends Controller
         }
     }
 
+    public function inlinePdf(Request $request)
+    {
+        $file = $request->query('file');
+        if (!$file) {
+            abort(404);
+        }
+
+        $path = parse_url($file, PHP_URL_PATH) ?: $file;
+        $path = rawurldecode($path);
+        $path = '/' . ltrim($path, '/');
+
+        if (!Str::endsWith(strtolower($path), '.pdf')) {
+            abort(404);
+        }
+
+        if (!Str::startsWith($path, ['/upload/', '/storage/'])) {
+            abort(403);
+        }
+
+        $absolutePath = public_path(ltrim($path, '/'));
+        if (!is_file($absolutePath)) {
+            abort(404);
+        }
+
+        return response()->file($absolutePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($absolutePath) . '"',
+        ]);
+    }
+
     public function addHit(Request $request)
     {
         $id      = $request->id;
@@ -568,9 +598,11 @@ class PublicController extends Controller
 
         $regUbahCabutArr = [];
         foreach ($cekperrow as $key => $row) {
+            $nomorValue = $row->nomor_peraturan ?? $row->nomor ?? $row->nomor_tahun ?? '-';
+            $tahunValue = $row->tahun ?? '-';
             $regUbahCabutArr[$row->id_reg_1][] = [
                 'id'          => $row->id,
-                'nomor'       => 'Nomor ' . $row->nomor . ' Tahun ' . $row->tahun,
+                'nomor'       => 'Nomor ' . $nomorValue . ' Tahun ' . $tahunValue,
                 'id_reg_1'    => $row->id_reg_1,
                 'id_reg_2'    => $row->id_reg_2,
                 'jenis'       => $row->jenis,
@@ -615,9 +647,11 @@ class PublicController extends Controller
 
         $regUbahCabutArr = [];
         foreach ($cekperrow as $row) {
+            $nomorValue = $row->nomor_peraturan ?? $row->nomor ?? $row->nomor_tahun ?? '-';
+            $tahunValue = $row->tahun ?? '-';
             $regUbahCabutArr[$row->id_reg_1][] = [
                 'id'           => $row->id,
-                'nomor'        => 'Nomor ' . ($row->nomor_peraturan ?? $row->nomor ?? '-') . ' Tahun ' . ($row->tahun ?? '-'),
+                'nomor'        => 'Nomor ' . $nomorValue . ' Tahun ' . $tahunValue,
                 'id_reg_1'     => $row->id_reg_1,
                 'id_reg_2'     => $row->id_reg_2,
                 'jenis'        => $row->jenis,

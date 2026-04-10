@@ -62,6 +62,7 @@ Route::view('/404', 'pages.404-two')->name('404');
 Route::post('/bye', 'Auth\LogoutController@bye')->name('logout.bye');
 Route::get('lang/{language}', 'LocalizationController@switch')->name('localization.switch');
 Route::get('/sync/jdihsync.php', 'PublicController@sync')->name('sync');
+Route::get('/pdf-view', 'PublicController@inlinePdf')->name('public.pdf.view');
 
 Route::get('/putusanpengadilan-negeri', 'PublicController@putusanNegeri')->name('putusan-negeri');
 Route::get('/putusanpengadilan-negeri/{id}/{slug}', 'PublicController@detailPutusan')->name('putusan-negeri.detail');

@@ -129,9 +129,11 @@ class PerdaController extends BaseController
                 ->get();
 
             foreach ($cekperrow as $row) {
+                $nomorValue = $row->nomor_peraturan ?? $row->nomor ?? $row->nomor_tahun ?? '-';
+                $tahunValue = $row->tahun ?? '-';
                 $regUbahCabutArr[$row->id_reg_1][] = [
                     'id' => $row->id,
-                    'nomor' => 'Nomor ' . ($row->nomor_peraturan ?? '-') . ' Tahun ' . ($row->tahun ?? '-'),
+                    'nomor' => 'Nomor ' . $nomorValue . ' Tahun ' . $tahunValue,
                     'jenis' => $row->jenis,
                     'nama_singkat' => $row->nama_singkat,
                     'judul' => $row->judul,

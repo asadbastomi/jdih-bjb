@@ -181,9 +181,9 @@ setlocale(LC_TIME, 'id_ID');
                                                             <i class="mdi mdi-eye"></i>
                                                         </a>
                                                         @if($reg->file)
-                                                        <a href="{{ asset('upload/' . ($reg->kategori->nama_singkat ?? '') . '/' . $tahun . '/' . $reg->file) }}" 
+                                                                          <a href="{{ asset('upload/' . ($reg->kategori->nama_singkat ?? '') . '/' . $tahun . '/' . $reg->file) }}" 
                                                            class="btn btn-sm btn-success" 
-                                                           download
+                                                                              download
                                                            title="Unduh Dokumen">
                                                             <i class="mdi mdi-download"></i>
                                                         </a>

@@ -25,7 +25,6 @@ class PerwalController extends BaseController
         if ($search != "") {
             $dataset->where(function ($query) use ($search) {
                 $query->orWhere('nomor_peraturan', 'like', '%' . $search . '%')
-                    ->orWhere('nomor_tahun', 'like', '%' . $search . '%')
                     ->orWhere('tahun', 'like', '%' . $search . '%')
                     ->orWhere('judul', 'like', '%' . $search . '%')
                     ->orWhere('penandatangan', 'like', '%' . $search . '%')
@@ -127,7 +126,7 @@ class PerwalController extends BaseController
                 ->get();
 
             foreach ($cekperrow as $row) {
-                $nomorValue = $row->nomor_peraturan ?? $row->nomor ?? '-';
+                $nomorValue = $row->nomor_peraturan ?? $row->nomor ?? $row->nomor_tahun ?? '-';
                 $tahunValue = $row->tahun ?? '-';
                 $idText = $nomorValue . ' Tahun ' . $tahunValue;
                 $regUbahCabutArr[$row->id_reg_1][] = [
@@ -201,7 +200,6 @@ class PerwalController extends BaseController
         $validator = Validator::make($request->all(), [
             'nomor' => ['required_without:nomor_peraturan'],
             'nomor_peraturan' => ['required_without:nomor'],
-            'nomor_tahun' => ['nullable', 'string'],
             'tahun' => ['required'],
             'tanggal_penetapan' => ['required'],
             'judul' => ['required'],
@@ -218,9 +216,7 @@ class PerwalController extends BaseController
         $table = new Regulasi;
         $table->kategori_id = $this->kategoriId;
 
-        $table->nomor = $request->nomor ?? $nomorPeraturan;
         $table->nomor_peraturan = $nomorPeraturan;
-        $table->nomor_tahun = $request->nomor_tahun;
         $table->tahun = $request->tahun;
         $table->tanggal_penetapan = $request->tanggal_penetapan;
         $table->judul = $request->judul;
@@ -388,7 +384,6 @@ class PerwalController extends BaseController
         $validator = Validator::make($request->all(), [
             'nomor' => ['required_without:nomor_peraturan'],
             'nomor_peraturan' => ['required_without:nomor'],
-            'nomor_tahun' => ['nullable', 'string'],
             'tahun' => ['required'],
             'tanggal_penetapan' => ['required'],
             'judul' => ['required'],
@@ -404,9 +399,7 @@ class PerwalController extends BaseController
         }
         $table = Regulasi::where('id', $request->id)->first();
 
-        $table->nomor = $request->nomor ?? $nomorPeraturan;
         $table->nomor_peraturan = $nomorPeraturan;
-        $table->nomor_tahun = $request->nomor_tahun;
         $table->tahun = $request->tahun;
         $table->tanggal_penetapan = $request->tanggal_penetapan;
         $table->judul = $request->judul;

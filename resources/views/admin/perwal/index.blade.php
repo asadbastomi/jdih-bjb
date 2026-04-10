@@ -183,6 +183,18 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Tema Dokumen <small>(pilih satu atau lebih)</small></label>
+                                    <select class="form-control select2-multiple send" name="tema_dokumen[]" id="tema_dokumen"
+                                        data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema...">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group dropifyheightforce119">
@@ -294,6 +306,62 @@
     $(function($){
         loadTable('{{ route($fetch) }}', textserach);
 
+        // Memuat tema dokumen saat halaman dimuat
+        loadTemaDokumen();
+
+        function getTemaItems(response) {
+            if (!response || !response.data) {
+                return [];
+            }
+
+            if (Array.isArray(response.data)) {
+                return response.data;
+            }
+
+            if (Array.isArray(response.data.data)) {
+                return response.data.data;
+            }
+
+            return [];
+        }
+
+        // Fungsi untuk memuat tema dokumen
+        function loadTemaDokumen() {
+            $.ajax({
+                url: '/api/tema-dokumen',
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var options = '';
+                    var temaItems = getTemaItems(response);
+                    $.each(temaItems, function(index, tema) {
+                        if (tema.status) {
+                            options += '<option value="' + tema.id + '" data-icon="' + tema.icon + '" data-color="' + tema.warna + '">' + tema.nama + '</option>';
+                        }
+                    });
+                    $('#tema_dokumen').html(options);
+
+                    $('#tema_dokumen').select2({
+                        templateResult: formatTema,
+                        templateSelection: formatTema,
+                        width: '100%'
+                    });
+                },
+                error: function(error) {
+                    console.error('Error loading tema:', error);
+                }
+            });
+        }
+
+        // Fungsi untuk memformat tampilan tema
+        function formatTema(tema) {
+            if (!tema.id) {
+                return tema.text;
+            }
+
+            return $('<span><i class="mdi mdi-checkbox-blank-circle mr-1" style="color:' + $(tema.element).data('color') + '"></i> ' + tema.text + '</span>');
+        }
+
         $(document).on('submit','form.async',function(){
             event.preventDefault();
             if ($(this).attr('id')=='{{$form}}') {
@@ -310,7 +378,41 @@
                             'after' : 300
                         }
                     }
-                    sentData('{{ route($store) }}', option);
+
+                    var selectedTemas = $('#tema_dokumen').val();
+                    if (selectedTemas && selectedTemas.length > 0) {
+                        var formdata = makeForm('{{$form}}', 'post');
+                        $.each(selectedTemas, function(index, temaId) {
+                            formdata.append('tema_dokumen[]', temaId);
+                        });
+
+                        $.ajax({
+                            type: 'post',
+                            url: '{{ route($store) }}',
+                            data: formdata,
+                            dataType: 'json',
+                            async: true,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                notifyMe('Success', response.message, 'success', 10000);
+                                btnLoadingStop('btn{{$module}}');
+                                clearSearch();
+                                $('#modalform').modal('hide');
+                                loadTable('{{ route($fetch) }}', null, 'first', {'stat':'addfirst', 'table':'table-main'});
+                            },
+                            error: function(response) {
+                                if (response.responseJSON && response.responseJSON.message == 'Validation Error') {
+                                    $.each(response.responseJSON.data, function(key, data) {
+                                        notifyMe(key, data, 'error');
+                                    });
+                                }
+                                btnLoadingStop('btn{{$module}}');
+                            }
+                        });
+                    } else {
+                        sentData('{{ route($store) }}', option);
+                    }
                 } else {
                     option = {
                         'module' : '{{$module}}',
@@ -324,7 +426,51 @@
                             'after' : 300
                         }
                     }
-                    sentData('{{ url('api') }}/{{$module}}/'+isnew.id, option);
+
+                    var selectedTemas = $('#tema_dokumen').val();
+                    var regulasiId = $('#{{$form}} input.id').val();
+
+                    if (!regulasiId) {
+                        notifyMe('Error', 'ID regulasi tidak ditemukan', 'error');
+                        btnLoadingStop('btn{{$module}}');
+                        return;
+                    }
+
+                    var formData = makeForm('{{$form}}', 'put');
+                    formData.append('_method', 'PUT');
+
+                    if (selectedTemas && selectedTemas.length > 0) {
+                        $.each(selectedTemas, function(index, temaId) {
+                            formData.append('tema_dokumen[]', temaId);
+                        });
+                    }
+
+                    $.ajax({
+                        type: 'post',
+                        url: '{{ url('api') }}/{{$module}}/' + regulasiId,
+                        data: formData,
+                        dataType: 'json',
+                        async: true,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            notifyMe('Success', response.message, 'success', 10000);
+                            btnLoadingStop('btn{{$module}}');
+                            clearSearch();
+                            $('#modalform').modal('hide');
+                            loadTable('{{ route($fetch) }}', null, 'first', {'stat':'update', 'id':response.data.id, 'table':'table-main'});
+                        },
+                        error: function(response) {
+                            if (response.responseJSON && response.responseJSON.message == 'Validation Error') {
+                                $.each(response.responseJSON.data, function(key, data) {
+                                    notifyMe(key, data, 'error');
+                                });
+                            } else {
+                                notifyMe('Error', 'Gagal menyimpan data', 'error');
+                            }
+                            btnLoadingStop('btn{{$module}}');
+                        }
+                    });
                 }
             }
             if ($(this).attr('id')=='formubahcabut') {
@@ -353,6 +499,35 @@
         $(document).on('click', '#btnadddata', function(event) {
             event.preventDefault();
             $('#modalform .modal-title').text('Add New');
+
+            $.ajax({
+                url: '/api/tema-dokumen',
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var temaItems = getTemaItems(response);
+                    $('#tema_dokumen').empty();
+
+                    $.each(temaItems, function(index, tema) {
+                        if (tema.status) {
+                            var option = new Option(tema.nama, tema.id, false, false);
+                            option.dataset.icon = tema.icon;
+                            option.dataset.color = tema.warna;
+                            $('#tema_dokumen').append(option);
+                        }
+                    });
+
+                    $('#tema_dokumen').select2({
+                        templateResult: formatTema,
+                        templateSelection: formatTema,
+                        width: '100%'
+                    });
+                },
+                error: function(error) {
+                    console.error('Error loading tema:', error);
+                }
+            });
+
             fieldClear('{{$form}}');
             $("#modalform").modal({
                 backdrop: 'static',
@@ -364,15 +539,65 @@
             event.preventDefault();
             rowid = $(this).parent().attr('data-id');
             $('#modalform .modal-title').text('Edit {{$title}}');
-            option = {
-                'success' : {
-                    'request' : 'appliedtoform',
-                    'modal' : 'modalform',
-                    'form' : '{{$form}}',
-                    'field' : {!! $field !!},
+
+            $.ajax({
+                url: '{{ url('api') }}/{{$module}}/' + rowid + '/edit',
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    option = {
+                        'success': {
+                            'request': 'appliedtoform',
+                            'modal': 'modalform',
+                            'form': '{{$form}}',
+                            'field': {!! $field !!},
+                        }
+                    }
+                    getData('{{ url('api') }}/{{$module}}/' + rowid + '/edit', option);
+
+                    var selectedTemasFromResponse = [];
+                    if (response.data.tema_dokumen && response.data.tema_dokumen.length > 0) {
+                        $.each(response.data.tema_dokumen, function(index, tema) {
+                            selectedTemasFromResponse.push(tema.id.toString());
+                        });
+                    }
+
+                    $.ajax({
+                        url: '/api/tema-dokumen',
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function(temaResponse) {
+                            var temaItems = getTemaItems(temaResponse);
+                            $('#tema_dokumen').empty();
+
+                            $.each(temaItems, function(index, tema) {
+                                if (tema.status) {
+                                    var option = new Option(tema.nama, tema.id, false, false);
+                                    option.dataset.icon = tema.icon;
+                                    option.dataset.color = tema.warna;
+                                    $('#tema_dokumen').append(option);
+                                }
+                            });
+
+                            $('#tema_dokumen').select2({
+                                templateResult: formatTema,
+                                templateSelection: formatTema,
+                                width: '100%'
+                            });
+
+                            if (selectedTemasFromResponse.length > 0) {
+                                $('#tema_dokumen').val(selectedTemasFromResponse).trigger('change');
+                            }
+                        },
+                        error: function(error) {
+                            console.error('Error loading tema:', error);
+                        }
+                    });
+                },
+                error: function(error) {
+                    console.error('Error loading regulasi:', error);
                 }
-            }
-            getData('{{ url('api') }}/{{$module}}/'+rowid+'/edit', option);
+            });
         });
 
         $(document).on('click', '.btneditubahcabut', function(event) {
@@ -441,6 +666,15 @@
             fieldIndcator('clear', formname);
             $('.select2-search__field').css('width', '406px');
         })
+
+        $('#modalform').on('hidden.bs.modal', function(e) {
+            var formname = $(this).find('form').attr('id');
+            $(this).find('input.additional').remove();
+            fieldClear(formname);
+            fieldIndcator('clear', formname);
+            $('#tema_dokumen').val(null).trigger('change');
+            $('#tema_dokumen').empty();
+        });
 
         $('.select2-ajax').select2({
             ajax: {

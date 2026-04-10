@@ -256,4 +256,122 @@
     </a>
 @endunless
 
+<script>
+    (function() {
+        var viewerBase = "{{ route('public.pdf.view') }}";
+        var modalId = 'publicPdfViewerModal';
+        var iframeId = 'publicPdfViewerFrame';
+        var newTabId = 'publicPdfViewerNewTab';
+
+        function ensureModal() {
+            if (document.getElementById(modalId)) {
+                return;
+            }
+
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = '' +
+                '<div class="modal fade" id="' + modalId + '" tabindex="-1" role="dialog" aria-hidden="true">' +
+                '  <div class="modal-dialog modal-xl" role="document" style="max-width: 96vw;">' +
+                '    <div class="modal-content">' +
+                '      <div class="modal-header">' +
+                '        <h5 class="modal-title">Pratinjau PDF</h5>' +
+                '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+                '          <span aria-hidden="true">&times;</span>' +
+                '        </button>' +
+                '      </div>' +
+                '      <div class="modal-body p-0" style="height: 82vh;">' +
+                '        <iframe id="' + iframeId + '" src="about:blank" title="PDF Viewer" style="width:100%;height:100%;border:0;"></iframe>' +
+                '      </div>' +
+                '      <div class="modal-footer">' +
+                '        <a id="' + newTabId + '" href="#" target="_blank" rel="noopener" class="btn btn-primary">Buka di Tab Baru</a>' +
+                '        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>' +
+                '      </div>' +
+                '    </div>' +
+                '  </div>' +
+                '</div>';
+
+            document.body.appendChild(wrapper.firstChild);
+
+            if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                window.jQuery('#' + modalId).on('hidden.bs.modal', function() {
+                    var frame = document.getElementById(iframeId);
+                    if (frame) {
+                        frame.src = 'about:blank';
+                    }
+                });
+            }
+        }
+
+        function isPdf(urlPart) {
+            return /\.pdf($|[?#])/i.test(urlPart || '');
+        }
+
+        function toViewerUrl(href) {
+            try {
+                var parsed = new URL(href, window.location.origin);
+                if (parsed.origin !== window.location.origin) {
+                    return null;
+                }
+
+                if (!/^\/(upload|storage)\//.test(parsed.pathname)) {
+                    return null;
+                }
+
+                if (!isPdf(parsed.pathname + parsed.search + parsed.hash)) {
+                    return null;
+                }
+
+                return viewerBase + '?file=' + encodeURIComponent(parsed.pathname);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function openInModal(viewerUrl) {
+            ensureModal();
+
+            var frame = document.getElementById(iframeId);
+            var newTabButton = document.getElementById(newTabId);
+            if (!frame || !newTabButton) {
+                window.open(viewerUrl, '_blank');
+                return;
+            }
+
+            var iframeUrl = viewerUrl + '#view=FitH';
+            frame.src = iframeUrl;
+            newTabButton.href = viewerUrl;
+
+            if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                window.jQuery('#' + modalId).modal('show');
+            } else {
+                window.open(viewerUrl, '_blank');
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            var anchor = event.target.closest('a[href]');
+            if (!anchor) {
+                return;
+            }
+
+            if (anchor.getAttribute('data-pdf-view') !== '1') {
+                return;
+            }
+
+            if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button === 1) {
+                return;
+            }
+
+            var viewerUrl = toViewerUrl(anchor.getAttribute('href'));
+            if (!viewerUrl) {
+                return;
+            }
+
+            event.preventDefault();
+            anchor.removeAttribute('download');
+            openInModal(viewerUrl);
+        }, true);
+    })();
+</script>
+
 <!-- footer end -->

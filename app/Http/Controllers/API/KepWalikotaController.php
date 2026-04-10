@@ -121,9 +121,11 @@ class KepWalikotaController extends BaseController
                 $cekperrow = \App\Regulasi::withUbahCabut()->whereIn('id_reg_1', $ids)->get();
                 
                 foreach ($cekperrow as $row) {
+                    $nomorValue = $row->nomor_peraturan ?? $row->nomor ?? $row->nomor_tahun ?? '-';
+                    $tahunValue = $row->tahun ?? '-';
                     $regUbahCabutArr[$row->id_reg_1][] = [
                         'id' => $row->id,
-                        'nomor' => $row->nomor ?? $row->nomor_peraturan ?? '-',
+                        'nomor' => 'Nomor ' . $nomorValue . ' Tahun ' . $tahunValue,
                         'jenis' => $row->jenis,
                         'judul' => $row->judul,
                         'url' => '/produk-hukum/' . ($row->nama_singkat ?? 'detail') . '/' . $row->id_reg_2 . '/' . \Illuminate\Support\Str::slug($row->judul ?? 'detail')

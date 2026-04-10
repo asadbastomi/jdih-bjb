@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class Regulasi extends Model
 {
@@ -54,9 +55,32 @@ class Regulasi extends Model
 
     public function scopeWithUbahCabut($query)
     {
-        // Support both old and new field names
-        $nomorColumn = \Schema::hasColumn('regulasi', 'nomor_peraturan') ? 'nomor_peraturan' : 'nomor';
-        $tahunColumn = \Schema::hasColumn('regulasi', 'tahun_peraturan') ? 'tahun_peraturan' : 'tahun';
+        $nomorCandidates = [];
+        if (\Schema::hasColumn('regulasi', 'nomor_peraturan')) {
+            $nomorCandidates[] = "NULLIF(regulasi.nomor_peraturan, '')";
+        }
+        if (\Schema::hasColumn('regulasi', 'nomor')) {
+            $nomorCandidates[] = "NULLIF(regulasi.nomor, '')";
+        }
+        if (\Schema::hasColumn('regulasi', 'nomor_tahun')) {
+            $nomorCandidates[] = "NULLIF(regulasi.nomor_tahun, '')";
+        }
+
+        $tahunCandidates = [];
+        if (\Schema::hasColumn('regulasi', 'tahun')) {
+            $tahunCandidates[] = 'regulasi.tahun';
+        }
+        if (\Schema::hasColumn('regulasi', 'tahun_peraturan')) {
+            $tahunCandidates[] = 'regulasi.tahun_peraturan';
+        }
+
+        $nomorExpression = count($nomorCandidates)
+            ? 'COALESCE(' . implode(', ', $nomorCandidates) . ")"
+            : "'-'";
+
+        $tahunExpression = count($tahunCandidates)
+            ? 'COALESCE(' . implode(', ', $tahunCandidates) . ")"
+            : "'-'";
         
         $query->join('reg_ubah_cabut as ruc', 'ruc.id_reg_2', '=', 'regulasi.id')
             ->join('kategori as kat', 'regulasi.kategori_id', '=', 'kat.id')
@@ -65,10 +89,10 @@ class Regulasi extends Model
             ->addSelect('ruc.id_reg_1')
             ->addSelect('ruc.id_reg_2')
             ->addSelect('ruc.jenis')
-            ->addSelect("regulasi.$nomorColumn as nomor")
+            ->addSelect(DB::raw("$nomorExpression as nomor"))
             ->addSelect('reg.keterangan')
             ->addSelect('kat.nama_singkat')
-            ->addSelect("regulasi.$tahunColumn as tahun")
+            ->addSelect(DB::raw("$tahunExpression as tahun"))
             ->addSelect('regulasi.judul');
     }
 

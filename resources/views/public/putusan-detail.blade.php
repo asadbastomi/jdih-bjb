@@ -105,14 +105,22 @@
                         <div class="legal-card-body">
                             <div class="doc-actions">
                                 @if ($data->file)
-                                    <a href="{{ url($data->file) }}" class="btn btn-primary waves-effect waves-light" target="_blank" onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id }})">
+                                    <a href="{{ url($data->file) }}" class="btn btn-outline-primary waves-effect waves-light" data-pdf-view="1">
+                                        <i class="mdi mdi-eye-outline mr-1"></i>
+                                        Lihat PDF
+                                    </a>
+                                    <a href="{{ url($data->file) }}" class="btn btn-primary waves-effect waves-light" target="_blank" download onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id }})">
                                         <i class="mdi mdi-download mr-1"></i>
                                         Unduh PDF
                                     </a>
                                 @endif
 
                                 @if ($data->lampiran)
-                                    <a href="{{ url($data->lampiran) }}" class="btn btn-warning waves-effect waves-light" target="_blank" onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id }})">
+                                    <a href="{{ url($data->lampiran) }}" class="btn btn-outline-warning waves-effect waves-light" data-pdf-view="1">
+                                        <i class="mdi mdi-eye-outline mr-1"></i>
+                                        Lihat Lampiran
+                                    </a>
+                                    <a href="{{ url($data->lampiran) }}" class="btn btn-warning waves-effect waves-light" target="_blank" download onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id }})">
                                         <i class="mdi mdi-paperclip mr-1"></i>
                                         Unduh Lampiran
                                     </a>

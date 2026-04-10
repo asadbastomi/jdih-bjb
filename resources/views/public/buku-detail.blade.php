@@ -112,7 +112,11 @@
                         <div class="legal-card-body">
                             <div class="doc-actions">
                                 @if ($data->file_url)
-                                    <a href="{{ $data->file_url }}" class="btn btn-primary waves-effect waves-light" target="_blank" onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id ?? 9 }})">
+                                    <a href="{{ $data->file_url }}" class="btn btn-outline-primary waves-effect waves-light" data-pdf-view="1">
+                                        <i class="mdi mdi-eye-outline mr-1"></i>
+                                        Lihat PDF
+                                    </a>
+                                    <a href="{{ $data->file_url }}" class="btn btn-primary waves-effect waves-light" target="_blank" download onclick="incrementDownload({{ $data->id }}, {{ $data->kategori_id ?? 9 }})">
                                         <i class="mdi mdi-download mr-1"></i>
                                         Unduh PDF
                                     </a>

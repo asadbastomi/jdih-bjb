@@ -22,7 +22,7 @@ setlocale(LC_TIME, 'id_ID');
                         <td><span class="badge label-table bg-success text-white">Berlaku</span></td>
                         <td>
                             <a href="{{ $row->url }}">
-                                <strong>Nomor {{ $row->nomor }} Tahun {{ $row->tahun }}</strong><br />
+                                <strong>Nomor {{ $row->nomor_peraturan ?? $row->nomor ?? '-' }} Tahun {{ $row->tahun ?? '-' }}</strong><br />
                                 {{ $row->judul }}
                             </a>
                         </td>

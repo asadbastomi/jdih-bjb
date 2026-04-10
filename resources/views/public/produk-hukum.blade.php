@@ -207,23 +207,36 @@
                         <div class="legal-card-body">
                             <div class="doc-actions">
                                 @if ($fileUrl)
+                                    <a class="btn btn-outline-info btn-sm waves-effect waves-light"
+                                        href="{{ $fileUrl }}" data-pdf-view="1">
+                                        <i class="mdi mdi-eye-outline mr-1"></i>
+                                        Lihat Berkas
+                                    </a>
                                     <a class="btn btn-info btn-sm waves-effect waves-light"
                                         onclick="downloading({{ $data->id }},{{ $data->kategori_id }})"
-                                        href="{{ $fileUrl }}" target="_blank">
+                                        href="{{ $fileUrl }}" target="_blank" download>
                                         <i class="mdi mdi-cloud-download-outline mr-1"></i>
                                         Download Berkas
                                     </a>
                                 @endif
 
                                 @if ($abstrakUrl)
-                                    <a class="btn btn-success btn-sm waves-effect waves-light" href="{{ $abstrakUrl }}" target="_blank">
+                                    <a class="btn btn-outline-success btn-sm waves-effect waves-light" href="{{ $abstrakUrl }}" data-pdf-view="1">
+                                        <i class="mdi mdi-eye-outline mr-1"></i>
+                                        Lihat Abstrak
+                                    </a>
+                                    <a class="btn btn-success btn-sm waves-effect waves-light" href="{{ $abstrakUrl }}" target="_blank" download>
                                         <i class="mdi mdi-file-document-outline mr-1"></i>
                                         Download Abstrak
                                     </a>
                                 @endif
 
                                 @if ($lampiranUrl)
-                                    <a class="btn btn-warning btn-sm waves-effect waves-light" href="{{ $lampiranUrl }}" target="_blank">
+                                    <a class="btn btn-outline-warning btn-sm waves-effect waves-light" href="{{ $lampiranUrl }}" data-pdf-view="1">
+                                        <i class="mdi mdi-eye-outline mr-1"></i>
+                                        Lihat Lampiran
+                                    </a>
+                                    <a class="btn btn-warning btn-sm waves-effect waves-light" href="{{ $lampiranUrl }}" target="_blank" download>
                                         <i class="mdi mdi-paperclip mr-1"></i>
                                         Download Lampiran
                                     </a>
