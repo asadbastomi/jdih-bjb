@@ -65,7 +65,7 @@
         style="display: none;">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <form id="formhalaman" class="async">
+                <form id="formhalaman" class="async" novalidate>
                     <input type="hidden" name="tipe" id="tipe" class="send">
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
@@ -76,7 +76,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Judul</label>
-                                    <input type="text" class="form-control send" id="judul"
+                                    <input type="text" class="form-control send" id="judul" required
                                         placeholder="Judul halaman">
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label class="control-label">Konten</label>
-                            <div class="wysiwyg send" id="konten" data-type="send"></div>
+                            <div class="wysiwyg send" id="konten" data-type="send" required></div>
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                     <div class="col-md-12">
                         <div class="form-group dropifyheightforce119">
                             <label class="control-label">File</label>
-                            <input type="file" data-plugins="dropify" accept="application/pdf" class="send" id="konten"/>
+                            <input type="file" data-plugins="dropify" accept="application/pdf" class="send" id="konten" required/>
                         </div>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                     <div class="col-md-12">
                         <div class="form-group dropifyheightforce119">
                             <label class="control-label">Foto</label>
-                            <input type="file" data-plugins="dropify" accept="image/x-png,image/gif,image/jpeg" class="dropify send" id="konten" multiple/>
+                            <input type="file" data-plugins="dropify" accept="image/x-png,image/gif,image/jpeg" class="dropify send" id="konten" multiple required/>
                         </div>
                     </div>
                 </div>

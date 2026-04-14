@@ -64,7 +64,7 @@
     <div id="modalform" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <form id="{{$form}}" class="async" >
+                <form id="{{$form}}" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -74,13 +74,13 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label class="control-label">Judul</label>
-                                    <input type="text" class="form-control send" id="judul" placeholder="Judul halaman">
+                                    <input type="text" class="form-control send" id="judul" placeholder="Judul halaman" required>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="control-label">Kategori</label>
-                                    <select class="form-control send" id="kategori" data-toggle="select2">
+                                    <select class="form-control send" id="kategori" data-toggle="select2" required>
                                         <option value="sosialisasi" selected>Sosialisasi</option>
                                         <option value="kadarkum">Kadarkum</option>
                                         <option value="workshop">Bimtek/Workshop</option>
@@ -90,7 +90,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="control-label">Tanggal</label>
-                                    <input type="text" class="form-control send" id="tanggal" placeholder="Tanggal">
+                                    <input type="text" class="form-control send" id="tanggal" placeholder="Tanggal" required>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +98,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Gambar Utama</label>
-                                    <input type="file" data-plugins="dropify" accept="image/x-png,image/gif,image/jpeg" class="dropify send" id="gambar"/>
+                                    <input type="file" data-plugins="dropify" accept="image/x-png,image/gif,image/jpeg" class="dropify send" id="gambar" required/>
                                 </div>
                             </div>
                         </div>
@@ -106,7 +106,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Konten</label>
-                                    <div class="wysiwyg send" id="konten" data-type="send"></div>
+                                    <div class="wysiwyg send" id="konten" data-type="send" required></div>
                                 </div>
                             </div>
                         </div>

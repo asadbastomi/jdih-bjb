@@ -65,7 +65,7 @@
     <div id="modalform" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <form id="{{$form}}" class="async" >
+                <form id="{{$form}}" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -74,8 +74,8 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group">
-                                    <label class="control-label">Nomor Keputusan DPRD</label>
-                                    <input type="text" class="form-control send" id="nomor" placeholder="188.4.43/39/XII/DPRD/2016">
+                                    <label class="control-label">Nomor Keputusan DPRD <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control send" id="nomor" placeholder="188.4.43/39/XII/DPRD/2016" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -88,8 +88,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">RAPERDA</label>
-                                    <input type="text" class="form-control send" id="raperda" placeholder="Rancangan Peraturan Daerah">
+                                    <label class="control-label">RAPERDA <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control send" id="raperda" placeholder="Rancangan Peraturan Daerah" required>
                                 </div>
                             </div>
                         </div>
@@ -98,8 +98,8 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label class="control-label">Tahun</label>
-                                            <select class="form-control send"  id="tahun">
+                                            <label class="control-label">Tahun <span class="text-danger">*</span></label>
+                                            <select class="form-control send"  id="tahun" required>
                                                 <option></option>
                                                 @for ($i=$yearstart; $i <= (date("Y")+1); $i++)
                                                     <option value="{{$i}}">{{$i}}</option>
@@ -111,8 +111,8 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label class="control-label">Usulan</label>
-                                            <input type="text" class="form-control send" id="usulan" placeholder="Usulan">
+                                            <label class="control-label">Usulan <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control send" id="usulan" placeholder="Usulan" required>
                                         </div>
                                     </div>
                                 </div>
@@ -155,10 +155,43 @@
     $(function($){
         loadTable('{{ route($fetch) }}', textserach);
 
+        function getFieldLabel(fieldId) {
+            var labels = {
+                nomor: 'Nomor Keputusan DPRD',
+                raperda: 'RAPERDA',
+                tahun: 'Tahun',
+                usulan: 'Usulan'
+            };
+
+            return labels[fieldId] || fieldId;
+        }
+
+        function validateMainForm() {
+            var requiredFields = ['nomor', 'raperda', 'tahun', 'usulan'];
+
+            for (var i = 0; i < requiredFields.length; i++) {
+                var fieldId = requiredFields[i];
+                var fieldValue = $('#' + fieldId).val();
+
+                if (!fieldValue || !String(fieldValue).trim()) {
+                    notifyMe('Validasi', getFieldLabel(fieldId) + ' wajib diisi.', 'warning');
+                    $('#' + fieldId).focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         $(document).on('submit','form.async',function(){
             event.preventDefault();
             // Form Halaman
             if ($(this).attr('id')=='{{$form}}') {
+                if (!validateMainForm()) {
+                    btnLoadingStop('btn{{$module}}');
+                    return;
+                }
+
                 isnew = isNew('{{$form}}');
                 if (isnew.status) {
                     option = {

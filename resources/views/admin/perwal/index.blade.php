@@ -64,7 +64,7 @@
     <div id="modalform" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <form id="{{$form}}" class="async">
+                <form id="{{$form}}" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -73,13 +73,13 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Tipe Dokumen</label>
+                                    <label class="control-label">Tipe Dokumen <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tipe_dokumen" placeholder="Contoh: Peraturan Wali Kota" required>
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="form-group">
-                                    <label class="control-label">Judul</label>
+                                    <label class="control-label">Judul <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="judul" placeholder="Judul Peraturan" required>
                                 </div>
                             </div>
@@ -93,13 +93,13 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Nomor Peraturan</label>
+                                    <label class="control-label">Nomor Peraturan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="nomor_peraturan" placeholder="contoh: 5" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Jenis/Bentuk Peraturan</label>
+                                    <label class="control-label">Jenis/Bentuk Peraturan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="jenis_peraturan" placeholder="Contoh: Peraturan Wali Kota" required>
                                 </div>
                             </div>
@@ -119,7 +119,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Tahun Penetapan/Pengundangan</label>
+                                    <label class="control-label">Tahun Penetapan/Pengundangan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tahun" placeholder="contoh: 2023" autocomplete="off" required>
                                 </div>
                             </div>
@@ -127,19 +127,19 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Tanggal Penetapan</label>
+                                    <label class="control-label">Tanggal Penetapan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tanggal_penetapan" placeholder="Tanggal" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Tanggal Diundangkan</label>
+                                    <label class="control-label">Tanggal Diundangkan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tanggal_diundangkan" placeholder="Tanggal" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Status Peraturan</label>
+                                    <label class="control-label">Status Peraturan <span class="text-danger">*</span></label>
                                     <select class="form-control send" id="status_peraturan" required>
                                         <option value="berlaku">Berlaku</option>
                                         <option value="tidak_berlaku">Tidak Berlaku</option>
@@ -164,7 +164,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Bidang Hukum</label>
+                                    <label class="control-label">Bidang Hukum <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="bidang_hukum" placeholder="Contoh: Hukum Tata Negara" required>
                                 </div>
                             </div>
@@ -172,13 +172,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Sumber</label>
+                                    <label class="control-label">Sumber <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="sumber" placeholder="Contoh: Berita Daerah Kota Banjarbaru" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Subjek</label>
+                                    <label class="control-label">Subjek <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="subjek" placeholder="Contoh: Perizinan" required>
                                 </div>
                             </div>
@@ -187,9 +187,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Tema Dokumen <small>(pilih satu atau lebih)</small></label>
+                                    <label class="control-label">Tema Dokumen <span class="text-danger">*</span> <small>(pilih satu atau lebih)</small></label>
                                     <select class="form-control select2-multiple send" name="tema_dokumen[]" id="tema_dokumen"
-                                        data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema...">
+                                        data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema..." required>
                                     </select>
                                 </div>
                             </div>
@@ -204,7 +204,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group dropifyheightforce119">
-                                    <label class="control-label">File</label>
+                                    <label class="control-label">File <span class="text-danger">*</span> <small>(wajib saat tambah)</small></label>
                                     <input type="file" data-plugins="dropify" accept="application/pdf" class="send" id="file"/>
                                 </div>
                             </div>
@@ -362,10 +362,115 @@
             return $('<span><i class="mdi mdi-checkbox-blank-circle mr-1" style="color:' + $(tema.element).data('color') + '"></i> ' + tema.text + '</span>');
         }
 
+        function getFieldLabel(fieldId) {
+            var labels = {
+                tipe_dokumen: 'Tipe Dokumen',
+                judul: 'Judul',
+                nomor_peraturan: 'Nomor Peraturan',
+                jenis_peraturan: 'Jenis/Bentuk Peraturan',
+                tahun: 'Tahun Penetapan/Pengundangan',
+                tanggal_penetapan: 'Tanggal Penetapan',
+                tanggal_diundangkan: 'Tanggal Diundangkan',
+                status_peraturan: 'Status Peraturan',
+                bidang_hukum: 'Bidang Hukum',
+                sumber: 'Sumber',
+                subjek: 'Subjek',
+                tema_dokumen: 'Tema Dokumen',
+                file: 'File'
+            };
+
+            return labels[fieldId] || fieldId;
+        }
+
+        function showValidationError(fieldId, message) {
+            notifyMe('Validasi', message, 'warning');
+
+            if (fieldId === 'tema_dokumen') {
+                $('#tema_dokumen').select2('open');
+                return;
+            }
+
+            if (fieldId === 'file') {
+                $('#file').focus();
+                return;
+            }
+
+            $('#' + fieldId).focus();
+        }
+
+        function showBackendValidationErrors(response) {
+            if (!(response.responseJSON && response.responseJSON.message == 'Validation Error')) {
+                notifyMe('Error', 'Gagal menyimpan data.', 'error');
+                return;
+            }
+
+            $.each(response.responseJSON.data, function(key, data) {
+                var fieldId = key.replace(/\..*$/, '');
+                var label = getFieldLabel(fieldId);
+                var message = Array.isArray(data) ? data[0] : data;
+
+                if (!message || message === 'validation.required' || message === 'The ' + fieldId + ' field is required.') {
+                    message = label + ' wajib diisi.';
+                }
+
+                notifyMe('Validasi', message, 'error');
+            });
+        }
+
+        function validateMainForm(isnew) {
+            var requiredFields = [
+                'tipe_dokumen',
+                'judul',
+                'nomor_peraturan',
+                'jenis_peraturan',
+                'tahun',
+                'tanggal_penetapan',
+                'tanggal_diundangkan',
+                'status_peraturan',
+                'bidang_hukum',
+                'sumber',
+                'subjek'
+            ];
+
+            for (var i = 0; i < requiredFields.length; i++) {
+                var fieldId = requiredFields[i];
+                var fieldValue = $('#' + fieldId).val();
+
+                if (!fieldValue || !String(fieldValue).trim()) {
+                    showValidationError(fieldId, getFieldLabel(fieldId) + ' wajib diisi.');
+                    return false;
+                }
+            }
+
+            var selectedTemas = $('#tema_dokumen').val();
+            if (!selectedTemas || selectedTemas.length === 0) {
+                showValidationError('tema_dokumen', 'Tema Dokumen wajib dipilih minimal 1.');
+                return false;
+            }
+
+            if (isnew.status) {
+                var fileInput = document.getElementById('file');
+                var hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+
+                if (!hasFile) {
+                    showValidationError('file', 'File wajib diupload sebelum menyimpan data.');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         $(document).on('submit','form.async',function(){
             event.preventDefault();
             if ($(this).attr('id')=='{{$form}}') {
                 isnew = isNew('{{$form}}');
+
+                if (!validateMainForm(isnew)) {
+                    btnLoadingStop('btn{{$module}}');
+                    return;
+                }
+
                 if (isnew.status) {
                     option = {
                         'module' : '{{$module}}',
@@ -402,11 +507,7 @@
                                 loadTable('{{ route($fetch) }}', null, 'first', {'stat':'addfirst', 'table':'table-main'});
                             },
                             error: function(response) {
-                                if (response.responseJSON && response.responseJSON.message == 'Validation Error') {
-                                    $.each(response.responseJSON.data, function(key, data) {
-                                        notifyMe(key, data, 'error');
-                                    });
-                                }
+                                showBackendValidationErrors(response);
                                 btnLoadingStop('btn{{$module}}');
                             }
                         });
@@ -461,13 +562,7 @@
                             loadTable('{{ route($fetch) }}', null, 'first', {'stat':'update', 'id':response.data.id, 'table':'table-main'});
                         },
                         error: function(response) {
-                            if (response.responseJSON && response.responseJSON.message == 'Validation Error') {
-                                $.each(response.responseJSON.data, function(key, data) {
-                                    notifyMe(key, data, 'error');
-                                });
-                            } else {
-                                notifyMe('Error', 'Gagal menyimpan data', 'error');
-                            }
+                            showBackendValidationErrors(response);
                             btnLoadingStop('btn{{$module}}');
                         }
                     });

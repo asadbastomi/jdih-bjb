@@ -69,7 +69,7 @@
         style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="formsop" class="async">
+                <form id="formsop" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -96,7 +96,7 @@
                                 <div class="form-group">
                                     <label class="control-label" required>File SOP</label>
                                     <input type="file" data-plugins="dropify" data-allowed-file-extensions="pdf"
-                                        accept="application/pdf" class="dropify send" id="file_sop" />
+                                        accept="application/pdf" class="dropify send" id="file_sop" required />
                                 </div>
                             </div>
                         </div>

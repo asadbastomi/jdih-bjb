@@ -64,7 +64,7 @@
         style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="formjadwal" class="async">
+                <form id="formjadwal" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -74,7 +74,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Judul</label>
-                                    <input type="text" class="form-control send" id="judul"
+                                    <input type="text" class="form-control send" id="judul" required
                                         placeholder="Judul jadwal">
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Waktu</label>
-                                    <input type="text" class="form-control send mb-1" id="waktu" readonly>
+                                    <input type="text" class="form-control send mb-1" id="waktu" readonly required>
                                     <div class="log-event" id="waktupicker"></div>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Tempat</label>
-                                    <input type="text" class="form-control send" id="tempat"
+                                    <input type="text" class="form-control send" id="tempat" required
                                         placeholder="Tempat Acara">
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Penyelenggara</label>
-                                    <textarea class="form-control send" id="penyelenggara" rows="5"></textarea>
+                                    <textarea class="form-control send" id="penyelenggara" rows="5" required></textarea>
                                 </div>
                             </div>
                         </div>

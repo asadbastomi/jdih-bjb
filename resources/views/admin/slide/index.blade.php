@@ -62,7 +62,7 @@
     <div id="modalform" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content">
-                <form id="{{$form}}" class="async" >
+                <form id="{{$form}}" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -88,7 +88,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Gambar Utama</label>
-                                    <input type="file" data-plugins="dropify" accept="image/x-png,image/gif,image/jpeg" class="dropify send" id="foto"/>
+                                    <input type="file" data-plugins="dropify" accept="image/x-png,image/gif,image/jpeg" class="dropify send" id="foto" required/>
                                 </div>
                             </div>
                         </div>

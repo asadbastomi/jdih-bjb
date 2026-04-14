@@ -67,7 +67,7 @@
         style="display: none;">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <form id="{{ $form }}" class="async">
+                <form id="{{ $form }}" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -76,25 +76,25 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Nomor</label>
+                                    <label class="control-label">Nomor <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="nomor" placeholder="contoh: 5" required>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label class="control-label">Tahun</label>
+                                    <label class="control-label">Tahun <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tahun" placeholder="contoh: 2023" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Tempat Penetapan</label>
+                                    <label class="control-label">Tempat Penetapan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tempat" placeholder="" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Tanggal Penetapan</label>
+                                    <label class="control-label">Tanggal Penetapan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tanggal_penetapan" placeholder="Tanggal" autocomplete="off" required>
                                 </div>
                             </div>
@@ -102,13 +102,13 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group">
-                                    <label class="control-label">Judul</label>
+                                    <label class="control-label">Judul <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="judul" placeholder="Judul Peraturan / tentang peraturan" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label class="control-label">Tanggal diundangkan</label>
+                                    <label class="control-label">Tanggal diundangkan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="tanggal_diundangkan" placeholder="Tanggal" required>
                                 </div>
                             </div>
@@ -116,25 +116,25 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">T.E.U Badan</label>
+                                    <label class="control-label">T.E.U Badan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="teu_badan" placeholder="T.E.U Badan / Pengarang" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Sumber</label>
+                                    <label class="control-label">Sumber <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="sumber" placeholder="Sumber / LD TLD" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Penandatangan</label>
+                                    <label class="control-label">Penandatangan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="penandatangan" placeholder="" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Bahasa</label>
+                                    <label class="control-label">Bahasa <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="bahasa" placeholder="Bahasa" required>
                                 </div>
                             </div>
@@ -142,34 +142,34 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Subjek</label>
+                                    <label class="control-label">Subjek <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="subjek" placeholder="" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Lokasi</label>
+                                    <label class="control-label">Lokasi <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="lokasi" placeholder="" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">Bidang Hukum</label>
+                                    <label class="control-label">Bidang Hukum <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control send" id="bidang_hukum" placeholder="" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="control-label">SKPD <small>(optional)</small></label>
-                                    <input type="text" class="form-control send" id="skpd" placeholder="">
+                                    <label class="control-label">SKPD <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control send" id="skpd" placeholder="" required>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Tema Dokumen <small>(pilih satu atau lebih)</small></label>
-                                    <select class="form-control select2-multiple send" name="tema_dokumen[]" id="tema_dokumen" data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema...">
+                                    <label class="control-label">Tema Dokumen <span class="text-danger">*</span> <small>(pilih satu atau lebih)</small></label>
+                                    <select class="form-control select2-multiple send" name="tema_dokumen[]" id="tema_dokumen" data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema..." required>
                                     </select>
                                 </div>
                             </div>
@@ -277,6 +277,95 @@
             return $tema;
         }
 
+        function getFieldLabel(fieldId) {
+            var labels = {
+                nomor: 'Nomor',
+                tahun: 'Tahun',
+                tempat: 'Tempat Penetapan',
+                tanggal_penetapan: 'Tanggal Penetapan',
+                judul: 'Judul',
+                tanggal_diundangkan: 'Tanggal diundangkan',
+                teu_badan: 'T.E.U Badan',
+                sumber: 'Sumber',
+                penandatangan: 'Penandatangan',
+                bahasa: 'Bahasa',
+                subjek: 'Subjek',
+                lokasi: 'Lokasi',
+                bidang_hukum: 'Bidang Hukum',
+                skpd: 'SKPD',
+                tema_dokumen: 'Tema Dokumen'
+            };
+
+            return labels[fieldId] || fieldId;
+        }
+
+        function showValidationError(fieldId, message) {
+            notifyMe('Validasi', message, 'warning');
+
+            if (fieldId === 'tema_dokumen') {
+                $('#tema_dokumen').select2('open');
+                return;
+            }
+
+            $('#' + fieldId).focus();
+        }
+
+        function showBackendValidationErrors(response) {
+            if (!(response.responseJSON && response.responseJSON.message == 'Validation Error')) {
+                notifyMe('Error', 'Gagal menyimpan data.', 'error');
+                return;
+            }
+
+            $.each(response.responseJSON.data, function(key, data) {
+                var fieldId = key.replace(/\..*$/, '');
+                var label = getFieldLabel(fieldId);
+                var message = Array.isArray(data) ? data[0] : data;
+
+                if (!message || message === 'validation.required' || message === 'The ' + fieldId + ' field is required.') {
+                    message = label + ' wajib diisi.';
+                }
+
+                notifyMe('Validasi', message, 'error');
+            });
+        }
+
+        function validateMainForm() {
+            var requiredFields = [
+                'nomor',
+                'tahun',
+                'tempat',
+                'tanggal_penetapan',
+                'judul',
+                'tanggal_diundangkan',
+                'teu_badan',
+                'sumber',
+                'penandatangan',
+                'bahasa',
+                'subjek',
+                'lokasi',
+                'bidang_hukum',
+                'skpd'
+            ];
+
+            for (var i = 0; i < requiredFields.length; i++) {
+                var fieldId = requiredFields[i];
+                var fieldValue = $('#' + fieldId).val();
+
+                if (!fieldValue || !String(fieldValue).trim()) {
+                    showValidationError(fieldId, getFieldLabel(fieldId) + ' wajib diisi.');
+                    return false;
+                }
+            }
+
+            var selectedTemas = $('#tema_dokumen').val();
+            if (!selectedTemas || selectedTemas.length === 0) {
+                showValidationError('tema_dokumen', 'Tema Dokumen wajib dipilih minimal 1.');
+                return false;
+            }
+
+            return true;
+        }
+
         // Fungsi untuk memperbarui tema dokumen
         function updateTemaDokumen(regulasiId, selectedTemas) {
             if (!regulasiId || !selectedTemas) {
@@ -319,6 +408,12 @@
                 // Form Halaman
                 if ($(this).attr('id') == '{{ $form }}') {
                     isnew = isNew('{{ $form }}');
+
+                    if (!validateMainForm()) {
+                        btnLoadingStop('btn{{ $module }}');
+                        return;
+                    }
+
                     if (isnew.status) {
                         option = {
                             'module': '{{ $module }}',
@@ -363,11 +458,7 @@
                                     loadTable('{{ route($fetch) }}', null, 'first', {'stat':'addfirst', 'table':'table-main'});
                                 },
                                 error: function(response) {
-                                    if (response.responseJSON.message == 'Validation Error') {
-                                        $.each(response.responseJSON.data, function(key, data){
-                                            notifyMe(key, data, 'error');
-                                        });
-                                    }
+                                    showBackendValidationErrors(response);
                                     btnLoadingStop('btn{{ $module }}');
                                 }
                             });
@@ -436,14 +527,7 @@
                                 loadTable('{{ route($fetch) }}', null, crrentPage, {'stat':'update', 'id':response.data.id, 'table':'table-main'}, response.data.id);
                             },
                             error: function(response) {
-                                if (response.responseJSON && response.responseJSON.message == 'Validation Error') {
-                                    $.each(response.responseJSON.data, function(key, data){
-                                        notifyMe(key, data, 'error');
-                                    });
-                                } else {
-                                    notifyMe('Error', 'Gagal menyimpan data', 'error');
-                                    console.error('Error response:', response);
-                                }
+                                showBackendValidationErrors(response);
                                 btnLoadingStop('btn{{ $module }}');
                             }
                         });

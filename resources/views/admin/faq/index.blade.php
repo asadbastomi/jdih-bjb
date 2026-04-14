@@ -68,7 +68,7 @@
         style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="formfaq" class="async">
+                <form id="formfaq" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -78,7 +78,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Pertanyaan</label>
-                                    <input type="text" class="form-control send" id="pertanyaan" placeholder="Pertanyaan">
+                                    <input type="text" class="form-control send" id="pertanyaan" placeholder="Pertanyaan" required>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +94,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Jawaban</label>
-                                    <div class="wysiwyg send" id="jawaban" data-type="send"></div>
+                                    <div class="wysiwyg send" id="jawaban" data-type="send" required></div>
                                 </div>
                             </div>
                         </div>

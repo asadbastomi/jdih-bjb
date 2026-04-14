@@ -69,7 +69,7 @@
         style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="formgaleri" class="async">
+                <form id="formgaleri" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -79,7 +79,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">Nama Kegiatan</label>
-                                    <input type="text" class="form-control send" id="nama_kegiatan"
+                                    <input type="text" class="form-control send" id="nama_kegiatan" required
                                         placeholder="Nama Kegiatan">
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                     <input type="file" data-plugins="dropify"
                                         data-allowed-file-extensions="jpg jpeg png webp"
                                         accept="image/x-png,image/jpg,image/jpeg,/image/webp" class="dropify send"
-                                        id="foto_kegiatan" multiple />
+                                        id="foto_kegiatan" multiple required />
                                 </div>
                             </div>
                         </div>

@@ -3,6 +3,8 @@ $(function ($) {
         allowClear: false
     });
     makeButtonLoading();
+    applyRequiredIndicators();
+    bindGlobalAsyncFormValidation();
     $(window).bind("load", function () {
     });
     $(document).on('click', '#btnlogout', function () {
@@ -26,7 +28,126 @@ $(function ($) {
         fieldClear(formname);
         fieldIndcator('clear', formname);
     })
+
+    $(document).on('shown.bs.modal', '.modal', function () {
+        applyRequiredIndicators();
+    });
 });
+
+function applyRequiredIndicators() {
+    $('form .form-group').each(function () {
+        var $group = $(this);
+        var $label = $group.find('label.control-label').first();
+        var $requiredField = $group.find('input[required], select[required], textarea[required], .wysiwyg[required]').first();
+
+        if (!$label.length || !$requiredField.length || $label.find('.required-marker').length || $label.text().indexOf('*') !== -1) {
+            return;
+        }
+
+        $label.append(' <span class="text-danger required-marker">*</span>');
+    });
+}
+
+function bindGlobalAsyncFormValidation() {
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (!form || !form.classList || !form.classList.contains('async')) {
+            return;
+        }
+
+        if (!validateRequiredFields(form)) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, true);
+}
+
+function validateRequiredFields(form) {
+    var requiredFields = form.querySelectorAll('input[required], select[required], textarea[required], .wysiwyg[required]');
+
+    for (var i = 0; i < requiredFields.length; i++) {
+        var field = requiredFields[i];
+        var fieldValue = $(field).val();
+        var isEmpty = !fieldValue || (typeof fieldValue === 'string' && fieldValue.trim() === '');
+
+        if (field.type === 'file') {
+            var hasUploadedFile = field.files && field.files.length > 0;
+            var hasExistingPreview = $(field)
+                .siblings()
+                .closest('.dropify-preview')
+                .find('.dropify-render')
+                .html() !== '';
+
+            isEmpty = !(hasUploadedFile || hasExistingPreview);
+        }
+
+        if (Array.isArray(fieldValue)) {
+            isEmpty = fieldValue.length === 0;
+        }
+
+        if ($(field).hasClass('wysiwyg')) {
+            var summernoteCode = $(field).summernote('code');
+            var plainText = String(summernoteCode || '').replace(/<[^>]*>/g, '').replace(/\s+/g, '').trim();
+            isEmpty = plainText === '';
+        }
+
+        if (isEmpty) {
+            var label = getLabelForField(field, form);
+            notifyMe('Validasi', label + ' wajib diisi.', 'warning');
+
+            if ($(field).hasClass('select2-hidden-accessible')) {
+                $(field).select2('open');
+            } else {
+                field.focus();
+            }
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function getLabelForField(field, form) {
+    var fieldId = field.id;
+    var label = null;
+
+    if (fieldId) {
+        label = form.querySelector('label[for="' + fieldId + '"]');
+    }
+
+    if (!label) {
+        label = $(field).closest('.form-group').find('label.control-label').get(0);
+    }
+
+    if (label) {
+        return cleanLabelText(label.textContent);
+    }
+
+    return cleanLabelText(field.name || 'Field');
+}
+
+function cleanLabelText(text) {
+    return String(text || 'Field').replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function normalizeValidationField(key) {
+    return String(key || '').split('.')[0];
+}
+
+function normalizeBackendValidationMessage(key, data) {
+    var field = normalizeValidationField(key);
+    var label = cleanLabelText(field.replace(/_/g, ' ')).replace(/\b\w/g, function (c) {
+        return c.toUpperCase();
+    });
+    var message = Array.isArray(data) ? data[0] : data;
+
+    if (!message || message === 'validation.required' || message === 'The ' + field + ' field is required.') {
+        return label + ' wajib diisi.';
+    }
+
+    return message;
+}
 (function ($) {
     $.fn.inputFilter = function (inputFilter) {
         return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
@@ -464,8 +585,8 @@ function sentData(url, option = null) {
             
             if (response.responseJSON.message == 'Validation Error') {
                 $.each(response.responseJSON.data, function (key, data) {
-                    notifyMe(key, data, 'error');
-                    fieldIndcator('add', key);
+                    notifyMe('Validasi', normalizeBackendValidationMessage(key, data), 'error');
+                    fieldIndcator('add', normalizeValidationField(key));
                 });
                 btnLoadingStop(buttonname);
             }

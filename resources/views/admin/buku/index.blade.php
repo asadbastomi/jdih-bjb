@@ -64,7 +64,7 @@
     <div id="modalform" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <form id="formbuku" class="async" >
+                <form id="formbuku" class="async" novalidate>
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -144,7 +144,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="control-label">Jumlah Eksemplar</label>
-                                    <input type="number" class="form-control send" id="jumlah" placeholder="Jumlah buku tersedia" min="0">
+                                    <input type="number" class="form-control send" id="jumlah" placeholder="Jumlah buku tersedia" min="0" required>
                                     <small class="form-text text-muted">Akan disimpan dalam field jumlah</small>
                                 </div>
                             </div>
