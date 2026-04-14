@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Regulasi;
 use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\API\BaseController as BaseController;
 
 class ArtikelController extends BaseController
@@ -149,41 +150,19 @@ class ArtikelController extends BaseController
         // Use tahun directly
         $table->tahun = $request->tahun;
 
-        if ($request->has('file')) {
-            $table->file = collect($request->file('file'))
-                ->filter(fn($file) => is_file($file))
-                ->map(function ($file) {
-                    $filePath = $file->getClientOriginalName();
-                    $file->move(public_path('upload/artikel/'), $filePath);
-                    return $filePath;
-                })
-                ->implode(';');
+        if ($request->hasFile('file')) {
+            $table->file = $this->storeUploadedFiles($request->file('file'), 'upload/artikel');
         }
 
-        if ($request->has('lampiran')) {
-            $table->lampiran = collect($request->file('lampiran'))
-                ->filter(fn($file) => is_file($file))
-                ->map(function ($file) {
-                    $filePath = $file->getClientOriginalName();
-                    $file->move(public_path('upload/lampiran/artikel/'), $filePath);
-                    return $filePath;
-                })
-                ->implode(';');
+        if ($request->hasFile('lampiran')) {
+            $table->lampiran = $this->storeUploadedFiles($request->file('lampiran'), 'upload/lampiran/artikel');
         }
 
-        if ($request->has('abstrak')) {
-            $table->abstrak = collect($request->file('abstrak'))
-                ->filter(fn($file) => is_file($file))
-                ->map(function ($file) {
-                    $filePath = $file->getClientOriginalName();
-                    $file->move(public_path('upload/abstrak/artikel/'), $filePath);
-                    return $filePath;
-                })
-                ->implode(';');
+        if ($request->hasFile('abstrak')) {
+            $table->abstrak = $this->storeUploadedFiles($request->file('abstrak'), 'upload/abstrak/artikel');
         }
 
         if ($table->save()) {
-            // Simpan tema dokumen jika ada
             if ($request->has('tema_dokumen')) {
                 $table->temaDokumen()->sync($request->tema_dokumen);
             }
@@ -237,71 +216,42 @@ class ArtikelController extends BaseController
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), 'Validation Error');
         }
-        
+
         $table = Regulasi::where('id', $id)->first();
         if (!$table) {
             return $this->sendError(null, 'Data not found', 404);
         }
 
-        // Map tempat to tempat_penetapan for consistency
         $requestData = $request->only([
-            'kategori_id', 'tipe_dokumen', 'judul', 'teu_badan', 
-            'nomor', 'nomor_peraturan', 'jenis_peraturan', 'singkatan_jenis_peraturan', 
-            'tempat_penetapan', 'sumber', 'subjek', 'status_peraturan', 'bahasa', 'lokasi', 
+            'kategori_id', 'tipe_dokumen', 'judul', 'teu_badan',
+            'nomor', 'nomor_peraturan', 'jenis_peraturan', 'singkatan_jenis_peraturan',
+            'tempat_penetapan', 'sumber', 'subjek', 'status_peraturan', 'bahasa', 'lokasi',
             'bidang_hukum', 'keterangan', 'tanggal_penetapan', 'tanggal_diundangkan'
         ]);
-        
+
         if ($request->has('tempat') && !$request->has('tempat_penetapan')) {
             $requestData['tempat_penetapan'] = $request->tempat;
         }
-        
+
         $table->fill($requestData);
-        
-        // Use tahun directly
         $table->tahun = $request->tahun;
 
-        // Handle file upload
         if ($request->hasFile('file')) {
-            $table->file = collect($request->file('file'))
-                ->filter(fn($file) => is_file($file))
-                ->map(function ($file) {
-                    $filePath = $file->getClientOriginalName();
-                    $file->move(public_path('upload/artikel/'), $filePath);
-                    return $filePath;
-                })
-                ->implode(';');
+            $table->file = $this->storeUploadedFiles($request->file('file'), 'upload/artikel');
         }
 
-        // Handle lampiran upload
         if ($request->hasFile('lampiran')) {
-            $table->lampiran = collect($request->file('lampiran'))
-                ->filter(fn($file) => is_file($file))
-                ->map(function ($file) {
-                    $filePath = $file->getClientOriginalName();
-                    $file->move(public_path('upload/lampiran/artikel/'), $filePath);
-                    return $filePath;
-                })
-                ->implode(';');
+            $table->lampiran = $this->storeUploadedFiles($request->file('lampiran'), 'upload/lampiran/artikel');
         }
 
-        // Handle abstrak upload
         if ($request->hasFile('abstrak')) {
-            $table->abstrak = collect($request->file('abstrak'))
-                ->filter(fn($file) => is_file($file))
-                ->map(function ($file) {
-                    $filePath = $file->getClientOriginalName();
-                    $file->move(public_path('upload/abstrak/artikel/'), $filePath);
-                    return $filePath;
-                })
-                ->implode(';');
+            $table->abstrak = $this->storeUploadedFiles($request->file('abstrak'), 'upload/abstrak/artikel');
         }
 
         if ($table->save()) {
-            // Update tema dokumen jika ada
             if ($request->has('tema_dokumen')) {
                 $table->temaDokumen()->sync($request->tema_dokumen);
             } else {
-                // Jika tidak ada tema yang dipilih, hapus semua tema
                 $table->temaDokumen()->detach();
             }
             return $this->sendResponse($table, 'Data updated successfully');
@@ -318,5 +268,28 @@ class ArtikelController extends BaseController
         } else {
             return $this->sendError(null, 'Data failed to delete', 500);
         }
+    }
+
+    protected function storeUploadedFiles($files, $directory)
+    {
+        $files = is_array($files) ? $files : [$files];
+        $storedFiles = [];
+        $targetDirectory = public_path($directory);
+
+        if (!File::isDirectory($targetDirectory)) {
+            File::makeDirectory($targetDirectory, 0755, true, true);
+        }
+
+        foreach ($files as $file) {
+            if (!$file || !$file->isValid()) {
+                continue;
+            }
+
+            $filePath = $file->getClientOriginalName();
+            $file->move($targetDirectory, $filePath);
+            $storedFiles[] = $filePath;
+        }
+
+        return implode(';', $storedFiles);
     }
 }
