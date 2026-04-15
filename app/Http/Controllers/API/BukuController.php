@@ -175,8 +175,9 @@ class BukuController extends BaseController
 
         if ($table->save()){
             // Handle tema dokumen relationships
-            if ($request->has('tema_dokumen') && is_array($request->tema_dokumen)) {
-                $table->temaDokumen()->sync($request->tema_dokumen);
+            $temaDokumenIds = $this->normalizeIdList($request->input('tema_dokumen'));
+            if (!empty($temaDokumenIds)) {
+                $table->temaDokumen()->sync($temaDokumenIds);
             }
 
             return $this->sendResponse($table, 'Data saved successfully');
@@ -257,8 +258,9 @@ class BukuController extends BaseController
 
         if ($table->save()){
             // Handle tema dokumen relationships
-            if ($request->has('tema_dokumen') && is_array($request->tema_dokumen)) {
-                $table->temaDokumen()->sync($request->tema_dokumen);
+            $temaDokumenIds = $this->normalizeIdList($request->input('tema_dokumen'));
+            if (!empty($temaDokumenIds)) {
+                $table->temaDokumen()->sync($temaDokumenIds);
             }
 
             return $this->sendResponse($table, 'Data updated successfully');

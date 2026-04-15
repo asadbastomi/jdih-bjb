@@ -164,7 +164,7 @@ class ArtikelController extends BaseController
 
         if ($table->save()) {
             if ($request->has('tema_dokumen')) {
-                $table->temaDokumen()->sync($request->tema_dokumen);
+                $table->temaDokumen()->sync($this->normalizeIdList($request->input('tema_dokumen')));
             }
             return $this->sendResponse($table, 'Data saved successfully');
         } else {
@@ -250,7 +250,7 @@ class ArtikelController extends BaseController
 
         if ($table->save()) {
             if ($request->has('tema_dokumen')) {
-                $table->temaDokumen()->sync($request->tema_dokumen);
+                $table->temaDokumen()->sync($this->normalizeIdList($request->input('tema_dokumen')));
             } else {
                 $table->temaDokumen()->detach();
             }

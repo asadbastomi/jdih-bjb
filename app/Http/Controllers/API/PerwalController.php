@@ -322,8 +322,9 @@ class PerwalController extends BaseController
 
         if ($table->save()) {
             // Simpan tema dokumen jika ada
-            if ($request->has('tema_dokumen') && is_array($request->tema_dokumen)) {
-                $table->temaDokumen()->sync($request->tema_dokumen);
+            $temaDokumenIds = $this->normalizeIdList($request->input('tema_dokumen'));
+            if (!empty($temaDokumenIds)) {
+                $table->temaDokumen()->sync($temaDokumenIds);
             }
 
             return $this->sendResponse($table, 'Data saved successfully');
@@ -512,11 +513,7 @@ class PerwalController extends BaseController
         if ($table->update()) {
             // Update tema dokumen jika ada
             if ($request->has('tema_dokumen')) {
-                if (is_array($request->tema_dokumen)) {
-                    $table->temaDokumen()->sync($request->tema_dokumen);
-                } else {
-                    $table->temaDokumen()->sync([]);
-                }
+                $table->temaDokumen()->sync($this->normalizeIdList($request->input('tema_dokumen')));
             }
 
             return $this->sendResponse($table, 'Data updated successfully');

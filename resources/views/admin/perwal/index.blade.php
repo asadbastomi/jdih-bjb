@@ -187,9 +187,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label">Tema Dokumen <span class="text-danger">*</span> <small>(pilih satu atau lebih)</small></label>
+                                    <label class="control-label">Tema Dokumen <small>(opsional, pilih satu atau lebih)</small></label>
                                     <select class="form-control select2-multiple send" name="tema_dokumen[]" id="tema_dokumen"
-                                        data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema..." required>
+                                        data-toggle="select2" multiple="multiple" data-placeholder="Pilih Tema...">
                                     </select>
                                 </div>
                             </div>
@@ -440,12 +440,6 @@
                     showValidationError(fieldId, getFieldLabel(fieldId) + ' wajib diisi.');
                     return false;
                 }
-            }
-
-            var selectedTemas = $('#tema_dokumen').val();
-            if (!selectedTemas || selectedTemas.length === 0) {
-                showValidationError('tema_dokumen', 'Tema Dokumen wajib dipilih minimal 1.');
-                return false;
             }
 
             if (isnew.status) {

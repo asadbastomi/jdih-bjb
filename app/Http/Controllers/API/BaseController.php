@@ -67,4 +67,22 @@ class BaseController extends Controller
         //     return $currentPage;
         // });
     }
+
+    protected function normalizeIdList($rawValue)
+    {
+        if (is_array($rawValue)) {
+            return array_values(array_filter($rawValue, function ($value) {
+                return $value !== null && $value !== '';
+            }));
+        }
+
+        if (is_string($rawValue)) {
+            $parts = preg_split('/[;,]/', $rawValue);
+            return array_values(array_filter($parts, function ($value) {
+                return trim($value) !== '';
+            }));
+        }
+
+        return [];
+    }
 }
